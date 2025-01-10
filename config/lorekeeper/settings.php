@@ -36,7 +36,7 @@ return [
     | site wherever the name needs to be displayed.
     |
     */
-    'site_name' => 'Hiraexin',
+    'site_name' => 'Lorekeeper',
 
     /*
     |--------------------------------------------------------------------------

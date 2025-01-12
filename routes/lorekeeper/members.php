@@ -198,3 +198,14 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function() {
     Route::post('/{comment}', 'CommentController@reply')->name('comments.reply');
     Route::post('/{id}/feature', 'CommentController@feature')->name('comments.feature');
 });
+
+/**************************************************************************************************
+    Higher or Lower
+**************************************************************************************************/
+
+Route::group(['prefix' => 'higher-or-lower'], function() {
+    Route::get('/', 'HolController@getIndex');
+
+    Route::get('play', 'HolController@playHol');
+    Route::post('play/guess', 'HolController@postGuess');
+});

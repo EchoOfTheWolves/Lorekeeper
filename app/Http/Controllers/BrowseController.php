@@ -146,13 +146,13 @@ class BrowseController extends Controller
         if($request->get('owner')) {
             $owner = User::find($request->get('owner'));
             $query->where(function($query) use ($owner) {
-                $query->where('user_id', $owner->id);
+                $query->where('user_id', $owner->id)->orWhere('coowner_id', $owner->id);
             });
         }
         if($request->get('owner_url')) {
             $ownerUrl = $request->get('owner_url');
             $query->where(function($query) use ($ownerUrl) {
-                $query->where('owner_url','LIKE', '%'.$ownerUrl.'%');
+                $query->where('owner_url','LIKE', '%'.$ownerUrl.'%')->orWhere('coowner_url','LIKE', '%'.$ownerUrl.'%');
             });
         }
 

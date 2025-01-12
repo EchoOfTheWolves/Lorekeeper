@@ -42,8 +42,23 @@
             </div>
         </div>
     </div>
-
-    @if(!$isMyo)
+@if(!$isMyo)
+    <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Co-Owner (Optional)') !!}
+                    {!! Form::select('coowner_id', $userOptions, old('coowner_id'), ['class' => 'form-control', 'placeholder' => 'Select User', 'id' => 'userSelect']) !!}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Owner URL (Optional)') !!}
+                    {!! Form::text('coowner_url', old('coowner_url'), ['class' => 'form-control']) !!}
+                </div>
+            </div>
+        </div>
+    <hr>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">

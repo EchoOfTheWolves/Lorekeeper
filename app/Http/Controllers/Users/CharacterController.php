@@ -41,7 +41,7 @@ class CharacterController extends Controller
      */
     public function getIndex()
     {
-        $characters = Auth::user()->characters()->with('image')->visible()->whereNull('trade_id')->get();
+        $characters = Auth::user()->primaryCharacters()->with('image')->visible()->whereNull('trade_id')->get();
 
         return view('home.characters', [
             'characters' => $characters,

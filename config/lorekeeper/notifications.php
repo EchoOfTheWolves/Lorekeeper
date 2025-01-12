@@ -317,6 +317,20 @@ return [
         'url' => ''
     ],
 
+    // COOWNER_OWNER_UPDATE
+    298 => [
+        'name' => 'Main Owner Update',
+        'message' => 'The main owner of {character_url} has changed. Transferred to: {recipient}',
+        'url' => ''
+    ],
+    
+    // COOWNER_UPDATE
+    299 => [
+        'name' => 'Co-owner Update',
+        'message' => '<a href="{user_url}">{user}</a> has updated your co-ownership status to {character_url}.',
+        'url' => ''
+    ],
+
     // CHARACTER_ITEM_GRANT
     501 => [
         'name' => 'Character Item Grant',

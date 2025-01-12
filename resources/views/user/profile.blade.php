@@ -106,6 +106,11 @@
                 <div class="mt-1">
                     <a href="{{ $character->url }}" class="h5 mb-0"> @if(!$character->is_visible) <i class="fas fa-eye-slash"></i> @endif {{ $character->fullName }}</a>
                 </div>
+                @if($character->user_id != $user->id)
+                <small class="text-muted">
+                    (Co-Owner)
+                </small>
+                @endif
             </div>
         @endforeach
     </div>

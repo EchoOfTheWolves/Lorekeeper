@@ -107,6 +107,7 @@ class CharacterManager extends Service
                 }
             }
             else $data['subtype_ids'] = null;
+            if($isMyo) { $data['coowner_id'] = null; $data['coowner_url'] = null; }
 
             // Get owner info
             $url = null;
@@ -121,6 +122,22 @@ class CharacterManager extends Service
             else {
                 $url = $recipient;
             }
+
+            // CO OWNER NOTIF ///////////////////////////
+            $courl = null;
+            $corecipientId = null;
+            $corecipient = null;
+            if(isset($data['coowner_id']) && $data['coowner_id']) $corecipient = User::find($data['coowner_id']);
+            elseif(isset($data['coowner_url']) && $data['coowner_url']) $corecipient = checkAlias($data['coowner_url']);
+    
+            if(is_object($corecipient)) {
+                $corecipientId = $corecipient->id;
+                $data['coowner_id'] = $corecipient->id;
+            }
+            else {
+                $courl = $corecipient;
+            }
+            /////////////////////////////////////////////
 
             // Create character
             $character = $this->handleCharacter($data, $isMyo);
@@ -161,6 +178,17 @@ class CharacterManager extends Service
                 ));
             }
 
+            /////////////
+            if(is_object($corecipient) && $user->id != $corecipient->id) {
+                Notifications::create($isMyo ? 'MYO_GRANT' : 'CHARACTER_UPLOAD', $corecipient, [
+                    'character_url' => $character->url,
+                ] + ($isMyo ?
+                    ['name' => $character->name] :
+                    ['character_slug' => $character->slug]
+                ));
+            }
+            ///////////
+
             return $this->commitReturn($character);
         } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -191,11 +219,12 @@ class CharacterManager extends Service
             $characterData = Arr::only($data, [
                 'character_category_id', 'rarity_id', 'user_id',
                 'number', 'slug', 'description',
-                'sale_value', 'transferrable_at', 'is_visible'
+                'sale_value', 'transferrable_at', 'is_visible', 'coowner_id'
             ]);
 
             $characterData['name'] = ($isMyo && isset($data['name'])) ? $data['name'] : null;
             $characterData['owner_url'] = isset($characterData['user_id']) ? null : $data['owner_url'];
+            $characterData['coowner_url'] = isset($characterData['coowner_id']) ? null : $data['coowner_url'];
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
             $characterData['is_giftable'] = isset($data['is_giftable']);
@@ -1208,6 +1237,8 @@ class CharacterManager extends Service
                 $this->createLog($user->id, null, null, null, $character->id, 'Character Updated', ucfirst(implode(', ', $result)) . ' edited', 'character', true, $old, $new);
             }
 
+            $this->updateCoOwner($character, Arr::only($data, ['coowner_id', 'coowner_url']), $user);
+
             return $this->commitReturn(true);
         } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -1721,6 +1752,24 @@ class CharacterManager extends Service
         if(is_object($recipient)) {
             if(!$character->is_myo_slot) $recipient->settings->is_fto = 0;
             $recipient->settings->save();
+        }
+
+        //Notify any co-owners
+        if($character->coowner_id)
+        {
+            $coOwner = $character->coowner;
+            if(is_object($recipient) && $coOwner->id == $recipient->id)
+            {
+                $character->coowner_id = null;
+                $character->coowner_url = null;
+                $character->save();
+            }
+            else {
+                Notifications::create('COOWNER_OWNER_UPDATE', $coOwner, [
+                    'character_url' => $character->displayName,
+                    'recipient' => is_object($recipient) ? $recipient->displayName : prettyProfileName($recipient),
+                ]);
+            }
         }
 
         // Update character owner, sort order and cooldown
@@ -2567,5 +2616,101 @@ is_object($sender) ? $sender->id : null,
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
+    }
+
+    /**
+     * 
+     * CO-OWNER STUFF   
+     * 
+     */
+    public function updateCoOwner($character, $data, $user)
+    {
+        // VALIDATION /////////
+        if($character->isMyo) throw new \Exception('Cannot have a co-owner on a MYO');
+
+            // old co owner
+            $oldOwner = null;
+            if(isset($character->coowner_url))
+            {
+                $oldOwner = prettyProfileLink($character->coowner_url); 
+            }
+            elseif(isset($character->coowner_id))
+            {
+                $oldOwner = $character->coowner->displayName;
+            }
+            else { $oldOwner = 'None.'; }
+            //
+
+        // if there was no co-owner before
+        if(!isset($data['coowner_id']) && !isset($data['coowner_url']))
+        {
+            if($character->coowner_id || $character->coowner_url)
+            {
+                $character->coowner_id = null;
+                $character->coowner_url = null;
+                $character->save();
+
+                $this->createLog($user->id, null, null, null, $character->id, 'Character Co-owner Removed', 'Co-owner removed. Old co-owner: ' . $oldOwner, 'character', true, null, null);
+        
+            }
+        }
+        // if there was
+        else {
+
+            if(isset($data['coowner_id'])) 
+            { 
+                if($character->user_id == $data['coowner_id']) throw new \Exception('You cannot set the owner as the co-owner.'); 
+                if(isset($character->coowner_id))
+                {
+                    if($character->coowner_id == $data['coowner_id']) throw new \Exception('This user is already a co-owner.'); 
+                }
+            }
+
+            if(isset($data['coowner_url'])) 
+            { 
+                if($character->owner_url == $data['coowner_url']) throw new \Exception('You cannot set the owner as the co-owner.'); 
+                if(isset($character->coowner_url))
+                {
+                    if($character->coowner_url == $data['coowner_url']) throw new \Exception('This user is already a co-owner.'); 
+                }
+            }
+            /////////////////////
+
+            if(isset($data['coowner_url'])) { if($character->owner_url == $data['coowner_url']) { throw new \Exception('You cannot set the owner as the co-owner.'); } }
+
+            // new co owner
+            $courl = null;
+            $corecipientId = null;
+            if(isset($data['coowner_id']) && $data['coowner_id']) $corecipient = User::find($data['coowner_id']);
+            elseif(isset($data['coowner_url']) && $data['coowner_url']) $corecipient = checkAlias($data['coowner_url']);
+
+            if(is_object($corecipient)) {
+                $corecipientId = $corecipient->id;
+                $data['coowner_id'] = $corecipient->id;
+            }
+            else {
+                $courl = $corecipient;
+            }
+
+            if(is_object($corecipient) && $character->user_id != $corecipient->id) {
+                Notifications::create('COOWNER_UPDATE', $corecipient, [
+                    'character_url' => $character->displayName,
+                    'user_url' => $user->url,
+                    'user' => $user->displayname
+                ]);
+
+                $character->coowner_id = $corecipientId;
+                $character->save();
+            }
+            else {
+                $character->coowner_url = $courl;
+                $character->save();
+            }
+
+            if($character->coowner_id)  { $new =  $character->coowner->displayName; }
+            else { $new = prettyProfileLink($character->coowner_url); }
+
+            $this->createLog($user->id, null, null, null, $character->id, 'Character Co-Owner Updated', 'Co-owner edited. Old co-owner: ' . $oldOwner . ' New co-owner: ' . $new . '.', 'character', true, null, null);
+        }
     }
 }

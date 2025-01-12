@@ -20,6 +20,11 @@
                 <div class="mt-1 h5">
                     @if(!$character->is_visible) <i class="fas fa-eye-slash"></i> @endif {!! $character->displayName !!}
                 </div>
+                @if($character->user_id != $user->id)
+                <small class="text-muted">
+                    (Co-Owner)
+                </small>
+                @endif
             </div>
         @endforeach
     </div>

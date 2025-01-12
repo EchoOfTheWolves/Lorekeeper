@@ -23,8 +23,23 @@
             {!! Form::label('Character Code') !!} {!! add_help('This code identifies the character itself. This must be unique among all characters (as it\'s used to generate the character\'s page URL).') !!}
             {!! Form::text('slug', $character->slug, ['class' => 'form-control', 'id' => 'code']) !!}
         </div>
+    
+        <p class="mt-1">To remove co-owner, leave the username option as 'Select User'</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Co-Owner (Optional)') !!}
+                {!! Form::select('coowner_id', $userOptions, $character->coowner_id, ['class' => 'form-control', 'placeholder' => 'Select User', 'id' => 'userSelect']) !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Co-Owner URL (Optional)') !!}
+                {!! Form::text('coowner_url', $character->coowner_url, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+    </div>
     @endif
-
     <div class="alert alert-info">
         These are displayed on the character's profile, but don't have any effect on site functionality except for the following: 
         <ul>

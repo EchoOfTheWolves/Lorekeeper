@@ -31,6 +31,11 @@
                         </div>
                     @endforeach
                 </div>
+                @if($character->user_id != $user->id)
+                <small class="text-muted">
+                    (Co-Owner)
+                </small>
+                @endif
             </div>
         </div>
     @endforeach

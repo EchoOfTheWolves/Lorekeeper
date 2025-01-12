@@ -43,6 +43,11 @@
     {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the shop will not be visible to regular users.') !!}
 </div>
 
+<div class="form-group">
+    {!! Form::checkbox('visible_only', 1, $shop->id ? $shop->visible_only : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+    {!! Form::label('visible_only', 'Set Visible-Only', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned on, the shop will be visible, but users will not be able to purchase from it..') !!}
+</div>
+
 <div class="text-right">
     {!! Form::submit($shop->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
 </div>

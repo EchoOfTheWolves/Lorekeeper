@@ -155,6 +155,7 @@ class ShopService extends Service
     {
         if(isset($data['description']) && $data['description']) $data['parsed_description'] = parse($data['description']);
         $data['is_active'] = isset($data['is_active']);
+        $data['visible_only'] = isset($data['visible_only']);
         
         if(isset($data['remove_image']))
         {

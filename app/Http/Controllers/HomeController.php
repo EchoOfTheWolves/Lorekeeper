@@ -9,9 +9,14 @@ use Auth;
 use Carbon\Carbon;
 use Config;
 use DB;
+use Settings;
+
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
+use App\Models\Character\Character;
+
+use App\Services\DeviantArtService;
 class HomeController extends Controller
 {
     /*
@@ -30,8 +35,13 @@ class HomeController extends Controller
      */
     public function getIndex()
     {
+        if(Settings::get('featured_character')) {
+            $character = Character::find(Settings::get('featured_character'));
+        }
+        else $character = null;
         return view('welcome', [
             'about' => SitePage::where('key', 'about')->first(),
+            'featured' => $character,
         ]);
     }
 

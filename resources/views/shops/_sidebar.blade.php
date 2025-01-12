@@ -12,10 +12,16 @@
         </li>
     @endif
 
-    <li class="sidebar-section">
+    @if($shops->count())
+<li class="sidebar-section">
         <div class="sidebar-section-header">Shops</div>
-        @foreach($shops as $shop)
-            <div class="sidebar-item"><a href="{{ $shop->url }}" class="{{ set_active('shops/'.$shop->id) }}">{{ $shop->name }}</a></div>
-        @endforeach
-    </li>
-</ul>
+@foreach($shops as $categoryId=>$categoryshops)
+<div class="sidebar-section-header"> {!! isset($shopcategories[$categoryId]) ? ''.$shopcategories[$categoryId]->name.'' : 'Miscellaneous' !!}</div>
+            @foreach($categoryshops->chunk(4) as $chunk)
+                    @foreach($chunk as $shopId=>$shop)
+                    <div class="sidebar-item"><a href="{{ $shop->url }}" class="{{ set_active('shops/'.$shop->id) }}">{{ $shop->name }}</a></div>
+                    @endforeach
+            @endforeach
+@endforeach
+</li>
+@endif

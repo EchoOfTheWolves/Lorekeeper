@@ -34,6 +34,12 @@
 </div>
 
 <div class="form-group">
+            {!! Form::label('Shop Category (Optional)') !!}
+            {!! Form::select('shop_category_id', $shop_categories, $shop->shop_category_id, ['class' => 'form-control selectize']) !!}
+</div>
+
+
+<div class="form-group">
     {!! Form::label('Description (Optional)') !!}
     {!! Form::textarea('description', $shop->description, ['class' => 'form-control wysiwyg']) !!}
 </div>

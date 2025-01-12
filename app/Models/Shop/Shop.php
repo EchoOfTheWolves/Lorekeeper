@@ -13,7 +13,7 @@ class Shop extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'sort', 'has_image', 'description', 'parsed_description', 'is_active', 'visible_only'
+        'name', 'sort', 'has_image', 'description', 'parsed_description', 'is_active', 'visible_only', 'shop_category_id'
     ];
 
     /**
@@ -32,6 +32,7 @@ class Shop extends Model
         'name' => 'required|unique:item_categories|between:3,100',
         'description' => 'nullable',
         'image' => 'mimes:png',
+        'shop_category_id' => 'nullable',
     ];
     
     /**
@@ -43,6 +44,7 @@ class Shop extends Model
         'name' => 'required|between:3,100',
         'description' => 'nullable',
         'image' => 'mimes:png',
+        'shop_category_id' => 'nullable',
     ];
 
     /**********************************************************************************************
@@ -65,6 +67,14 @@ class Shop extends Model
     public function displayStock()
     {
         return $this->belongsToMany('App\Models\Item\Item', 'shop_stock')->withPivot('item_id', 'currency_id', 'cost', 'use_user_bank', 'use_character_bank', 'is_limited_stock', 'quantity', 'purchase_limit', 'id');
+    }
+
+        /**
+     * Get the category the shop belongs to.
+     */
+    public function category()
+    {
+        return $this->belongsTo('App\Models\Shop\ShopCategory', 'shop_category_id');
     }
 
     /**********************************************************************************************

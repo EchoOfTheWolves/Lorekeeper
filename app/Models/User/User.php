@@ -205,6 +205,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function folders()
     {
         return $this->hasMany('App\Models\Character\CharacterFolder');
+    }
+     /**
      * Get the user's rank data.
      */
     public function shops()

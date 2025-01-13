@@ -284,25 +284,22 @@
     @include('widgets._character_code_js')
 @endif
 
-<script>
-    $( "#species" ).change(function() {
-      var species = $('#species').val();
-      var myo = '<?php echo($isMyo); ?>';
-      $.ajax({
-        type: "GET", url: "{{ url('admin/masterlist/check-subtype') }}?species="+species+"&myo="+myo, dataType: "text"
-      }).done(function (res) { 
-        $("#subtypes").html(res); 
-        $( "#subtype" ).selectize({
-            maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
-        });
-    }).fail(function (jqXHR, textStatus, errorThrown) { alert("AJAX call failed: " + textStatus + ", " + errorThrown); });
-    });
 
-    $( "#subtype" ).selectize({
-        maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
-    });
 
-    $.ajax({
+    <script>
+        $("#species").change(function() {
+            var species = $('#species').val();
+            var myo = '<?php echo $isMyo; ?>';
+            $.ajax({
+                type: "GET",
+                url: "{{ url('admin/masterlist/check-subtype') }}?species=" + species + "&myo=" + myo,
+                dataType: "text"
+            }).done(function(res) {
+                $("#subtypes").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+            $.ajax({
                 type: "GET",
                 url: "{{ url('admin/masterlist/check-transformation') }}?species=" + species + "&myo=" + myo,
                 dataType: "text"
@@ -311,7 +308,11 @@
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
-</script>
+        });
 
-    
+        $( "#subtype" ).selectize({
+        maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+    });
+
+    </script>
 @endsection

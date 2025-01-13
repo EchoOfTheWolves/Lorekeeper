@@ -134,6 +134,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function() 
 
     Route::post('{slug}/approval', 'CharacterController@postCharacterApproval');
     Route::get('{slug}/approval', 'CharacterController@getCharacterApproval');
+    Route::post('{slug}/approval/{id}', 'CharacterController@postCharacterApprovalSpecificImage');
 });
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function() {
     Route::get('{id}/profile/edit', 'MyoController@getEditCharacterProfile');
@@ -145,6 +146,8 @@ Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function() {
 
     Route::post('{id}/approval', 'MyoController@postCharacterApproval');
     Route::get('{id}/approval', 'MyoController@getCharacterApproval');
+    //this is useless but im not sure if we dont include it things will get weird or not
+    Route::post('{slug}/approval/{id}', 'CharacterController@postCharacterApprovalSpecificImage');
 });
 
 /**************************************************************************************************
@@ -206,6 +209,7 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function() {
     Route::get('{id}/traits', 'DesignController@getFeatures');
     Route::post('{id}/traits', 'DesignController@postFeatures');
     Route::get('traits/subtype', 'DesignController@getFeaturesSubtype');
+    Route::get('traits/transformation', 'DesignController@getFeaturesTransformation');
 
     Route::get('{id}/confirm', 'DesignController@getConfirm');
     Route::post('{id}/submit', 'DesignController@postSubmit');

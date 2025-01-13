@@ -26,7 +26,7 @@ class CharacterDesignUpdate extends Model
         'hash', 'species_id', 'subtype_id', 'rarity_id',
         'has_comments', 'has_image', 'has_addons', 'has_features',
         'submitted_at', 'update_type', 'fullsize_hash', 
-        'approval_votes', 'rejection_votes'
+        'approval_votes', 'rejection_votes', 'transformation_id','transformation_info','transformation_description'
     ];
 
     /**
@@ -142,6 +142,13 @@ class CharacterDesignUpdate extends Model
     public function artists()
     {
         return $this->hasMany('App\Models\Character\CharacterImageCreator', 'character_image_id')->where('type', 'Artist')->where('character_type', 'Update');
+    }
+
+        /**
+     * Get the transformation of the design update.
+     */
+    public function transformation() {
+        return $this->belongsTo('App\Models\Character\CharacterTransformation', 'transformation_id');
     }
 
     /**********************************************************************************************

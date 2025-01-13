@@ -284,13 +284,8 @@ class CharacterManager extends Service
                 }
             }
             $imageData = Arr::only($data, [
-<<<<<<< HEAD
-                'species_id', 'rarity_id', 'use_cropper',
-                'x0', 'x1', 'y0', 'y1',
-=======
                 'species_id', 'subtype_id', 'rarity_id', 'use_cropper',
                 'x0', 'x1', 'y0', 'y1', 'transformation_id','transformation_info','transformation_description'
->>>>>>> cdd6b876c8cec544b8d30a5a301e7b6284b5ade7
             ]);
             $imageData['use_cropper'] = isset($data['use_cropper']) ;
             $imageData['description'] = isset($data['image_description']) ? $data['image_description'] : null;

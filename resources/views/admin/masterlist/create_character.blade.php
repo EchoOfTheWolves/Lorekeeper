@@ -301,22 +301,8 @@
     $( "#subtype" ).selectize({
         maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
     });
-</script>
 
-    <script>
-        $("#species").change(function() {
-            var species = $('#species').val();
-            var myo = '<?php echo $isMyo; ?>';
-            $.ajax({
-                type: "GET",
-                url: "{{ url('admin/masterlist/check-subtype') }}?species=" + species + "&myo=" + myo,
-                dataType: "text"
-            }).done(function(res) {
-                $("#subtypes").html(res);
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
-            });
-            $.ajax({
+    $.ajax({
                 type: "GET",
                 url: "{{ url('admin/masterlist/check-transformation') }}?species=" + species + "&myo=" + myo,
                 dataType: "text"
@@ -325,6 +311,7 @@
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
-        });
-    </script>
+</script>
+
+    
 @endsection

@@ -33,6 +33,10 @@
         </div>
     </div>
 
+    <div class="text-right">
+        {!! Form::submit($transformation->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
+    </div>
+
     <div class="form-group">
         {!! Form::label('World Page Image (Optional)') !!} {!! add_help('This image is used only on the world information pages.') !!}
         <div>{!! Form::file('image') !!}</div>

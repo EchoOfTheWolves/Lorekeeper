@@ -1871,7 +1871,7 @@ is_object($sender) ? $sender->id : null,
                 // Set some data based on the character's existing stats
                 'rarity_id' => $image->rarity_id,
                 'species_id' => $image->species_id,
-                'subtype_ids' => $image->subtype_id,
+                'subtype_ids' => $character->image->subtypes()->pluck('subtype_id')->toArray(),
                 'transformation_id' => $image->transformation_id,
                 'transformation_info' => $image->transformation_info,
                 'transformation_description' => $image->transformation_description

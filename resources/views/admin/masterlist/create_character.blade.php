@@ -244,7 +244,7 @@
         <h5>{{ ucfirst(__('transformations.transformations')) }}</h5>
         <div class="form-group" id="transformations">
             {!! Form::label(ucfirst(__('transformations.transformation')) . ' (Optional)') !!} {!! add_help('This will make the image have the selected ' . __('transformations.transformation') . ' id.') !!}
-            {!! Form::select('transformation_id', $transformations, old('transformation_id'), ['class' => 'form-control disabled', 'id' => 'transformations', 'placeholder' => 'No Transformations Found']) !!}
+            {!! Form::select('transformation_id', $transformations, old('transformation_id'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-group">
             {!! Form::label(ucfirst(__('transformations.transformation')) . ' Tab Info (Optional)') !!}{!! add_help('This is text that will show alongside the ' . __('transformations.transformation') . ' name in the tabs, so try to keep it short.') !!}

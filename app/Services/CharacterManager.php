@@ -1885,7 +1885,7 @@ is_object($sender) ? $sender->id : null,
             // users to edit compulsory traits, so we'll only add them when the design is approved.
             if(!$character->is_myo_slot)
             {
-                foreach($image->features as $feature)
+                foreach($character->image->features as $feature)
                 {
                     $request->features()->create([
                         'character_image_id' => $request->id,
@@ -2193,7 +2193,7 @@ is_object($sender) ? $sender->id : null,
             // Update other stats
             $request->species_id = $species->id;
             $request->rarity_id = $rarity->id;
-            $request->subtype_ids = $subtypes ? $subtypes->id : null;
+            $request->subtype_ids = isset($subtypes) ? $subtypes : null;
             $request->transformation_id = $transformation ? $transformation->id : null;
             $request->transformation_info = $transformation_info;
             $request->transformation_description = $transformation_description;

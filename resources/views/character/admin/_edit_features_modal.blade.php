@@ -108,4 +108,5 @@
     $( "#subtype" ).selectize({
         maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
     });
+})
 </script>

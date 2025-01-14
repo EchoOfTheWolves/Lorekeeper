@@ -83,15 +83,6 @@
         }
     });
 
-<<<<<<< HEAD
-    $( "#species" ).change(function() {
-      var species = $('#species').val();
-      var id = '<?php echo($image->id); ?>';
-      $.ajax({
-        type: "GET", url: "{{ url('admin/character/image/traits/subtype') }}?species="+species+"&id="+id, dataType: "text"
-      }).done(function (res) { $("#subtypes").html(res); }).fail(function (jqXHR, textStatus, errorThrown) { alert("AJAX call failed: " + textStatus + ", " + errorThrown); });
-    });
-=======
     $("#species").change(function() {
         var species = $('#species').val();
         var id = '<?php echo $image->id; ?>';
@@ -113,7 +104,6 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert("AJAX call failed: " + textStatus + ", " + errorThrown);
         });
->>>>>>> cdd6b876c8cec544b8d30a5a301e7b6284b5ade7
 
     $( "#subtype" ).selectize({
         maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),

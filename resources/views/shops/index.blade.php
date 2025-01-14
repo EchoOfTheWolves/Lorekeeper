@@ -30,22 +30,6 @@
             @foreach($categoryshops->chunk(4) as $chunk)
                 <div class="row mb-3">
                     @foreach($chunk as $shopId=>$shop)
-                        <div class="col-md-3 col-6 mb-3 text-center">
-                            <div class="shop-image">
-                                <a href="{{ $shop->url }}"><img src="{{ $shop->shopImageUrl }}" alt="{{ $shop->name }}" /></a>
-                            </div>
-                            <div class="shop-name mt-1">
-                                <a href="{{ $shop->url }}" class="h5 mb-0">{{ $shop->name }}</a>
-                            </div>
-                         </div>
-                    @endforeach
-                </div>
-            @endforeach
-        </div>
-@endforeach
-@endif
-
-@foreach($shops as $shop)
         @if($shop->visible_only == 1)
             <div class="col-md-3 col-6 mb-3 text-center collectionnotunlocked">
                 <div class="shop-image">
@@ -66,6 +50,13 @@
             </div>
         @endif
     @endforeach
+                </div>
+            @endforeach
+        </div>
+@endforeach
+@endif
+
+
 </div>
 
 @endsection

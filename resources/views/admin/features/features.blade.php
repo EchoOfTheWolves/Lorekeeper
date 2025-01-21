@@ -23,7 +23,7 @@
             {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('subtype_id', $subtypes, Request::get('subtype_id'), ['class' => 'form-control']) !!}
+            {!! Form::select('subtype_ids', $subtypes, Request::get('subtype_ids'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
             {!! Form::select('rarity_id', $rarities, Request::get('rarity_id'), ['class' => 'form-control']) !!}

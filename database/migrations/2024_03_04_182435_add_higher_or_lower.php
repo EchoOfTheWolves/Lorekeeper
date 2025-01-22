@@ -14,7 +14,7 @@ class AddHigherOrLower extends Migration
     public function up()
     {
         Schema::table('user_settings', function (Blueprint $table) {
-            $table->integer('hol_plays')->default(0);
+            $table->integer('hol_plays')->default(5);
         });
     }
 

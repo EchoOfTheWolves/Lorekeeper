@@ -58,7 +58,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('Subtype (Optional)') !!} {!! add_help('This is cosmetic and does not limit choice of traits in selections.') !!}
-            {!! Form::select('subtype_id', $subtypes, $feature->subtype_id, ['class' => 'form-control']) !!}
+            {!! Form::select('subtype_ids', $subtypes, $feature->subtype_ids, ['class' => 'form-control']) !!}
         </div>
     </div>
 </div>

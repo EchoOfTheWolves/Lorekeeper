@@ -22,7 +22,7 @@
     @endif
 
     @if($character->profile->link)
-    <a class="btn btn-outline-info" data-character-id="{{ $character->id }}" href="{!! $character->profile->link !!}"><i class="fas fa-home"></i> Profile </a>
+    <a class="btn btn-outline-info float-right" data-character-id="{{ $character->id }}" href="{!! $character->profile->link !!}"><i class="fas fa-home"></i> Profile </a>
     @endif
 
     @if(Config::get('lorekeeper.extensions.character_TH_profile_link') && $character->profile->link)

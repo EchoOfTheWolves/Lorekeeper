@@ -42,7 +42,7 @@ class HolController extends Controller
             return redirect()->back();
         }
 
-        $user->settings->hol_plays -= 5;
+        $user->settings->hol_plays -= 1;
         $user->settings->save();
 
         //roll numba

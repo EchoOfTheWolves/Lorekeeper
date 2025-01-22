@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 return [
 
@@ -16,7 +16,7 @@ return [
     'hol_plays' => 5, 
 
     //amount to grant when guess is successful
-    'currency_grant' => 1,
+    'currency_grant' => 10,
     
     //id of currency to grant
     'currency_id' => 1,

@@ -85,6 +85,8 @@ body {
     display: none !important;
 }
 
+.grecaptcha-badge { visibility: hidden !important; }
+
 .parsed-text img {
     max-width: 100% !important;
     height: auto !important;

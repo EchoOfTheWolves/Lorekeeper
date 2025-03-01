@@ -131,16 +131,17 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    <a id="gameDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Games
                     </a>
+                    <div class="dropdown-menu" aria-labelledby="gameDropdown">
                     <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
                         {{__('dailies.dailies')}}
                         </a>
                     <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
                             Higher or Lower
                         </a>    
-                    
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>

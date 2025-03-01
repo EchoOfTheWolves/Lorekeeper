@@ -43,9 +43,7 @@
                             <a class="dropdown-item" href="{{ url('bank') }}">
                                 Bank
                             </a>
-                            <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
-                                Higher or Lower
-                            </a>
+                            
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -128,8 +126,21 @@
                         @endif
                         <a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">
                             All User Shops
-                        </a>
+
+                       
                     </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        Games
+                    </a>
+                    <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
+                        {{__('dailies.dailies')}}
+                        </a>
+                    <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
+                            Higher or Lower
+                        </a>    
+                    
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>

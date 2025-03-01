@@ -276,6 +276,16 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('criteria-defaults/edit/{id}', 'CriterionController@postCreateEditCriterionDefault');
     Route::get('criteria-defaults/delete/{id}', 'CriterionController@getDeleteCriterionDefault');
     Route::post('criteria-defaults/delete/{id}', 'CriterionController@postDeleteCriterionDefault');
+    
+    # DAILIES
+    Route::get('dailies', 'DailyController@getIndex');
+    Route::get('dailies/create', 'DailyController@getCreateDaily');
+    Route::get('dailies/edit/{id}', 'DailyController@getEditDaily');
+    Route::get('dailies/delete/{id}', 'DailyController@getDeleteDaily');
+    Route::post('dailies/create', 'DailyController@postCreateEditDaily');
+    Route::post('dailies/edit/{id?}', 'DailyController@postCreateEditDaily');
+    Route::post('dailies/delete/{id}', 'DailyController@postDeleteDaily');
+    Route::post('dailies/sort', 'DailyController@postSortDaily'); 
 });
 
 

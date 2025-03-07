@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand');
+
+
+/**************************************************************************************************
+    
+    Base styles
+    
+**************************************************************************************************/
+
+h1{
+    font-family:'Quicksand';
+    color:#a87ebe;
+    /*text-shadow: 0px 0px 15px #BE77B7;*/
+}
+
+h2, h3, h4, h5, h6{
+    font-family:'Quicksand';
+    color:#BE77B7;
+    /*text-shadow: 0px 0px 15px #BE77B7;*/
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a,
+a.h1, a.h2, a.h3, a.h4, a.h5 {
+    color: #77b4be;
+    transition: all .5s ease;
+    text-shadow: 0px 0px 0px;
+}
+
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover,
+a.h1:hover, a.h2:hover, a.h3:hover, a.h4:hover, a.h5:hover {
+    text-decoration: none;
+    letter-spacing:1px; 
+    color:#f7c3ff;
+    text-shadow: 0px 0px 5px #f7c3ff;
+}
+
+a {
+    color:#77b4be!important;
+    transition: all .5s ease;
+    text-shadow: 0px 0px 0px;
+}
+a:hover {
+    text-decoration: none;
+    letter-spacing:1px; 
+    color:#f7c3ff!important;
+    text-shadow: 0px 0px 5px #f7c3ff;
+}
+
+/**************************************************************************************************
+    
+    Layout
+    
+**************************************************************************************************/
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #1e1d28;
+}
+
+body, pre{
+    color:#ffffff;
+}
+
+.main-content {
+    background-color:rgba(55,36,79,0.8);
+    box-shadow: 0px 0px 6px 3px #0f0f15;
+}
+
+.card, .media-body .d-block .border{
+    background-color:rgba(55,36,79,0.8)!important;
+    border: 5px double;
+    border-color:rgba(255,255,255,0.2);
+}
+
+.list-group-item{
+    background-color: #382550;
+}
+
+.btn{
+    background:#a87ebe;
+    border:none;
+    transition: all .5s ease;
+    color:#ffffff!important;
+}
+
+.btn:hover{
+    background:#77b4be!important;
+    text-shadow:0px, 0px, 0px!important;
+    color:#ffffff!important;
+}
+
+.btn-secondary{
+    background:#5b407d!important;
+    border:none;
+    color:#ffffff!important;
+}
+
+.badge{
+    background:#a87ebe;
+    color:#ffffff;
+}
+
+.tooltip-inner{
+    background-color:#382550!important;
+    border:none;
+    color:#ffffff!important;
+}
+
+.bs-tooltip-top .arrow:before{
+    border-top-color:#382550!important;
+}
+
+.divider{
+    border-color:rgba(255,255,255,0.3)!important;
+ }
+
+/* Header */
+
+.navbar .navbar-brand, .navbar .nav-item .nav-link{
+    font-family: 'Quicksand'; 
+    color:#77b4be;
+    transition: all .5s ease;
+    text-shadow: 0px 0px 0px;
+}
+
+.navbar-dark{
+    background-color: #190e26!important;
+}
+
+/* Dropdown */
+
+.dropdown-menu{
+    background-color:#382550!important;
+}
+
+.dropdown-divider{
+    border-top: 1px solid #190e26;
+}
+
+.dropdown-item:hover{
+    background-color:#5b407d;
+}
+
+/* Sidebar */
+
+.sidebar ul li {
+    background-color: rgba(55,36,79,0.8);
+    box-shadow: 0px 0px 6px 3px #0f0f15;
+}
+
+.sidebar .sidebar-header,
+.sidebar .sidebar-section .sidebar-section-header, .sidebar a {
+    font-family: 'Quicksand';
+}
+
+.sidebar .sidebar-header {
+    background-color: #211231;
+}
+
+.sidebar a:hover {
+    background-color: #5b407d;
+}
+
+.sidebar a.active, .sidebar a.active:hover {
+    background-color: #1a203f;
+}
+
+@media (max-width: 991px) {
+    .site-mobile-header{
+        background-color: #5b407d!important;
+    }
+    .sidebar {
+        background-color: #382550;
+    }
+}
+
+.site-footer .copyright {
+    color: #ffffff;
+}
+
+/**************************************************************************************************
+    
+    Content
+    
+**************************************************************************************************/
+
+.breadcrumb{
+    font-family:'Quicksand';
+}
+
+.breadcrumb-item+.breadcrumb-item:before {
+    color:#a87ebe;
+}
+
+.breadcrumb-item.active{
+    color:#a87ebe;
+}
+
+.modal-body, .modal-header{
+    background-color: #5b407d;
+}
+
+.help-icon {
+    color: #a87ebe;
+}
+
+.spoiler-toggle {
+    background-color: #211231;
+}
+
+.spoiler-text{
+    background-color: #382550;
+}
+/* NOTIFICATIONS ************************************************************************/
+
+.notifications-table .unread, .notifications-table .unread td {
+    background-color: #5b407d;
+}
+
+/* LOGS ******************************************************************************************/
+tr.inflow {
+    background-color: #5b407d;
+}
+tr.outflow {
+    background-color: #5b407d;
+}
+
+/* PROFILE ***************************************************************************************/
+.character-bio .nav-tabs.card-header-tabs *{
+    border:none;
+}
+
+.character-bio .nav-tabs.card-header-tabs .active {
+    background-color: #5b407d;
+    border:none;
+}
+
+
+
+/**************************************************************************************************
+    
+    Font definitions 
+
+**************************************************************************************************/
+*{
+    font-family:'Quicksand';
+}

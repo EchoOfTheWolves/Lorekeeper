@@ -188,6 +188,7 @@ class PromptController extends Controller
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'criteria' => Criterion::active()->orderBy('name')->pluck('name', 'id'),
+            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year']
         ]);
     }
 
@@ -200,6 +201,7 @@ class PromptController extends Controller
     public function getEditPrompt($id)
     {
         $prompt = Prompt::find($id);
+        
         if(!$prompt) abort(404);
         return view('admin.prompts.create_edit_prompt', [
             'prompt' => $prompt,
@@ -209,6 +211,7 @@ class PromptController extends Controller
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'criteria' => Criterion::active()->orderBy('name')->pluck('name', 'id'),
+            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year']
         ]);
     }
 
@@ -224,7 +227,7 @@ class PromptController extends Controller
     {
         $id ? $request->validate(Prompt::$updateRules) : $request->validate(Prompt::$createRules);
         $data = $request->only([
-            'name', 'prompt_category_id', 'summary', 'description', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'is_active', 'rewardable_type', 'rewardable_id', 'quantity', 'image', 'remove_image', 'prefix', 'hide_submissions', 'criterion_id', 'criterion','criterion_currency_id','default_criteria'
+            'name', 'prompt_category_id', 'summary', 'description', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'is_active', 'rewardable_type', 'rewardable_id', 'quantity', 'image', 'remove_image', 'prefix', 'hide_submissions', 'criterion_id', 'criterion','criterion_currency_id','default_criteria', 'limit', 'limit_period', 'limit_character'
         ]);
         if($id && $service->updatePrompt(Prompt::find($id), $data, Auth::user())) {
             flash('Prompt updated successfully.')->success();

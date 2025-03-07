@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Auth;
 use Config;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Prompt\PromptCategory;
@@ -13,6 +14,8 @@ use App\Models\Item\ItemCategory;
 use App\Models\Currency\Currency;
 use App\Models\Loot\LootTable;
 use App\Models\Raffle\Raffle;
+use App\Models\Prompt\Prompt;
+use App\Models\Character\Character;
 
 use App\Services\SubmissionManager;
 
@@ -62,8 +65,26 @@ class SubmissionController extends Controller
     public function getSubmission($id)
     {
         $submission = Submission::whereNotNull('prompt_id')->where('id', $id)->first();
+<<<<<<< HEAD
         $inventory = isset($submission->data['user']) ? parseAssetData($submission->data['user']) : null;
+=======
+        $prompt = Prompt::where('id', $submission->prompt_id)->first();
+>>>>>>> 35ceb267c180c72b04ece467ccfb5aa1eaea1bb8
         if(!$submission) abort(404);
+
+        $count['all'] = Submission::submitted($prompt->id, $submission->user_id)->count();
+        $count['Hour'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfHour())->count();
+        $count['Day'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfDay())->count();
+        $count['Week'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfWeek())->count();
+        $count['Month'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfMonth())->count();
+        $count['Year'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfYear())->count();
+
+        if($prompt->limit_character) {
+            $limit = $prompt->limit * Character::visible()->where('is_myo_slot', 0)->where('user_id', $submission->user_id)->count();
+        } else {
+            $limit = $prompt->limit;
+        }
+
         return view('admin.submissions.submission', [
             'submission' => $submission,
             'inventory' => $inventory,
@@ -76,8 +97,14 @@ class SubmissionController extends Controller
             'items' => Item::orderBy('name')->pluck('name', 'id'),
             'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
+<<<<<<< HEAD
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'count' => Submission::where('prompt_id', $submission->prompt_id)->where('status', 'Approved')->where('user_id', $submission->user_id)->count()
+=======
+            'count' => $count,
+            'prompt' => $prompt,
+            'limit' => $limit
+>>>>>>> 35ceb267c180c72b04ece467ccfb5aa1eaea1bb8
         ] : []));
     }
 

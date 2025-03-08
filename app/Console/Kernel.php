@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check-sales')
                 ->everyMinute();
         $schedule->command('reset-hol')
-                 ->everyminute();
+                 ->daily();
         $schedule->command('update-timed-daily')
                 ->everyMinute();          
 

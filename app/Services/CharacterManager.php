@@ -2151,7 +2151,7 @@ is_object($sender) ? $sender->id : null,
             }
             
             if(isset($data['subtype_ids']) && $data['subtype_ids'])
-                $subtype = ($request->character->is_myo_slot && $request->character->image->subtype_id) ? $request->character->image->subtype : Subtype::find($data['subtype_id']);
+                $subtype = ($request->character->is_myo_slot && $request->character->image->subtype_ids) ? $request->character->image->subtype : Subtype::find($data['subtype_ids']);
             else $subtype = null;
             if (isset($data['transformation_id']) && $data['transformation_id']) {
                 $transformation = ($request->character->is_myo_slot && $request->character->image->transformation_id) ? $request->character->image->transformation : Transformation::find($data['transformation_id']);

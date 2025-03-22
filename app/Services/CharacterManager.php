@@ -2141,7 +2141,7 @@ is_object($sender) ? $sender->id : null,
             $species = ($request->character->is_myo_slot && $request->character->image->species_id) ? $request->character->image->species : Species::find($data['species_id']);
 
             if (($request->character->is_myo_slot && count($request->character->image->subtypes))) {
-                $subtypes = $request->character->image->subtypes()->pluck('subtype_id')->toArray();
+                $subtypes = $request->character->image->subtypes()->pluck('subtype_ids')->toArray();
             } else {
                 if(isset($data['subtype_ids']) && $data['subtype_ids']) {
                     $subtypes = $data['subtype_ids'];

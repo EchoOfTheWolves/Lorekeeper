@@ -41,7 +41,7 @@ class ResetHigherOrLower extends Command
 
         $users = UserSettings::all();
         foreach ($users as $user) {
-            $user->hol_plays = Config::get('lorekeeper.hol.hol_plays');
+            $user->hol_plays = config('lorekeeper.hol.hol_plays');
             $user->save();
         }
     }

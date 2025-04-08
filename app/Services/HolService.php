@@ -72,8 +72,8 @@ class HolService extends Service
         DB::beginTransaction();
 
         try {
-            $currency = Currency::find(Config::get('lorekeeper.hol.currency_id'));
-            $grant = Config::get('lorekeeper.hol.currency_grant');
+            $currency = Currency::find(config('lorekeeper.hol.currency_id'));
+            $grant = config('lorekeeper.hol.currency_grant');
             if (!(new CurrencyManager())->creditCurrency(null, $user, 'HoL Grant', 'Won at Higher or Lower!', $currency, $grant)) {
                 flash('Could not grant currency.')->error();
                 return redirect()->back();

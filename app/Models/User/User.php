@@ -689,7 +689,7 @@ class User extends Authenticatable implements MustVerifyEmail {
         $matches = []; $count = 0;
         foreach($this->aliases as $alias) {
             // Find all urls from the same site as this alias
-            foreach($urlCharacters as $key=>$character) preg_match_all(Config::get('lorekeeper.sites.'.$alias->site.'.regex'), $character, $matches[$key]);
+            foreach($urlCharacters as $key=>$character) preg_match_all(config('lorekeeper.sites.'.$alias->site.'.regex'), $character, $matches[$key]);
             // Find all alias matches within those, and update the character's owner
             foreach($matches as $key=>$match) if($match[1] != [] && strtolower($match[1][0]) == strtolower($alias->alias)) {Character::find($key)->update(['coowner_url' => null, 'coowner_id' => $this->id]); $count += 1;}
         }

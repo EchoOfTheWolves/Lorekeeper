@@ -24,9 +24,12 @@
 
     <div class="form-group">
         {!! Form::label('Character Image') !!} {!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
-        <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
+        <div class="custom-file">
+            {!! Form::label('image', 'Choose file...', ['class' => 'custom-file-label']) !!}
+            {!! Form::file('image', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+        </div>
     </div>
-    @if (Config::get('lorekeeper.settings.masterlist_image_automation') === 1)
+    @if (config('lorekeeper.settings.masterlist_image_automation') === 1)
         <div class="form-group">
             {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
             {!! Form::label('use_cropper', 'Use Thumbnail Automation', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the Thumbnail Automation, or upload a custom thumbnail.') !!}
@@ -59,8 +62,11 @@
     <div class="card mb-3" id="thumbnailUpload">
         <div class="card-body">
             {!! Form::label('Thumbnail Image') !!} {!! add_help('This image is shown on the masterlist page.') !!}
-            <div>{!! Form::file('thumbnail') !!}</div>
-            <div class="text-muted">Recommended size: {{ Config::get('lorekeeper.settings.masterlist_thumbnails.width') }}px x {{ Config::get('lorekeeper.settings.masterlist_thumbnails.height') }}px</div>
+            <div class="custom-file">
+                {!! Form::label('thumbnail', 'Choose thumbnail...', ['class' => 'custom-file-label']) !!}
+                {!! Form::file('thumbnail', ['class' => 'custom-file-input']) !!}
+            </div>
+            <div class="text-muted">Recommended size: {{ config('lorekeeper.settings.masterlist_thumbnails.width') }}px x {{ config('lorekeeper.settings.masterlist_thumbnails.height') }}px</div>
         </div>
     </div>
     <p class="alert alert-info">
@@ -75,11 +81,6 @@
                 <a href="#" class="add-designer btn btn-link" data-toggle="tooltip" title="Add another designer">+</a>
             </div>
         </div>
-        <div class="designer-row hide mb-2">
-            {!! Form::select('designer_id[]', $users, null, ['class' => 'form-control mr-2 designer-select', 'placeholder' => 'Select a Designer']) !!}
-            {!! Form::text('designer_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Designer URL']) !!}
-            <a href="#" class="add-designer btn btn-link" data-toggle="tooltip" title="Add another designer">+</a>
-        </div>
     </div>
     <div class="form-group">
         {!! Form::label('Artist(s)') !!}
@@ -89,11 +90,6 @@
                 {!! Form::text('artist_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Artist URL']) !!}
                 <a href="#" class="add-artist btn btn-link" data-toggle="tooltip" title="Add another artist">+</a>
             </div>
-        </div>
-        <div class="artist-row hide mb-2">
-            {!! Form::select('artist_id[]', $users, null, ['class' => 'form-control mr-2 artist-select', 'placeholder' => 'Select an Artist']) !!}
-            {!! Form::text('artist_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Artist URL']) !!}
-            <a href="#" class="add-artist btn btn-link mb-2" data-toggle="tooltip" title="Add another artist">+</a>
         </div>
     </div>
 
@@ -107,34 +103,14 @@
         Traits
     </h3>
 
-<h3>
-    {{-- <div class="float-right"><a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" title="This will fill the below fields with the same data as the character's current image. Note that this will overwrite any changes made below.">Fill Data</a></div> --}}
-Traits
-</h3>
-
-<div class="form-group">
-    {!! Form::label('Species') !!}
-    {!! Form::select('species_id', $specieses, old('species_id') ? : $character->image->species_id, ['class' => 'form-control', 'id' => 'species']) !!}
-</div>
-
-<div class="form-group" id="subtypes">
-    {!! Form::label('Subtypes (Optional)') !!}
-    {!! Form::select('subtype_ids[]', $subtypes, old('subtype_ids') ? : $character->image->subtypes()?->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple']) !!}
-</div>
-
-<div class="form-group">
-    {!! Form::label('Character Rarity') !!}
-    {!! Form::select('rarity_id', $rarities, old('rarity_id') ? : $character->image->rarity_id, ['class' => 'form-control']) !!}
-</div>
-
-<div class="form-group">
-    {!! Form::label('Traits') !!}
-    <div id="featureList">
+    <div class="form-group">
+        {!! Form::label('Species') !!}
+        {!! Form::select('species_id', $specieses, old('species_id') ?: $character->image->species_id, ['class' => 'form-control', 'id' => 'species']) !!}
     </div>
 
     <div class="form-group" id="subtypes">
-        {!! Form::label('Subtype (Optional)') !!}
-        {!! Form::select('subtype_id', $subtypes, old('subtype_id') ?: $character->image->subtype_id, ['class' => 'form-control', 'id' => 'subtype']) !!}
+        {!! Form::label('Subtypes (Optional)') !!}
+        {!! Form::select('subtype_ids[]', $subtypes, old('subtype_ids') ? : $character->image->subtypes()?->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple']) !!}
     </div>
 
     <hr>
@@ -160,9 +136,18 @@ Traits
 
     <div class="form-group">
         {!! Form::label('Traits') !!}
+        <div><a href="#" class="btn btn-primary mb-2" id="add-feature">Add Trait</a></div>
         <div id="featureList">
+            @if (config('lorekeeper.extensions.autopopulate_image_features'))
+                @foreach ($character->image->features as $feature)
+                    <div class="d-flex mb-2">
+                        {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 feature-select original', 'placeholder' => 'Select Trait']) !!}
+                        {!! Form::text('feature_data[]', $feature->data, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
+                        <a href="#" class="remove-feature btn btn-danger mb-2">×</a>
+                    </div>
+                @endforeach
+            @endif
         </div>
-        <div><a href="#" class="btn btn-primary" id="add-feature">Add Trait</a></div>
         <div class="feature-row hide mb-2">
             {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait']) !!}
             {!! Form::text('feature_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
@@ -174,6 +159,17 @@ Traits
         {!! Form::submit('Create Image', ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
+    
+    <div class="designer-row hide mb-2">
+        {!! Form::select('designer_id[]', $users, null, ['class' => 'form-control mr-2 designer-select', 'placeholder' => 'Select a Designer']) !!}
+        {!! Form::text('designer_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Designer URL']) !!}
+        <a href="#" class="add-designer btn btn-link" data-toggle="tooltip" title="Add another designer">+</a>
+    </div>
+    <div class="artist-row hide mb-2">
+        {!! Form::select('artist_id[]', $users, null, ['class' => 'form-control mr-2 artist-select', 'placeholder' => 'Select an Artist']) !!}
+        {!! Form::text('artist_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Artist URL']) !!}
+        <a href="#" class="add-artist btn btn-link mb-2" data-toggle="tooltip" title="Add another artist">+</a>
+    </div>
 @endsection
 
 @section('scripts')
@@ -270,17 +266,29 @@ Traits
                     e.preventDefault();
                     removeFeatureRow($(this));
                 })
-                $clone.find('.feature-select').selectize();
+                @if (config('lorekeeper.extensions.organised_traits_dropdown'))
+                    $clone.find('.feature-select').selectize({
+                        render: {
+                            item: featureSelectedRender
+                        }
+                    });
+                @else
+                    $clone.find('.feature-select').selectize();
+                @endif
             }
 
             function removeFeatureRow($trigger) {
                 $trigger.parent().remove();
             }
 
+            function featureSelectedRender(item, escape) {
+                return '<div><span>' + escape(item["text"].trim()) + ' (' + escape(item["optgroup"].trim()) + ')' + '</span></div>';
+            }
+
             // Croppie ////////////////////////////////////////////////////////////////////////////////////
 
-            var thumbnailWidth = {{ Config::get('lorekeeper.settings.masterlist_thumbnails.width') }};
-            var thumbnailHeight = {{ Config::get('lorekeeper.settings.masterlist_thumbnails.height') }};
+            var thumbnailWidth = {{ config('lorekeeper.settings.masterlist_thumbnails.width') }};
+            var thumbnailHeight = {{ config('lorekeeper.settings.masterlist_thumbnails.height') }};
             var $cropper = $('#cropper');
             var c = null;
             var $x0 = $('#cropX0');
@@ -330,20 +338,22 @@ Traits
 
         });
 
-
-
-$( "#species" ).change(function() {
-    var species = $('#species').val();
-    var id = '<?php echo($character->image->id); ?>';
-    $.ajax({
-        type: "GET", url: "{{ url('admin/character/image/subtype') }}?species="+species+"&id="+id, dataType: "text"
-    }).done(function (res) { $("#subtypes").html(res); }).fail(function (jqXHR, textStatus, errorThrown) { alert("AJAX call failed: " + textStatus + ", " + errorThrown); });
-});
-
-$('#subtype').selectize({
-    maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
-});
-$.ajax({
+        $( "#species" ).change(function() {
+            var species = $('#species').val();
+            var id = '<?php echo($character->image->id); ?>';
+            $.ajax({
+                type: "GET",
+                url: "{{ url('admin/character/image/subtype') }}?species=" + species + "&id=" + id,
+                dataType: "text"
+            }).done(function(res) {
+                $("#subtypes").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+            $('#subtype').selectize({
+                maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+            });
+            $.ajax({
                 type: "GET",
                 url: "{{ url('admin/character/image/transformation') }}?species=" + species + "&id=" + id,
                 dataType: "text"
@@ -352,5 +362,10 @@ $.ajax({
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
-</script>
+        });
+
+        $('#subtype').selectize({
+            maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+        });
+    </script>
 @endsection

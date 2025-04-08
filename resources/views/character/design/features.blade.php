@@ -1,7 +1,7 @@
 @extends('character.design.layout')
 
 @section('design-title')
-    Design Approval Request (#{{ $request->id }}) :: Comments
+    Request (#{{ $request->id }}) :: Traits
 @endsection
 
 @section('design-content')
@@ -71,6 +71,7 @@
 
         <div class="form-group">
             {!! Form::label('Traits') !!}
+            <div><a href="#" class="btn btn-primary mb-2" id="add-feature">Add Trait</a></div>
             <div id="featureList">
                 {{-- Add in the compulsory traits for MYO slots --}}
                 @if ($request->character->is_myo_slot && $request->character->image->features)
@@ -87,14 +88,13 @@
                 @if ($request->features)
                     @foreach ($request->features as $feature)
                         <div class="mb-2 d-flex">
-                            {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait']) !!}
+                            {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 initial feature-select', 'placeholder' => 'Select Trait']) !!}
                             {!! Form::text('feature_data[]', $feature->data, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
                             <a href="#" class="remove-feature btn btn-danger mb-2">×</a>
                         </div>
                     @endforeach
                 @endif
             </div>
-            <div><a href="#" class="btn btn-primary" id="add-feature">Add Trait</a></div>
             <div class="feature-row hide mb-2">
                 {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait']) !!}
                 {!! Form::text('feature_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
@@ -113,49 +113,49 @@
                 </div>
                 <div class="col-md-10 col-8">{!! $request->species ? $request->species->displayName : 'None Selected' !!}</div>
             </div>
-            @if($request->subtype_ids || count($request->character->image->subtypes))
+        @if($request->subtype_ids || count($request->character->image->subtypes))
             <div class="row">
                 <div class="col-md-2 col-4"><h5>Subtype(s)</h5></div>
                 <div class="col-md-10 col-8">
-                @if($request->subtype_ids)
-                    {!! $request->subtype_ids ? $request->displaySubtypes() : 'None Selected' !!}
-                @else
-                    {!! $request->character->image->displaySubtypes() ?? 'None Selected' !!}
-                @endif
+                    @if($request->subtype_ids)
+                        {!! $request->subtype_ids ? $request->displaySubtypes() : 'None Selected' !!}
+                    @else
+                        {!! $request->character->image->displaySubtypes() ?? 'None Selected' !!}
+                    @endif
                 </div>
             </div>
         @endif
-            @if ($request->transformation_id)
-                <div class="row">
-                    <div class="col-md-2 col-4">
-                        <h5>{{ ucfirst(__('transformations.transformation')) }}</h5>
-                    </div>
-                    <div class="col-md-10 col-8">
-                        @if ($request->character->is_myo_slot && $request->character->image->transformation_id)
-                            {!! $request->character->image->transformation->displayName !!}
-                        @else
-                            {!! $request->transformation_id ? $request->transformation->displayName : 'None Selected' !!}
-                        @endif
-                    </div>
-                    <div class="col-md-2 col-4">
-                        <strong>Tab Info</strong>
-                    </div>
-                    <div class="col-md-10 col-8">
-                        @if ($request->character->is_myo_slot && $request->character->image->transformation_info)
-                            {{ $request->character->image->transformation_info }}
-                        @else
-                            {!! $request->transformation_info ? $request->transformation_info : 'No tab info given.' !!}
-                        @endif
-                    </div>
-                    <div class="col-md-2 col-4">
-                        <strong>Description</strong>
-                    </div>
-                    <div class="col-md-10 col-8">
-                        @if ($request->character->is_myo_slot && $request->character->image->transformation_description)
-                            {{ $request->character->image->transformation_description }}
-                        @else
-                            {!! $request->transformation_description ? $request->transformation_description : 'No description given.' !!}
-                        @endif
+        @if ($request->transformation_id)
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <h5>{{ ucfirst(__('transformations.transformation')) }}</h5>
+                </div>
+                <div class="col-md-10 col-8">
+                    @if ($request->character->is_myo_slot && $request->character->image->transformation_id)
+                        {!! $request->character->image->transformation->displayName !!}
+                    @else
+                        {!! $request->transformation_id ? $request->transformation->displayName : 'None Selected' !!}
+                    @endif
+                </div>
+                <div class="col-md-2 col-4">
+                    <strong>Tab Info</strong>
+                </div>
+                <div class="col-md-10 col-8">
+                    @if ($request->character->is_myo_slot && $request->character->image->transformation_info)
+                        {{ $request->character->image->transformation_info }}
+                    @else
+                        {!! $request->transformation_info ? $request->transformation_info : 'No tab info given.' !!}
+                    @endif
+                </div>
+                <div class="col-md-2 col-4">
+                    <strong>Description</strong>
+                </div>
+                <div class="col-md-10 col-8">
+                    @if ($request->character->is_myo_slot && $request->character->image->transformation_description)
+                        {{ $request->character->image->transformation_description }}
+                    @else
+                        {!! $request->transformation_description ? $request->transformation_description : 'No description given.' !!}
+                    @endif
                     </div>
                 </div>
             @endif
@@ -218,7 +218,6 @@
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
-
         });
     </script>
 @endsection

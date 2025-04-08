@@ -1,15 +1,18 @@
 @extends('galleries.layout')
 
-@section('gallery-title') {{ $submission->title }} Log @endsection
+@section('gallery-title')
+    {{ $submission->title }} Log
+@endsection
 
 @section('gallery-content')
-{!! breadcrumbs(['gallery' => 'gallery', $submission->gallery->displayName => 'gallery/'.$submission->gallery->id, $submission->title => 'gallery/view/'.$submission->id, 'Log Details' => 'gallery/queue/'.$submission->id ]) !!}
+    {!! breadcrumbs(['gallery' => 'gallery', $submission->gallery->displayName => 'gallery/' . $submission->gallery->id, $submission->title => 'gallery/view/' . $submission->id, 'Log Details' => 'gallery/queue/' . $submission->id]) !!}
 
-<h1>Log Details
-    <span class="float-right badge badge-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Accepted' ? 'success' : 'danger') }}">{{ $submission->collaboratorApproved ? $submission->status : 'Pending Collaborator Approval' }}</span>
-</h1>
+    <h1>Log Details
+        <span
+            class="float-right badge badge-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Accepted' ? 'success' : 'danger') }}">{{ $submission->collaboratorApproval ? $submission->status : 'Pending Collaborator Approval' }}</span>
+    </h1>
 
-@include('galleries._queue_submission', ['key' => 0])
+    @include('galleries._queue_submission', ['key' => 0])
 
 <div class="row">
     <div class="col-md">
@@ -60,7 +63,37 @@
                                         </div>
                                     {!! Form::close() !!}
                             @else
-                                <p>This submission hasn't been evaluated yet. You'll receive a notification once it has!</p>
+                                @if (isset($submission->data['staff']))
+                                    <p><strong>Processed By:</strong> {!! App\Models\User\User::find($submission->data['staff'])->displayName !!}</p>
+                                @endif
+                                @if (isset($submission->data['ineligible']) && $submission->data['ineligible'] == 1)
+                                    <p>This submission has been evaluated as ineligible for {{ $currency->name }} rewards.</p>
+                                @else
+                                    <p>{{ $currency->name }} has been awarded for this submission.</p>
+                                    <div class="row">
+                                        @if (isset($submission->data['value']['submitted']))
+                                            <div class="col-md-4">
+                                                {!! $submission->user->displayName !!}: {!! $currency->display($submission->data['value']['submitted'][$submission->user->id]) !!}
+                                            </div>
+                                        @endif
+                                        @if ($submission->collaborators->count())
+                                            <div class="col-md-4">
+                                                @foreach ($submission->collaborators as $collaborator)
+                                                    {!! $collaborator->user->displayName !!} ({{ $collaborator->data }}): {!! $currency->display($submission->data['value']['collaborator'][$collaborator->user->id]) !!}
+                                                    <br />
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                        @if ($submission->participants->count())
+                                            <div class="col-md-4">
+                                                @foreach ($submission->participants as $participant)
+                                                    {!! $participant->user->displayName !!} ({{ $participant->displayType }}): {!! $currency->display($submission->data['value']['participant'][$participant->user->id]) !!}
+                                                    <br />
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
                             @endif
                         @else
                             @if(isset($submission->data['staff']))<p><strong>Processed By:</strong> {!! App\Models\User\User::find($submission->data['staff'])->displayName !!}</p>@endif
@@ -110,63 +143,56 @@
                         </div>
                     @endif
                 </div>
-            </div>
-        @endif
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>Staff Comments</h4> {!! Auth::user()->hasPower('staff_comments') ? '(Visible to '.$submission->credits.')' : '' !!}
-            </div>
-            <div class="card-body">
-                @if(isset($submission->parsed_staff_comments))
-                    <h5>Staff Comments (Old):</h5>
-                    {!! $submission->parsed_staff_comments !!}
-                    <hr/>
-                @endif
-                <!-- Staff-User Comments -->
-                <div class="container">
-                    @comments(['model' => $submission,
-                            'type' => 'Staff-User',
-                            'perPage' => 5
-                        ])
-                </div>
-            </div>
-        </div>
-    </div>
-    @if(Auth::user()->hasPower('manage_submissions') && $submission->collaboratorApproved)
-        <div class="col-md-5">
+            @endif
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>[Admin] Vote Info</h5>
+                    <h4>Staff Comments</h4> {!! Auth::user()->hasPower('staff_comments') ? '(Visible to ' . $submission->credits . ')' : '' !!}
                 </div>
                 <div class="card-body">
-                    @if(isset($submission->vote_data) && $submission->voteData->count())
-                        @foreach($submission->voteData as $voter=>$vote)
-                            <li>
-                                {!! App\Models\User\User::find($voter)->displayName !!} {{ $voter == Auth::user()->id ? '(you)' : '' }}: <span {!! $vote == 2 ? 'class="text-success">Accept' : 'class="text-danger">Reject' !!}</span>
-                            </li>
-                        @endforeach
-                    @else
-                        <p>No votes have been cast yet!</p>
+                    @if (isset($submission->parsed_staff_comments))
+                        <h5>Staff Comments (Old):</h5>
+                        {!! $submission->parsed_staff_comments !!}
+                        <hr />
                     @endif
-                </div>
-            </div>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>[Admin] Staff Comments</h5> (Only visible to staff)
-                </div>
-                <div class="card-body">
                     <!-- Staff-User Comments -->
                     <div class="container">
-                        @comments(['model' => $submission,
-                                'type' => 'Staff-Staff',
-                                'perPage' => 5
-                            ])
+                        @comments(['model' => $submission, 'type' => 'Staff-User', 'perPage' => 5])
                     </div>
                 </div>
             </div>
         </div>
-    @endif
-</div>
+        @if (Auth::user()->hasPower('manage_submissions') && $submission->collaboratorApproval)
+            <div class="col-12 col-md-5">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>[Admin] Vote Info</h5>
+                    </div>
+                    <div class="card-body">
+                        @if ($submission->getVoteData()['raw']->count())
+                            @foreach ($submission->getVoteData(1)['raw'] as $vote)
+                                <li>
+                                    {!! $vote['user']->displayName !!} {{ $vote['user']->id == Auth::user()->id ? '(you)' : '' }}: <span {!! $vote['vote'] == 2 ? 'class="text-success">Accept' : 'class="text-danger">Reject' !!}</span>
+                                </li>
+                            @endforeach
+                        @else
+                            <p>No votes have been cast yet!</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>[Admin] Staff Comments</h5> (Only visible to staff)
+                    </div>
+                    <div class="card-body">
+                        <!-- Staff-User Comments -->
+                        <div class="container">
+                            @comments(['model' => $submission, 'type' => 'Staff-Staff', 'perPage' => 5])
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 
 
 <script>

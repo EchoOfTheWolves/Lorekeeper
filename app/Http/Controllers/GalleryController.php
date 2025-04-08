@@ -8,6 +8,7 @@ use App\Models\Criteria\Criterion;
 use App\Models\Comment\Comment;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\Gallery;
+use App\Models\Gallery\GalleryCriterion;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Prompt\Prompt;
 use App\Models\User\User;

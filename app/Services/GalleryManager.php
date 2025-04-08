@@ -11,6 +11,7 @@ use App\Models\Gallery\Gallery;
 use App\Models\Gallery\GalleryCharacter;
 use App\Models\Gallery\GalleryCollaborator;
 use App\Models\Gallery\GalleryFavorite;
+use App\Models\Gallery\GalleryCriterion;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Prompt\Prompt;
 use App\Models\User\User;

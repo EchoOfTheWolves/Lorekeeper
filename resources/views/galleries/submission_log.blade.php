@@ -28,7 +28,6 @@
                                 {!! Form::open(['url' => 'admin/gallery/edit/'.$submission->id.'/value']) !!}
                                 @if(isset($submission->data['criterion']))
                                      <p>Adjust the criteria submitted and other options as needed for what the submitter, collaborators, and/or participants, should receive.</p>
-                                
                                         <h2 class="mt-5">Criteria Rewards</h2>
                                         @foreach($submission->data['criterion'] as $key => $criterionData)
                                             <div class="card p-3 mb-2">
@@ -38,7 +37,6 @@
                                             @include('criteria._minimum_requirements', ['criterion' => $criterion, 'values' => $criterionData, 'minRequirements' => $submission->gallery->criteria->where('criterion_id', $criterionData['id'])->first()->minRequirements, 'title' => 'Selections', 'limitByMinReq' => true, 'id' => $key, 'criterion_currency' => isset($criterionData['criterion_currency_id']) ? $criterionData['criterion_currency_id'] : $criterion->currency_id])
                                             </div>
                                         @endforeach
-                                        
                                     @else
                                         <p>This submission didn't have any criteria specified for rewards. Hitting submit will confirm this and clear it from the queue.</p>
                                     @endif
@@ -162,7 +160,7 @@
             </div>
         </div>
         @if (Auth::user()->hasPower('manage_submissions') && $submission->collaboratorApproval)
-            <div class="col-12 col-md-5">
+            <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>[Admin] Vote Info</h5>

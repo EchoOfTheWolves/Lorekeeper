@@ -233,8 +233,13 @@
             {!! Form::select('species_id', $specieses, old('species_id'), ['class' => 'form-control', 'id' => 'species']) !!}
         </div>
 
+
         <div class="form-group" id="subtypes">
-            {!! Form::label('Subtypes (Optional)') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.') !!} @endif
+            {!! Form::label('Subtypes (Optional)') !!} @if ($isMyo)
+                {!! add_help(
+                    'This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.',
+                ) !!}
+            @endif
             {!! Form::select('subtype_ids[]', $subtypes, old('subtype_ids'), ['class' => 'form-control disabled', 'id' => 'subtype', 'multiple', 'placeholder' => 'Pick a Species First']) !!}
         </div>
 
@@ -315,6 +320,9 @@
                 dataType: "text"
             }).done(function(res) {
                 $("#subtypes").html(res);
+                $("#subtype").selectize({
+                    maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+                });
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
@@ -329,8 +337,10 @@
             });
         });
 
-        $( "#subtype" ).selectize({
-            maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+        $(document).ready(function() {
+            $("#subtype").selectize({
+                maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+            });
         });
     </script>
 @endsection

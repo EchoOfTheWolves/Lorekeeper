@@ -27,9 +27,9 @@ class Shop extends Model {
      * @var array
      */
     public static $createRules = [
-        'name'        => 'required|unique:item_categories|between:3,100',
-        'description' => 'nullable',
-        'image' => 'mimes:png',
+        'name'             => 'required|unique:item_categories|between:3,100',
+        'description'      => 'nullable',
+        'image'            => 'mimes:png',
         'shop_category_id' => 'nullable',
     ];
 
@@ -39,9 +39,9 @@ class Shop extends Model {
      * @var array
      */
     public static $updateRules = [
-        'name'        => 'required|between:3,100',
-        'description' => 'nullable',
-        'image' => 'mimes:png',
+        'name'             => 'required|between:3,100',
+        'description'      => 'nullable',
+        'image'            => 'mimes:png',
         'shop_category_id' => 'nullable',
     ];
 
@@ -65,11 +65,10 @@ class Shop extends Model {
         return $this->belongsToMany(Item::class, 'shop_stock')->withPivot('item_id', 'currency_id', 'cost', 'use_user_bank', 'use_character_bank', 'is_limited_stock', 'quantity', 'purchase_limit', 'id');
     }
 
-        /**
+    /**
      * Get the category the shop belongs to.
      */
-    public function category()
-    {
+    public function category() {
         return $this->belongsTo('App\Models\Shop\ShopCategory', 'shop_category_id');
     }
 

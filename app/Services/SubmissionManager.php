@@ -18,7 +18,6 @@ use App\Models\User\UserItem;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Services\Service;
 
 class SubmissionManager extends Service {
     /*
@@ -33,10 +32,10 @@ class SubmissionManager extends Service {
     /**
      * Creates a new submission.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param bool                  $isClaim
-     * @param mixed                 $isDraft
+     * @param array $data
+     * @param User  $user
+     * @param bool  $isClaim
+     * @param mixed $isDraft
      *
      * @return mixed
      */
@@ -60,10 +59,10 @@ class SubmissionManager extends Service {
                 if (!$prompt) {
                     throw new \Exception('Invalid prompt selected.');
                 }
-                //check that the prompt limit hasn't been hit
-                if($prompt->limit) {
-                    //check that the user hasn't hit the prompt submission limit
-                    //filter the submissions by hour/day/week/etc and count
+                // check that the prompt limit hasn't been hit
+                if ($prompt->limit) {
+                    // check that the user hasn't hit the prompt submission limit
+                    // filter the submissions by hour/day/week/etc and count
                     $count['all'] = Submission::submitted($prompt->id, $user->id)->count();
                     $count['Hour'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfHour())->count();
                     $count['Day'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfDay())->count();
@@ -71,43 +70,60 @@ class SubmissionManager extends Service {
                     $count['Month'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfMonth())->count();
                     $count['Year'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfYear())->count();
 
-                    //if limit by character is on... multiply by # of chars. otherwise, don't
-                    if($prompt->limit_character) {
+                    // if limit by character is on... multiply by # of chars. otherwise, don't
+                    if ($prompt->limit_character) {
                         $limit = $prompt->limit * Character::visible()->where('is_myo_slot', 0)->where('user_id', $user->id)->count();
-                    } else { $limit = $prompt->limit; }
-                    //if limit by time period is on
-                    if($prompt->limit_period) {
-                        if($count[$prompt->limit_period] >= $limit) throw new \Exception("You have already submitted to this prompt the maximum number of times.");
-                    } else if($count['all'] >= $limit) throw new \Exception("You have already submitted to this prompt the maximum number of times.");
+                    } else {
+                        $limit = $prompt->limit;
+                    }
+                    // if limit by time period is on
+                    if ($prompt->limit_period) {
+                        if ($count[$prompt->limit_period] >= $limit) {
+                            throw new \Exception('You have already submitted to this prompt the maximum number of times.');
+                        }
+                    } elseif ($count['all'] >= $limit) {
+                        throw new \Exception('You have already submitted to this prompt the maximum number of times.');
+                    }
                 }
+            } else {
+                $prompt = null;
             }
-            else $prompt = null;
-            
-            $withCriteriaSelected = isset($data['criterion']) ? array_filter($data['criterion'], function($obj){
+
+            $withCriteriaSelected = isset($data['criterion']) ? array_filter($data['criterion'], function ($obj) {
                 return isset($obj['id']);
             }) : [];
-            if(count($withCriteriaSelected) > 0) $data['criterion'] = $withCriteriaSelected;
-            else $data['criterion'] = null;
+            if (count($withCriteriaSelected) > 0) {
+                $data['criterion'] = $withCriteriaSelected;
+            } else {
+                $data['criterion'] = null;
+            }
 
             // The character identification comes in both the slug field and as character IDs
             // that key the reward ID/quantity arrays.
             // We'll need to match characters to the rewards for them.
             // First, check if the characters are accessible to begin with.
-            if(isset($data['slug'])) {
+            if (isset($data['slug'])) {
                 $characters = Character::myo(0)->visible()->whereIn('slug', $data['slug'])->get();
-                if(count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters do not exist.");
+                if (count($characters) != count($data['slug'])) {
+                    throw new \Exception('One or more of the selected characters do not exist.');
+                }
+            } else {
+                $characters = [];
             }
-            else $characters = [];
 
             $userAssets = createAssetsArray();
 
             // Attach items. Technically, the user doesn't lose ownership of the item - we're just adding an additional holding field.
             // We're also not going to add logs as this might add unnecessary fluff to the logs and the items still belong to the user.
-            if(isset($data['stack_id'])) {
-                foreach($data['stack_id'] as $stackId) {
+            if (isset($data['stack_id'])) {
+                foreach ($data['stack_id'] as $stackId) {
                     $stack = UserItem::with('item')->find($stackId);
-                    if(!$stack || $stack->user_id != $user->id) throw new \Exception("Invalid item selected.");
-                    if(!isset($data['stack_quantity'][$stackId])) throw new \Exception("Invalid quantity selected.");
+                    if (!$stack || $stack->user_id != $user->id) {
+                        throw new \Exception('Invalid item selected.');
+                    }
+                    if (!isset($data['stack_quantity'][$stackId])) {
+                        throw new \Exception('Invalid quantity selected.');
+                    }
                     $stack->submission_count += $data['stack_quantity'][$stackId];
                     $stack->save();
 
@@ -139,9 +155,9 @@ class SubmissionManager extends Service {
 
             $submission->update([
                 'data' => json_encode([
-                    'user'    => Arr::only(getDataReadyAssets($userAssets), ['user_items', 'currencies']),
-                    'rewards' => getDataReadyAssets($promptRewards),
-                    'criterion' => isset($data['criterion']) ? $data['criterion'] : null,
+                    'user'      => Arr::only(getDataReadyAssets($userAssets), ['user_items', 'currencies']),
+                    'rewards'   => getDataReadyAssets($promptRewards),
+                    'criterion' => $data['criterion'] ?? null,
                 ]), // list of rewards and addons
             ]);
 
@@ -159,11 +175,11 @@ class SubmissionManager extends Service {
     /**
      * Edits an existing submission.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param bool                  $isClaim
-     * @param mixed                 $submission
-     * @param mixed                 $isSubmit
+     * @param array $data
+     * @param User  $user
+     * @param bool  $isClaim
+     * @param mixed $submission
+     * @param mixed $isSubmit
      *
      * @return mixed
      */
@@ -214,7 +230,7 @@ class SubmissionManager extends Service {
                 'data'          => json_encode([
                     'user'          => Arr::only(getDataReadyAssets($userAssets), ['user_items', 'currencies']),
                     'rewards'       => getDataReadyAssets($promptRewards),
-                    'criterion' => isset($data['criterion']) ? $data['criterion'] : null,
+                    'criterion'     => $data['criterion'] ?? null,
                 ]), // list of rewards and addons
             ] + ($isClaim ? [] : ['prompt_id' => $prompt->id]));
 
@@ -306,8 +322,8 @@ class SubmissionManager extends Service {
     /**
      * Rejects a submission.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return mixed
      */
@@ -369,8 +385,8 @@ class SubmissionManager extends Service {
     /**
      * Approves a submission.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return mixed
      */
@@ -466,21 +482,22 @@ class SubmissionManager extends Service {
 
             // Distribute currency from criteria
             $service = new CurrencyManager;
-            
-            if(isset($data['criterion'])) {
-                foreach($data['criterion'] as $key => $criterionData) {
+
+            if (isset($data['criterion'])) {
+                foreach ($data['criterion'] as $key => $criterionData) {
                     $criterion = Criterion::where('id', $criterionData['id'])->first();
-                    if(isset($criterionData['criterion_currency_id'])){
+                    if (isset($criterionData['criterion_currency_id'])) {
                         $criterion_currency = Currency::find($criterionData['criterion_currency_id']);
-                    }else{
+                    } else {
                         $criterion_currency = $criterion->currency;
                     }
 
-                    if(!$service->creditCurrency($user, $submission->user, $promptLogType, $promptData['data'], $criterion_currency, $criterion->calculateReward($criterionData))) throw new \Exception("Failed to distribute criterion rewards to user.");
+                    if (!$service->creditCurrency($user, $submission->user, $promptLogType, $promptData['data'], $criterion_currency, $criterion->calculateReward($criterionData))) {
+                        throw new \Exception('Failed to distribute criterion rewards to user.');
+                    }
                 }
             }
-        
-            
+
             // Retrieve all reward IDs for characters
             $currencyIds = [];
             $itemIds = [];
@@ -555,9 +572,9 @@ class SubmissionManager extends Service {
                 'staff_id'              => $user->id,
                 'status'                => 'Approved',
                 'data'                  => json_encode([
-                    'user'    => $addonData,
-                    'rewards' => getDataReadyAssets($rewards),
-                    'criterion' => isset($data['criterion']) ? $data['criterion'] : null,
+                    'user'      => $addonData,
+                    'rewards'   => getDataReadyAssets($rewards),
+                    'criterion' => $data['criterion'] ?? null,
                 ]), // list of rewards
             ]);
 

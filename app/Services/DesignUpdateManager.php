@@ -33,18 +33,20 @@ class DesignUpdateManager extends Service {
     /**
      * Creates a character design update request (or a MYO design approval request).
      *
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param Character  $character
+     * @param User       $user
+     * @param mixed|null $image
+     * @param mixed      $isImage
      *
-     * @return \App\Models\Character\CharacterDesignUpdate|bool
+     * @return bool|CharacterDesignUpdate
      */
     public function createDesignUpdateRequest($character, $user, $image = null, $isImage = false) {
         DB::beginTransaction();
 
         try {
-            if($isImage){
+            if ($isImage) {
                 $image = $image;
-            }else{
+            } else {
                 $image = $character->image;
             }
 
@@ -67,11 +69,11 @@ class DesignUpdateManager extends Service {
                 'update_type'   => $character->is_myo_slot ? 'MYO' : 'Character',
 
                 // Set some data based on the character's existing stats
-                'rarity_id' => $image->rarity_id,
-                'species_id' => $image->species_id,
-                'subtype_ids' => $character->image->subtypes()->pluck('subtype_id')->toArray(),
-                'transformation_id' => $image->transformation_id,
-                'transformation_info' => $image->transformation_info,
+                'rarity_id'                  => $image->rarity_id,
+                'species_id'                 => $image->species_id,
+                'subtype_ids'                => $character->image->subtypes()->pluck('subtype_id')->toArray(),
+                'transformation_id'          => $image->transformation_id,
+                'transformation_info'        => $image->transformation_info,
                 'transformation_description' => $image->transformation_description,
             ];
 
@@ -103,8 +105,8 @@ class DesignUpdateManager extends Service {
     /**
      * Saves the comment section of a character design update request.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
      *
      * @return bool
      */
@@ -128,9 +130,9 @@ class DesignUpdateManager extends Service {
     /**
      * Saves the image upload section of a character design update request.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
-     * @param bool                                        $isAdmin
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     * @param bool                  $isAdmin
      *
      * @return bool
      */
@@ -252,8 +254,8 @@ class DesignUpdateManager extends Service {
     /**
      * Saves the addons section of a character design update request.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
      *
      * @return bool
      */
@@ -364,8 +366,8 @@ class DesignUpdateManager extends Service {
     /**
      * Saves the character features (traits) section of a character design update request.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
      *
      * @return bool
      */
@@ -386,24 +388,30 @@ class DesignUpdateManager extends Service {
             if (($request->character->is_myo_slot && count($request->character->image->subtypes))) {
                 $subtypes = $request->character->image->subtypes()->pluck('subtype_id')->toArray();
             } else {
-                if(isset($data['subtype_ids']) && $data['subtype_ids']) {
+                if (isset($data['subtype_ids']) && $data['subtype_ids']) {
                     $subtypes = $data['subtype_ids'];
-                    foreach($data['subtype_ids'] as $subtypeId) {
+                    foreach ($data['subtype_ids'] as $subtypeId) {
                         $subtype = Subtype::find($subtypeId);
-                        if(!$subtype) throw new \Exception("Invalid subtype selected.");
-                        if($subtype && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
+                        if (!$subtype) {
+                            throw new \Exception('Invalid subtype selected.');
+                        }
+                        if ($subtype && $subtype->species_id != $species->id) {
+                            throw new \Exception('Subtype does not match the species.');
+                        }
                     }
                 }
             }
-            if(isset($data['subtype_ids']) && $data['subtype_ids'])
+            if (isset($data['subtype_ids']) && $data['subtype_ids']) {
                 $subtype = ($request->character->is_myo_slot && $request->character->image->subtype_ids) ? $request->character->image->subtype : Subtype::find($data['subtype_ids']);
-            else $subtype = null;
+            } else {
+                $subtype = null;
+            }
 
             if (isset($data['transformation_id']) && $data['transformation_id']) {
                 $transformation = ($request->character->is_myo_slot && $request->character->image->transformation_id) ? $request->character->image->transformation : Transformation::find($data['transformation_id']);
                 $transformation_info = ($request->character->is_myo_slot && $request->character->image->transformation_info) ? $request->character->image->transformation_info : $data['transformation_info'];
                 $transformation_description = ($request->character->is_myo_slot && $request->character->image->transformation_description) ? $request->character->image->transformation_description : $data['transformation_description'];
-            } else { 
+            } else {
                 $transformation = null;
                 $transformation_info = null;
                 $transformation_description = null;
@@ -418,8 +426,10 @@ class DesignUpdateManager extends Service {
             if ($subtype && $subtype->species_id != $species->id) {
                 throw new \Exception('Subtype does not match the species.');
             }
-            if($transformation && $transformation->species_id != null){
-                if($transformation->species_id != $species->id) throw new \Exception(ucfirst(__('transformations.transformation'))." does not match the species.");
+            if ($transformation && $transformation->species_id != null) {
+                if ($transformation->species_id != $species->id) {
+                    throw new \Exception(ucfirst(__('transformations.transformation')).' does not match the species.');
+                }
             }
 
             // Clear old features
@@ -437,7 +447,7 @@ class DesignUpdateManager extends Service {
 
                 // Skip the feature if the rarity is too high.
                 // Comment out this check if rarities should have more berth for traits choice.
-                //if($features[$featureId]->rarity->sort > $rarity->sort) continue;
+                // if($features[$featureId]->rarity->sort > $rarity->sort) continue;
 
                 // Skip the feature if it's not the correct species.
                 if ($features[$featureId]->species_id && $features[$featureId]->species_id != $species->id) {
@@ -450,7 +460,7 @@ class DesignUpdateManager extends Service {
             // Update other stats
             $request->species_id = $species->id;
             $request->rarity_id = $rarity->id;
-            $request->subtype_ids = isset($subtypes) ? $subtypes : null;
+            $request->subtype_ids = $subtypes ?? null;
             $request->transformation_id = $transformation ? $transformation->id : null;
             $request->transformation_info = $transformation_info;
             $request->transformation_description = $transformation_description;
@@ -468,7 +478,7 @@ class DesignUpdateManager extends Service {
     /**
      * Submit a character design update request to the approval queue.
      *
-     * @param \App\Models\Character\CharacterDesignUpdate $request
+     * @param CharacterDesignUpdate $request
      *
      * @return bool
      */
@@ -505,9 +515,9 @@ class DesignUpdateManager extends Service {
     /**
      * Approves a character design update request and processes it.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
-     * @param \App\Models\User\User                       $user
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     * @param User                  $user
      *
      * @return bool
      */
@@ -599,24 +609,24 @@ class DesignUpdateManager extends Service {
 
             // Create a new image with the request data
             $image = CharacterImage::create([
-                'character_id'       => $request->character_id,
-                'is_visible'         => 1,
-                'hash'               => $request->hash,
-                'fullsize_hash'      => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
-                'extension'          => config('lorekeeper.settings.masterlist_image_format') != null ? config('lorekeeper.settings.masterlist_image_format') : $request->extension,
-                'fullsize_extension' => config('lorekeeper.settings.masterlist_fullsizes_format') != null ? config('lorekeeper.settings.masterlist_fullsizes_format') : $request->extension,
-                'use_cropper'        => $request->use_cropper,
-                'x0'                 => $request->x0,
-                'x1'                 => $request->x1,
-                'y0'                 => $request->y0,
-                'y1'                 => $request->y1,
-                'species_id'         => $request->species_id,
-                'subtype_ids' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_ids : $request->subtype_ids,
-                'transformation_id' => ($request->character->is_myo_slot && isset($request->character->image->transformation_id)) ? $request->character->image->transformation_id : $request->transformation_id,
-                'transformation_info' => ($request->character->is_myo_slot && isset($request->character->image->transformation_info)) ? $request->character->image->transformation_info : $request->transformation_info,
+                'character_id'               => $request->character_id,
+                'is_visible'                 => 1,
+                'hash'                       => $request->hash,
+                'fullsize_hash'              => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
+                'extension'                  => config('lorekeeper.settings.masterlist_image_format') != null ? config('lorekeeper.settings.masterlist_image_format') : $request->extension,
+                'fullsize_extension'         => config('lorekeeper.settings.masterlist_fullsizes_format') != null ? config('lorekeeper.settings.masterlist_fullsizes_format') : $request->extension,
+                'use_cropper'                => $request->use_cropper,
+                'x0'                         => $request->x0,
+                'x1'                         => $request->x1,
+                'y0'                         => $request->y0,
+                'y1'                         => $request->y1,
+                'species_id'                 => $request->species_id,
+                'subtype_ids'                => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_ids : $request->subtype_ids,
+                'transformation_id'          => ($request->character->is_myo_slot && isset($request->character->image->transformation_id)) ? $request->character->image->transformation_id : $request->transformation_id,
+                'transformation_info'        => ($request->character->is_myo_slot && isset($request->character->image->transformation_info)) ? $request->character->image->transformation_info : $request->transformation_info,
                 'transformation_description' => ($request->character->is_myo_slot && isset($request->character->image->transformation_description)) ? $request->character->image->transformation_description : $request->transformation_description,
-                'rarity_id'          => $request->rarity_id,
-                'sort'               => 0,
+                'rarity_id'                  => $request->rarity_id,
+                'sort'                       => 0,
             ]);
 
             // do subtype stuff
@@ -624,14 +634,14 @@ class DesignUpdateManager extends Service {
                 foreach ($request->character->image->subtypes as $subtype) {
                     CharacterImageSubtype::create([
                         'character_image_id' => $image->id,
-                        'subtype_id' => $subtype->subtype_id
+                        'subtype_id'         => $subtype->subtype_id,
                     ]);
                 }
-            } else if($request->subtype_ids) {
-                foreach($request->subtypes() as $subtypeId) {
+            } elseif ($request->subtype_ids) {
+                foreach ($request->subtypes() as $subtypeId) {
                     CharacterImageSubtype::create([
                         'character_image_id' => $image->id,
-                        'subtype_id' => $subtypeId
+                        'subtype_id'         => $subtypeId,
                     ]);
                 }
             }
@@ -772,11 +782,11 @@ class DesignUpdateManager extends Service {
      * Rejection can be a soft rejection (reopens the request so the user can edit it and resubmit)
      * or a hard rejection (takes the request out of the queue completely).
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
-     * @param \App\Models\User\User                       $user
-     * @param bool                                        $forceReject
-     * @param mixed                                       $notification
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     * @param User                  $user
+     * @param bool                  $forceReject
+     * @param mixed                 $notification
      *
      * @return bool
      */
@@ -862,9 +872,9 @@ class DesignUpdateManager extends Service {
     /**
      * Cancels a character design update request.
      *
-     * @param array                                       $data
-     * @param \App\Models\Character\CharacterDesignUpdate $request
-     * @param \App\Models\User\User                       $user
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     * @param User                  $user
      *
      * @return bool
      */
@@ -912,7 +922,7 @@ class DesignUpdateManager extends Service {
     /**
      * Deletes a character design update request.
      *
-     * @param \App\Models\Character\CharacterDesignUpdate $request
+     * @param CharacterDesignUpdate $request
      *
      * @return bool
      */
@@ -983,9 +993,9 @@ class DesignUpdateManager extends Service {
     /**
      * Votes on a character design update request.
      *
-     * @param string                                      $action
-     * @param \App\Models\Character\CharacterDesignUpdate $request
-     * @param \App\Models\User\User                       $user
+     * @param string                $action
+     * @param CharacterDesignUpdate $request
+     * @param User                  $user
      *
      * @return bool
      */

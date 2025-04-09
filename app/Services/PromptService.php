@@ -32,7 +32,7 @@ class PromptService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Prompt\PromptCategory|bool
+     * @return bool|PromptCategory
      */
     public function createPromptCategory($data, $user) {
         DB::beginTransaction();
@@ -67,11 +67,11 @@ class PromptService extends Service {
     /**
      * Update a category.
      *
-     * @param \App\Models\Prompt\PromptCategory $category
-     * @param array                             $data
-     * @param \App\Models\User\User             $user
+     * @param PromptCategory        $category
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Prompt\PromptCategory|bool
+     * @return bool|PromptCategory
      */
     public function updatePromptCategory($category, $data, $user) {
         DB::beginTransaction();
@@ -109,7 +109,7 @@ class PromptService extends Service {
     /**
      * Delete a category.
      *
-     * @param \App\Models\Prompt\PromptCategory $category
+     * @param PromptCategory $category
      *
      * @return bool
      */
@@ -173,7 +173,7 @@ class PromptService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Prompt\Prompt|bool
+     * @return bool|Prompt
      */
     public function createPrompt($data, $user) {
         DB::beginTransaction();
@@ -210,8 +210,8 @@ class PromptService extends Service {
             }
 
             $this->populateRewards(Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity']), $prompt);
-            (new CriterionService)->populateCriteria(Arr::only($data, ['criterion_id', 'criterion','criterion_currency_id', 'default_criteria']), $prompt, PromptCriterion::class);
-            
+            (new CriterionService)->populateCriteria(Arr::only($data, ['criterion_id', 'criterion', 'criterion_currency_id', 'default_criteria']), $prompt, PromptCriterion::class);
+
             return $this->commitReturn($prompt);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -223,11 +223,11 @@ class PromptService extends Service {
     /**
      * Updates a prompt.
      *
-     * @param \App\Models\Prompt\Prompt $prompt
-     * @param array                     $data
-     * @param \App\Models\User\User     $user
+     * @param Prompt                $prompt
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Prompt\Prompt|bool
+     * @return bool|Prompt
      */
     public function updatePrompt($prompt, $data, $user) {
         DB::beginTransaction();
@@ -269,7 +269,7 @@ class PromptService extends Service {
             }
 
             $this->populateRewards(Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity']), $prompt);
-            (new CriterionService)->populateCriteria(Arr::only($data, ['criterion_id', 'criterion','criterion_currency_id','default_criteria']), $prompt, PromptCriterion::class);
+            (new CriterionService)->populateCriteria(Arr::only($data, ['criterion_id', 'criterion', 'criterion_currency_id', 'default_criteria']), $prompt, PromptCriterion::class);
 
             return $this->commitReturn($prompt);
         } catch (\Exception $e) {
@@ -282,7 +282,7 @@ class PromptService extends Service {
     /**
      * Deletes a prompt.
      *
-     * @param \App\Models\Prompt\Prompt $prompt
+     * @param Prompt $prompt
      *
      * @return bool
      */
@@ -312,8 +312,8 @@ class PromptService extends Service {
     /**
      * Handle category data.
      *
-     * @param array                                  $data
-     * @param \App\Models\Prompt\PromptCategory|null $category
+     * @param array               $data
+     * @param PromptCategory|null $category
      *
      * @return array
      */
@@ -338,8 +338,8 @@ class PromptService extends Service {
     /**
      * Processes user input for creating/updating a prompt.
      *
-     * @param array                     $data
-     * @param \App\Models\Prompt\Prompt $prompt
+     * @param array  $data
+     * @param Prompt $prompt
      *
      * @return array
      */
@@ -360,7 +360,9 @@ class PromptService extends Service {
         if (!isset($data['staff_only'])) {
             $data['staff_only'] = 0;
         }
-        if(!isset($data['limit_character'])) $data['limit_character'] = null;
+        if (!isset($data['limit_character'])) {
+            $data['limit_character'] = null;
+        }
 
         if (isset($data['remove_image'])) {
             if ($prompt && $prompt->has_image && $data['remove_image']) {
@@ -376,8 +378,8 @@ class PromptService extends Service {
     /**
      * Processes user input for creating/updating prompt rewards.
      *
-     * @param array                     $data
-     * @param \App\Models\Prompt\Prompt $prompt
+     * @param array  $data
+     * @param Prompt $prompt
      */
     private function populateRewards($data, $prompt) {
         // Clear the old rewards...

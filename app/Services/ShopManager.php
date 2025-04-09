@@ -60,8 +60,10 @@ class ShopManager extends Service {
             if ($shopStock->purchase_limit && $quantity > $shopStock->purchase_limit) {
                 throw new \Exception('The quantity specified exceeds the amount of this item you can buy.');
             }
-            
-            if($shop->visible_only == 1) throw new \Exception('You are not allowed to buy items from this shop at this time.');
+
+            if ($shop->visible_only == 1) {
+                throw new \Exception('You are not allowed to buy items from this shop at this time.');
+            }
 
             $total_cost = $shopStock->cost * $quantity;
 
@@ -136,8 +138,8 @@ class ShopManager extends Service {
     /**
      * Checks if the purchase limit for an item from a shop has been reached.
      *
-     * @param \App\Models\Shop\ShopStock $shopStock
-     * @param \App\Models\User\User      $user
+     * @param ShopStock             $shopStock
+     * @param \App\Models\User\User $user
      *
      * @return bool
      */
@@ -152,8 +154,8 @@ class ShopManager extends Service {
     /**
      * Checks how many times a user has purchased a shop item.
      *
-     * @param \App\Models\Shop\ShopStock $shopStock
-     * @param \App\Models\User\User      $user
+     * @param ShopStock             $shopStock
+     * @param \App\Models\User\User $user
      *
      * @return int
      */

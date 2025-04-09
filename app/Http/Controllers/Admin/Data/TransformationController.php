@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\Data;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\CharacterTransformation as Transformation;
+use App\Models\Species\Species;
 use App\Services\TransformationService;
 use Auth;
 use Illuminate\Http\Request;
-use App\Models\Species\Species;
 
 class TransformationController extends Controller {
     /**
@@ -29,7 +29,7 @@ class TransformationController extends Controller {
     public function getCreateTransformation() {
         return view('admin.transformations.create_edit_transformation', [
             'transformation' => new Transformation,
-            'specieses' => ['none' => 'Any Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'      => ['none' => 'Any Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -48,7 +48,7 @@ class TransformationController extends Controller {
 
         return view('admin.transformations.create_edit_transformation', [
             'transformation' => $transformation,
-            'specieses' => ['none' => 'Any Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'      => ['none' => 'Any Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -63,7 +63,7 @@ class TransformationController extends Controller {
     public function postCreateEditTransformation(Request $request, TransformationService $service, $id = null) {
         $id ? $request->validate(Transformation::$updateRules) : $request->validate(Transformation::$createRules);
         $data = $request->only([
-            'name', 'description', 'image', 'remove_image','species_id'
+            'name', 'description', 'image', 'remove_image', 'species_id',
         ]);
         if ($id && $service->updateTransformation(Transformation::find($id), $data, Auth::user())) {
             flash(ucfirst(__('transformations.transformation')).' updated successfully.')->success();

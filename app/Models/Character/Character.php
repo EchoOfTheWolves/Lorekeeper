@@ -32,7 +32,7 @@ class Character extends Model {
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
-        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'folder_id', 'coowner_id', 'coowner_url'
+        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'folder_id', 'coowner_id', 'coowner_url',
     ];
 
     /**
@@ -74,7 +74,7 @@ class Character extends Model {
         'character_category_id' => 'required',
         'rarity_id'             => 'required',
         'user_id'               => 'nullable',
-        'coowner_id' => 'nullable',
+        'coowner_id'            => 'nullable',
         'number'                => 'required',
         'slug'                  => 'required|alpha_dash',
         'description'           => 'nullable',
@@ -82,7 +82,7 @@ class Character extends Model {
         'image'                 => 'required|mimes:jpeg,jpg,gif,png|max:2048',
         'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'owner_url'             => 'url|nullable',
-        'coowner_url' => 'url|nullable',
+        'coowner_url'           => 'url|nullable',
     ];
 
     /**
@@ -133,8 +133,7 @@ class Character extends Model {
     /**
      * Get the user who owns the character.
      */
-    public function coowner()
-    {
+    public function coowner() {
         return $this->belongsTo('App\Models\User\User', 'coowner_id');
     }
 
@@ -206,8 +205,7 @@ class Character extends Model {
     /**
      * Gets which folder the character currently resides in.
      */
-    public function folder()
-    {
+    public function folder() {
         return $this->belongsTo('App\Models\Character\CharacterFolder', 'folder_id');
     }
 
@@ -316,10 +314,12 @@ class Character extends Model {
      *
      * @return string
      */
-    public function getDisplayCoOwnerAttribute()
-    {
-        if($this->coowner_id) return $this->coowner->displayName;
-        else return prettyProfileLink($this->coowner_url);
+    public function getDisplayCoOwnerAttribute() {
+        if ($this->coowner_id) {
+            return $this->coowner->displayName;
+        } else {
+            return prettyProfileLink($this->coowner_url);
+        }
     }
 
     /**
@@ -418,25 +418,28 @@ class Character extends Model {
     }
 
     // checks if chara has a co-owner
-    public function gethasCoOwner()
-    {
-        if($this->coowner_id != NULL || $this->coowner_url != NUll) return true;
-        else return false;
+    public function gethasCoOwner() {
+        if ($this->coowner_id != null || $this->coowner_url != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Checks if the character's owner has registered on the site and updates ownership accordingly.
      */
-    public function updateCoOwner()
-    {
-        if($this->hasCoOwner) {
+    public function updateCoOwner() {
+        if ($this->hasCoOwner) {
             // Return if the character has an owner on the site already.
-            if($this->coowner_id) return;
+            if ($this->coowner_id) {
+                return;
+            }
 
             // Check if the owner has an account and update the character's user ID for them.
             $owner = checkAlias($this->coowner_url);
 
-            if(is_object($owner)) {
+            if (is_object($owner)) {
                 $this->coowner_id = $owner->id;
                 $this->coowner_url = null;
                 $this->save();
@@ -563,14 +566,14 @@ class Character extends Model {
         return Submission::with('user.rank')->with('prompt')->where('status', 'Approved')->whereIn('id', SubmissionCharacter::where('character_id', $this->id)->pluck('submission_id')->toArray())->paginate(30);
 
         // Untested
-        //$character = $this;
-        //return Submission::where('status', 'Approved')->with(['characters' => function($query) use ($character) {
+        // $character = $this;
+        // return Submission::where('status', 'Approved')->with(['characters' => function($query) use ($character) {
         //    $query->where('submission_characters.character_id', 1);
-        //}])
-        //->whereHas('characters', function($query) use ($character) {
+        // }])
+        // ->whereHas('characters', function($query) use ($character) {
         //    $query->where('submission_characters.character_id', 1);
-        //});
-        //return Submission::where('status', 'Approved')->where('user_id', $this->id)->orderBy('id', 'DESC')->paginate(30);
+        // });
+        // return Submission::where('status', 'Approved')->where('user_id', $this->id)->orderBy('id', 'DESC')->paginate(30);
     }
 
     /**

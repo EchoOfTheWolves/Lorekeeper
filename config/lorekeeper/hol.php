@@ -8,16 +8,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | Settings for Higher or Lower
-    | 
+    |
     |
     */
 
-    //daily plays for HOL
-    'hol_plays' => 5, 
+    // daily plays for HOL
+    'hol_plays' => 5,
 
-    //amount to grant when guess is successful
+    // amount to grant when guess is successful
     'currency_grant' => 10,
-    
-    //id of currency to grant
+
+    // id of currency to grant
     'currency_id' => 1,
 ];

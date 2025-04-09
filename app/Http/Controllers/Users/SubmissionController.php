@@ -17,9 +17,7 @@ use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Services\SubmissionManager;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use DB;
 
 class SubmissionController extends Controller {
     /*
@@ -107,7 +105,7 @@ class SubmissionController extends Controller {
             'inventory'           => $inventory,
             'page'                => 'submission',
             'expanded_rewards'    => config('lorekeeper.extensions.character_reward_expansion.expanded'),
-            'criteria' => $prompt ? Criterion::active()->whereIn('id', $promptCriteria)->orderBy('name')->pluck('name', 'id') : null,
+            'criteria'            => $prompt ? Criterion::active()->whereIn('id', $promptCriteria)->orderBy('name')->pluck('name', 'id') : null,
         ]));
     }
 
@@ -134,7 +132,7 @@ class SubmissionController extends Controller {
         $count['Month'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfMonth())->count();
         $count['Year'] = Submission::submitted($prompt->id, $submission->user_id)->where('created_at', '>=', now()->startOfYear())->count();
 
-        if($prompt->limit_character) {
+        if ($prompt->limit_character) {
             $limit = $prompt->limit * Character::visible()->where('is_myo_slot', 0)->where('user_id', $submission->user_id)->count();
         } else {
             $limit = $prompt->limit;
@@ -156,10 +154,10 @@ class SubmissionController extends Controller {
             'page'                => 'submission',
             'expanded_rewards'    => config('lorekeeper.extensions.character_reward_expansion.expanded'),
             'selectedInventory'   => isset($submission->data['user']) ? parseAssetData($submission->data['user']) : null,
-            'criteria' => $prompt ? Criterion::active()->whereIn('id', $promptCriteria)->orderBy('name')->pluck('name', 'id') : null,
-            'count' => $count,
-            'prompt' => $prompt,
-            'limit' => $limit,
+            'criteria'            => $prompt ? Criterion::active()->whereIn('id', $promptCriteria)->orderBy('name')->pluck('name', 'id') : null,
+            'count'               => $count,
+            'prompt'              => $prompt,
+            'limit'               => $limit,
         ]));
     }
 
@@ -198,7 +196,7 @@ class SubmissionController extends Controller {
         $count['Month'] = Submission::submitted($id, Auth::user()->id)->where('created_at', '>=', now()->startOfMonth())->count();
         $count['Year'] = Submission::submitted($id, Auth::user()->id)->where('created_at', '>=', now()->startOfYear())->count();
 
-        if($prompt->limit_character) {
+        if ($prompt->limit_character) {
             $limit = $prompt->limit * Character::visible()->where('is_myo_slot', 0)->where('user_id', Auth::user()->id)->count();
         } else {
             $limit = $prompt->limit;
@@ -206,8 +204,8 @@ class SubmissionController extends Controller {
 
         return view('home._prompt', [
             'prompt' => $prompt,
-            'count' => $count,
-            'limit' => $limit,
+            'count'  => $count,
+            'limit'  => $limit,
         ]);
     }
 

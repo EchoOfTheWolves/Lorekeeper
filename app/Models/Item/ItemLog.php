@@ -4,8 +4,8 @@ namespace App\Models\Item;
 
 use App\Models\Character\Character;
 use App\Models\Model;
-use App\Models\User\User;
 use App\Models\Shop\UserShop;
+use App\Models\User\User;
 
 class ItemLog extends Model {
     /**

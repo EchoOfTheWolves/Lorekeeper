@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterTransformation as Transformation;
-use DB;
 use App\Models\Species\Species;
+use DB;
 
 class TransformationService extends Service {
     /*
@@ -154,8 +154,12 @@ class TransformationService extends Service {
      * @return array
      */
     private function populateTransformationData($data, $transformation = null) {
-        if(isset($data['species_id']) && $data['species_id'] == 'none') $data['species_id'] = null;
-        if((isset($data['species_id']) && $data['species_id']) && !Species::where('id', $data['species_id'])->exists()) throw new \Exception("The selected species is invalid.");
+        if (isset($data['species_id']) && $data['species_id'] == 'none') {
+            $data['species_id'] = null;
+        }
+        if ((isset($data['species_id']) && $data['species_id']) && !Species::where('id', $data['species_id'])->exists()) {
+            throw new \Exception('The selected species is invalid.');
+        }
 
         if (isset($data['description']) && $data['description']) {
             $data['parsed_description'] = parse($data['description']);

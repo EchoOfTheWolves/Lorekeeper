@@ -172,7 +172,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('shops/delete/{id}', 'ShopController@postDeleteShop');
     Route::post('shops/sort', 'ShopController@postSortShop');
 
-    # categories
+    // categories
     Route::get('shops/shop-categories', 'ShopController@getShopCategoryIndex');
     Route::get('shops/shop-categories/create', 'ShopController@getCreateShopCategory');
     Route::get('shops/shop-categories/edit/{id}', 'ShopController@getEditShopCategory');
@@ -182,7 +182,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('shops/shop-categories/delete/{id}', 'ShopController@postDeleteShopCategory');
     Route::post('shops/shop-categories/sort', 'ShopController@postSortShopCategory');
 
-    # FEATURES (TRAITS)
+    // FEATURES (TRAITS)
     Route::get('trait-categories', 'FeatureController@getIndex');
     Route::get('trait-categories/create', 'FeatureController@getCreateFeatureCategory');
     Route::get('trait-categories/edit/{id}', 'FeatureController@getEditFeatureCategory');
@@ -249,7 +249,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('prompts/edit/{id?}', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
 
-    # TRANSFORMATIONS
+    // TRANSFORMATIONS
     Route::get('transformations', 'TransformationController@getTransformationIndex');
     Route::get('transformations/create', 'TransformationController@getCreateTransformation');
     Route::get('transformations/edit/{id}', 'TransformationController@getEditTransformation');
@@ -258,9 +258,8 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('transformations/edit/{id?}', 'TransformationController@postCreateEditTransformation');
     Route::post('transformations/delete/{id}', 'TransformationController@postDeleteTransformation');
     Route::post('transformations/sort', 'TransformationController@postSortTransformations');
-    
-    
-    # Criteria
+
+    // Criteria
     Route::get('criteria', 'CriterionController@getIndex');
     Route::get('criteria/create', 'CriterionController@getCreateEditCriterion');
     Route::post('criteria/create', 'CriterionController@postCreateEditCriterion');
@@ -288,8 +287,8 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('criteria-defaults/edit/{id}', 'CriterionController@postCreateEditCriterionDefault');
     Route::get('criteria-defaults/delete/{id}', 'CriterionController@getDeleteCriterionDefault');
     Route::post('criteria-defaults/delete/{id}', 'CriterionController@postDeleteCriterionDefault');
-    
-    # DAILIES
+
+    // DAILIES
     Route::get('dailies', 'DailyController@getIndex');
     Route::get('dailies/create', 'DailyController@getCreateDaily');
     Route::get('dailies/edit/{id}', 'DailyController@getEditDaily');
@@ -297,7 +296,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('dailies/create', 'DailyController@postCreateEditDaily');
     Route::post('dailies/edit/{id?}', 'DailyController@postCreateEditDaily');
     Route::post('dailies/delete/{id}', 'DailyController@postDeleteDaily');
-    Route::post('dailies/sort', 'DailyController@postSortDaily'); 
+    Route::post('dailies/sort', 'DailyController@postSortDaily');
 });
 
 // PAGES

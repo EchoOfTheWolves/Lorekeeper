@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
-use App\Models\Character\CharacterCategory;
-use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterFolder;
+use App\Models\Character\CharacterImage;
 use App\Models\Character\Sublist;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\Gallery;
@@ -14,9 +13,9 @@ use App\Models\Gallery\GalleryCharacter;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Shop\UserShop;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
-use App\Models\Shop\UserShop;
 use App\Models\User\UserUpdateLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,8 +72,8 @@ class UserController extends Controller {
             $aliases->visible();
         }
 
-        $characters->orderByRaw('user_id = ? desc',[$this->user->id])->orderBy('sort', 'DESC')->get();
-        
+        $characters->orderByRaw('user_id = ? desc', [$this->user->id])->orderBy('sort', 'DESC')->get();
+
         return view('user.profile', [
             'user'       => $this->user,
             'name'       => $name,
@@ -110,20 +109,18 @@ class UserController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserCharacters($name)
-    {
+    public function getUserCharacters($name) {
         $first = Character::myo(0)->where('coowner_id', $this->user->id);
         $query = Character::myo(0)->where('user_id', $this->user->id)->union($first);
 
         $imageQuery = CharacterImage::images(Auth::check() ? Auth::user() : null)->with('features')->with('rarity')->with('species')->with('features');
 
-        if($sublists = Sublist::where('show_main', 0)->get())
-        $subCategories = []; $subSpecies = [];
-        {   foreach($sublists as $sublist)
-            {
-                $subCategories = array_merge($subCategories, $sublist->categories->pluck('id')->toArray());
-                $subSpecies = array_merge($subSpecies, $sublist->species->pluck('id')->toArray());
-            }
+        if ($sublists = Sublist::where('show_main', 0)->get()) {
+            $subCategories = [];
+        } $subSpecies = [];
+        foreach ($sublists as $sublist) {
+            $subCategories = array_merge($subCategories, $sublist->categories->pluck('id')->toArray());
+            $subSpecies = array_merge($subSpecies, $sublist->species->pluck('id')->toArray());
         }
 
         $query->whereNotIn('character_category_id', $subCategories);
@@ -131,26 +128,30 @@ class UserController extends Controller {
 
         $query->whereIn('id', $imageQuery->pluck('character_id'));
 
-        if(!Auth::check() || !(Auth::check() && Auth::user()->hasPower('manage_characters'))) $query->visible();
+        if (!Auth::check() || !(Auth::check() && Auth::user()->hasPower('manage_characters'))) {
+            $query->visible();
+        }
         $query = $query->orderBy('sort', 'DESC')->get()
         // group query folder, getting the name from the id
-        ->groupBy(function($item) {
-            return $item->folder ? $item->folder->name : 'Unsorted';
-        });
+            ->groupBy(function ($item) {
+                return $item->folder ? $item->folder->name : 'Unsorted';
+            });
+
         return view('user.characters', [
-            'user' => $this->user,
+            'user'       => $this->user,
             'characters' => $query,
         ]);
     }
 
-        /**
+    /**
      * Shows a user's characters.
      *
-     * @param  string  $name
+     * @param string $name
+     * @param mixed  $folder
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserCharacterFolder($name, $folder)
-    {
+    public function getUserCharacterFolder($name, $folder) {
         $folder = CharacterFolder::where('name', $folder)->where('user_id', $this->user->id)->first();
         $query = Character::myo(0)->where('user_id', $this->user->id)->where('folder_id', $folder->id);
         $imageQuery = CharacterImage::images(Auth::check() ? Auth::user() : null)->with('features')->with('rarity')->with('species')->with('features');
@@ -174,9 +175,9 @@ class UserController extends Controller {
         }
 
         return view('user.character_folder', [
-            'user' => $this->user,
-            'folder' => $folder,
-            'characters' => $query->orderByRaw('user_id = ? desc',[$this->user->id])->orderBy('sort', 'DESC')->get(),
+            'user'       => $this->user,
+            'folder'     => $folder,
+            'characters' => $query->orderByRaw('user_id = ? desc', [$this->user->id])->orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -188,12 +189,11 @@ class UserController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserSublist($name, $key)
-    {
+    public function getUserSublist($name, $key) {
         $user = $this->user;
-        $query = Character::myo(0)->where(function($query) use ($user) {
+        $query = Character::myo(0)->where(function ($query) use ($user) {
             $query->where('user_id', $user->id)
-            ->orWhere('coowner_id', $user->id);
+                ->orWhere('coowner_id', $user->id);
         });
         $imageQuery = CharacterImage::images(Auth::check() ? Auth::user() : null)->with('features')->with('rarity')->with('species')->with('features');
 
@@ -218,9 +218,9 @@ class UserController extends Controller {
         }
 
         return view('user.sublist', [
-            'user' => $user,
-            'characters' => $query->orderByRaw('user_id = ? desc',[$user->id])->orderBy('sort', 'DESC')->get(),
-            'sublist' => $sublist,
+            'user'       => $user,
+            'characters' => $query->orderByRaw('user_id = ? desc', [$user->id])->orderBy('sort', 'DESC')->get(),
+            'sublist'    => $sublist,
         ]);
     }
 
@@ -394,9 +394,9 @@ class UserController extends Controller {
      */
     public function getUserOwnCharacterFavorites(Request $request, $name) {
         $user = $this->user;
-        $userCharacters = Character::myo(0)->where(function($query) use ($user) {
+        $userCharacters = Character::myo(0)->where(function ($query) use ($user) {
             $query->where('user_id', $user->id)
-            ->orWhere('coowner_id', $user->id);
+                ->orWhere('coowner_id', $user->id);
         })->pluck('id')->toArray();
         $userFavorites = $user->galleryFavorites()->pluck('gallery_submission_id')->toArray();
 
@@ -410,15 +410,15 @@ class UserController extends Controller {
     /**
      * Shows a user's characters.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserShops($name)
-    {
+    public function getUserShops($name) {
         $shops = UserShop::visible()->where('user_id', $this->user->id);
 
         return view('user.shops', [
-            'user' => $this->user,
+            'user'  => $this->user,
             'shops' => $shops->orderBy('sort', 'DESC')->get(),
         ]);
     }

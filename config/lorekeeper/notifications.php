@@ -349,16 +349,16 @@ return [
 
     // COOWNER_OWNER_UPDATE
     298 => [
-        'name' => 'Main Owner Update',
+        'name'    => 'Main Owner Update',
         'message' => 'The main owner of {character_url} has changed. Transferred to: {recipient}',
-        'url' => ''
+        'url'     => '',
     ],
-    
+
     // COOWNER_UPDATE
     299 => [
-        'name' => 'Co-owner Update',
+        'name'    => 'Co-owner Update',
         'message' => '<a href="{user_url}">{user}</a> has updated your co-ownership status to {character_url}.',
-        'url' => ''
+        'url'     => '',
     ],
 
     // CHARACTER_ITEM_GRANT
@@ -454,8 +454,8 @@ return [
 
     // USER_SHOP_ITEM_SOLD
     1104 => [
-        'name' => 'Shop Item Sold',
+        'name'    => 'Shop Item Sold',
         'message' => 'You have sold a {item_name} from <a href="{url}">{shop_name}</a> and have been credited {currency_quantity} {currency_name}.',
-        'url' => 'user-shops/shop/{shop_id}'
+        'url'     => 'user-shops/shop/{shop_id}',
     ],
 ];

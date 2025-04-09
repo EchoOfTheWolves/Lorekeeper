@@ -103,8 +103,8 @@ Route::group(['prefix' => 'trades', 'namespace' => 'Users'], function () {
     Route::post('{id}/cancel-trade', 'TradeController@postCancelTrade');
 });
 
-Route::group(['prefix' => 'user-shops', 'namespace' => 'Users'], function() {
-    Route::get('/', 'UserShopController@getUserIndex'); 
+Route::group(['prefix' => 'user-shops', 'namespace' => 'Users'], function () {
+    Route::get('/', 'UserShopController@getUserIndex');
     Route::get('create', 'UserShopController@getCreateShop');
     Route::get('edit/{id}', 'UserShopController@getEditShop');
     Route::get('delete/{id}', 'UserShopController@getDeleteShop');
@@ -124,9 +124,9 @@ Route::group(['prefix' => 'user-shops', 'namespace' => 'Users'], function() {
     Route::post('quickstock/{id}', 'UserShopController@postQuickstockStock');
 });
 
-Route::group(['prefix' => 'user-shops',], function() {
-    Route::get('/shop-index', 'UserShopController@getIndex'); 
-    Route::get('/shop/{id}', 'UserShopController@getShop'); 
+Route::group(['prefix' => 'user-shops'], function () {
+    Route::get('/shop-index', 'UserShopController@getIndex');
+    Route::get('/shop/{id}', 'UserShopController@getShop');
     Route::post('/shop/buy', 'UserShopController@postBuy');
     Route::get('{id}/{stockId}', 'UserShopController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
 });
@@ -159,7 +159,7 @@ Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
 
     Route::post('{id}/approval', 'MyoController@postCharacterApproval');
     Route::get('{id}/approval', 'MyoController@getCharacterApproval');
-    //this is useless but im not sure if we dont include it things will get weird or not
+    // this is useless but im not sure if we dont include it things will get weird or not
     Route::post('{slug}/approval/{id}', 'CharacterController@postCharacterApprovalSpecificImage');
 });
 
@@ -253,18 +253,16 @@ Route::group(['prefix' => 'shops'], function () {
     Route::get('history', 'ShopController@getPurchaseHistory');
 });
 
-
 /**************************************************************************************************
     Dailies
 **************************************************************************************************/
 
-Route::group(['prefix' => __('dailies.dailies')], function() {
+Route::group(['prefix' => __('dailies.dailies')], function () {
     // throttle requests to 1 per ~10 seconds
     Route::middleware('throttle:1,0.16')->group(function () {
         Route::post('{id}', 'DailyController@postRoll');
     });
 });
-
 
 /**************************************************************************************************
     Comments
@@ -283,20 +281,20 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function () {
     Higher or Lower
 **************************************************************************************************/
 
-Route::group(['prefix' => 'higher-or-lower'], function() {
+Route::group(['prefix' => 'higher-or-lower'], function () {
     Route::get('/', 'HolController@getIndex');
 
     Route::get('play', 'HolController@playHol');
     Route::post('play/guess', 'HolController@postGuess');
 });
-/**************************************************************************************************    
+/**************************************************************************************************
 Criteria
 **************************************************************************************************/
-Route::group(['prefix' => 'criteria'], function() {
+Route::group(['prefix' => 'criteria'], function () {
     Route::get('/{entity}/{id}', 'CriterionController@getCriterionSelector')->where('entity', 'prompt|gallery');
     Route::get('{entity}/{id}/{entity_id}/{form_id}', 'CriterionController@getCriterionForm')->where('entity', 'prompt|gallery');
     Route::get('/{id}', 'CriterionController@getCriterionFormLimited');
     Route::post('/rewards/{id}', 'CriterionController@postCriterionRewards');
-    
+
     Route::get('guide/{id}', 'CriterionController@getCriterionGuide');
 });

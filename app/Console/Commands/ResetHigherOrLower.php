@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Facades\Settings;
-use Illuminate\Console\Command;
-use Config;
 use App\Models\User\UserSettings;
+use Illuminate\Console\Command;
 
-class ResetHigherOrLower extends Command
-{
+class ResetHigherOrLower extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -26,8 +23,7 @@ class ResetHigherOrLower extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -36,9 +32,7 @@ class ResetHigherOrLower extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
-
+    public function handle() {
         $users = UserSettings::all();
         foreach ($users as $user) {
             $user->hol_plays = config('lorekeeper.hol.hol_plays');

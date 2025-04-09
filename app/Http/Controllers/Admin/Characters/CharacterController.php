@@ -48,14 +48,14 @@ class CharacterController extends Controller {
      */
     public function getCreateCharacter() {
         return view('admin.masterlist.create_character', [
-            'categories'  => CharacterCategory::orderBy('sort')->get(),
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes'    => [],
-            'features'    => Feature::getDropdownItems(1),
+            'categories'      => CharacterCategory::orderBy('sort')->get(),
+            'userOptions'     => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'rarities'        => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'       => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes'        => [],
+            'features'        => Feature::getDropdownItems(1),
             'transformations' => ['0' => 'Pick a Species First'],
-            'isMyo' => false,
+            'isMyo'           => false,
         ]);
     }
 
@@ -66,13 +66,13 @@ class CharacterController extends Controller {
      */
     public function getCreateMyo() {
         return view('admin.masterlist.create_character', [
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes'    => [],
-            'features'    => Feature::getDropdownItems(1),
+            'userOptions'     => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'rarities'        => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'       => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes'        => [],
+            'features'        => Feature::getDropdownItems(1),
             'transformations' => ['0' => 'Pick a Species First'],
-            'isMyo' => true,
+            'isMyo'           => true,
         ]);
     }
 
@@ -89,7 +89,7 @@ class CharacterController extends Controller {
             'isMyo'    => $request->input('myo'),
         ]);
     }
-    
+
     /**
      * Shows the edit image transformation portion of the modal.
      *
@@ -97,8 +97,9 @@ class CharacterController extends Controller {
      */
     public function getCreateCharacterMyoTransformation(Request $request) {
         $species = $request->input('species');
+
         return view('admin.masterlist._create_character_transformation', [
-            'transformations' => ['0' => 'Select '.ucfirst(__('transformations.transformation'))] + Transformation::where('species_id','=',$species)->orWhereNull('species_id')->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'transformations' => ['0' => 'Select '.ucfirst(__('transformations.transformation'))] + Transformation::where('species_id', '=', $species)->orWhereNull('species_id')->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'isMyo'           => $request->input('myo'),
         ]);
     }
@@ -120,7 +121,7 @@ class CharacterController extends Controller {
             'designer_id', 'designer_url',
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',
-            'image', 'thumbnail', 'image_description', 'coowner_id', 'coowner_url', 'transformation_id','transformation_info','transformation_description'
+            'image', 'thumbnail', 'image_description', 'coowner_id', 'coowner_url', 'transformation_id', 'transformation_info', 'transformation_description',
         ]);
         if ($character = $service->createCharacter($data, Auth::user())) {
             flash('Character created successfully.')->success();
@@ -152,7 +153,7 @@ class CharacterController extends Controller {
             'designer_id', 'designer_url',
             'artist_id', 'artist_url',
             'species_id', 'subtype_ids', 'rarity_id', 'feature_id', 'feature_data',
-            'image', 'thumbnail', 'transformation_id', 'transformation_info', 'transformation_description'
+            'image', 'thumbnail', 'transformation_id', 'transformation_info', 'transformation_description',
         ]);
         if ($character = $service->createCharacter($data, Auth::user(), true)) {
             flash('MYO slot created successfully.')->success();
@@ -222,7 +223,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'character_category_id', 'number', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'coowner_id', 'coowner_url'
+            'transferrable_at', 'coowner_id', 'coowner_url',
         ]);
         $this->character = Character::where('slug', $slug)->first();
         if (!$this->character) {

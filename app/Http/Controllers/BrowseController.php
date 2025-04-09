@@ -204,7 +204,7 @@ class BrowseController extends Controller {
         if ($request->get('owner_url')) {
             $ownerUrl = $request->get('owner_url');
             $query->where(function ($query) use ($ownerUrl) {
-                $query->where('owner_url','LIKE', '%'.$ownerUrl.'%')->orWhere('coowner_url','LIKE', '%'.$ownerUrl.'%');
+                $query->where('owner_url', 'LIKE', '%'.$ownerUrl.'%')->orWhere('coowner_url', 'LIKE', '%'.$ownerUrl.'%');
             });
         }
 
@@ -218,7 +218,7 @@ class BrowseController extends Controller {
             $imageQuery->where('species_id', $request->get('species_id'));
         }
         if ($request->get('subtype_ids')) {
-            $imageQuery->whereHas('subtypes', function($query) use ($request) {
+            $imageQuery->whereHas('subtypes', function ($query) use ($request) {
                 if (config('lorekeeper.extensions.exclusionary_search')) {
                     // If exclusionary search is enabled, we need to make sure that the character has all of the subtypes specified.
                     $query->whereIn('character_image_subtypes.subtype_id', $request->get('subtype_ids'))->havingRaw('COUNT(*) = ?', [count($request->get('subtype_ids'))]);
@@ -325,15 +325,15 @@ class BrowseController extends Controller {
         }
 
         return view('browse.masterlist', [
-            'isMyo' => false,
-            'characters' => $query->paginate(24)->appends($request->query()),
-            'categories'  => [0 => 'Any Category'] + CharacterCategory::whereNotIn('id', $subCategories)->visible(Auth::check() ? Auth::user() : null)->orderBy('character_categories.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'specieses'   => [0 => 'Any Species'] + Species::whereNotIn('id', $subSpecies)->visible(Auth::check() ? Auth::user() : null)->orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes'    => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities'    => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features'    => Feature::getDropdownItems(),
-            'sublists' => Sublist::orderBy('sort', 'DESC')->get(),
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'isMyo'           => false,
+            'characters'      => $query->paginate(24)->appends($request->query()),
+            'categories'      => [0 => 'Any Category'] + CharacterCategory::whereNotIn('id', $subCategories)->visible(Auth::check() ? Auth::user() : null)->orderBy('character_categories.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'       => [0 => 'Any Species'] + Species::whereNotIn('id', $subSpecies)->visible(Auth::check() ? Auth::user() : null)->orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes'        => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities'        => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features'        => Feature::getDropdownItems(),
+            'sublists'        => Sublist::orderBy('sort', 'DESC')->get(),
+            'userOptions'     => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'transformations' => [0 => 'Any '.ucfirst(__('transformations.transformation'))] + Transformation::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
@@ -589,7 +589,7 @@ class BrowseController extends Controller {
         if ($request->get('has_transformation')) {
             $imageQuery->whereNotNull('transformation_id');
         }
-        if($request->get('artist')) {
+        if ($request->get('artist')) {
             $artist = User::find($request->get('artist'));
             $imageQuery->whereHas('artists', function ($query) use ($artist) {
                 $query->where('user_id', $artist->id);
@@ -654,16 +654,16 @@ class BrowseController extends Controller {
         }
 
         return view('browse.sub_masterlist', [
-            'isMyo' => false,
-            'characters' => $query->paginate(24)->appends($request->query()),
-            'categories' => [0 => 'Any Category'] + $subCategory,
-            'specieses' => [0 => 'Any Species'] + $subSpecies,
-            'subtypes'    => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities' => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features'    => Feature::getDropdownItems(),
-            'sublist' => $sublist,
-            'sublists' => Sublist::orderBy('sort', 'DESC')->get(),
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'isMyo'           => false,
+            'characters'      => $query->paginate(24)->appends($request->query()),
+            'categories'      => [0 => 'Any Category'] + $subCategory,
+            'specieses'       => [0 => 'Any Species'] + $subSpecies,
+            'subtypes'        => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities'        => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features'        => Feature::getDropdownItems(),
+            'sublist'         => $sublist,
+            'sublists'        => Sublist::orderBy('sort', 'DESC')->get(),
+            'userOptions'     => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'transformations' => [0 => 'Any '.ucfirst(__('transformations.transformation'))] + Transformation::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }

@@ -423,7 +423,7 @@ class WorldController extends Controller {
         ]);
     }
 
-     /**
+    /**
      * Shows the Transformations page.
      *
      * @return \Illuminate\Contracts\Support\Renderable

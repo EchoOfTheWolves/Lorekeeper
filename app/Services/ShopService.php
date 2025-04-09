@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Shop\Shop;
-use App\Models\Shop\ShopStock;
 use App\Models\Shop\ShopCategory;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +28,7 @@ class ShopService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Shop\Shop|bool
+     * @return bool|Shop
      */
     public function createShop($data, $user) {
         DB::beginTransaction();
@@ -47,8 +46,12 @@ class ShopService extends Service {
                 $data['has_image'] = 0;
             }
 
-            if(isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') $data['shop_category_id'] = null;
-            if((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) throw new \Exception("The selected shop category is invalid.");
+            if (isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') {
+                $data['shop_category_id'] = null;
+            }
+            if ((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) {
+                throw new \Exception('The selected shop category is invalid.');
+            }
 
             $shop = Shop::create($data);
 
@@ -67,11 +70,11 @@ class ShopService extends Service {
     /**
      * Updates a shop.
      *
-     * @param \App\Models\Shop\Shop $shop
+     * @param Shop                  $shop
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Shop\Shop|bool
+     * @return bool|Shop
      */
     public function updateShop($shop, $data, $user) {
         DB::beginTransaction();
@@ -92,8 +95,12 @@ class ShopService extends Service {
                 unset($data['image']);
             }
 
-            if(isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') $data['shop_category_id'] = null;
-            if((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) throw new \Exception("The selected shop category is invalid.");
+            if (isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') {
+                $data['shop_category_id'] = null;
+            }
+            if ((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) {
+                throw new \Exception('The selected shop category is invalid.');
+            }
 
             $shop->update($data);
 
@@ -112,11 +119,11 @@ class ShopService extends Service {
     /**
      * Updates shop stock.
      *
-     * @param \App\Models\Shop\Shop $shop
+     * @param Shop                  $shop
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Shop\Shop|bool
+     * @return bool|Shop
      */
     public function updateShopStock($shop, $data, $user) {
         DB::beginTransaction();
@@ -164,7 +171,7 @@ class ShopService extends Service {
     /**
      * Deletes a shop.
      *
-     * @param \App\Models\Shop\Shop $shop
+     * @param Shop $shop
      *
      * @return bool
      */
@@ -214,64 +221,69 @@ class ShopService extends Service {
         return $this->rollbackReturn(false);
     }
 
-      /**********************************************************************************************
-        SHOP CATEGORIES
+    /**********************************************************************************************
+      SHOP CATEGORIES
     **********************************************************************************************/
 
     /**
      * Create a category.
      *
-     * @param  array                 $data
-     * @param  \App\Models\User\User $user
-     * @return \App\Models\Shop\ShopCategory|bool
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return bool|ShopCategory
      */
-    public function createShopCategory($data, $user)
-    {
+    public function createShopCategory($data, $user) {
         DB::beginTransaction();
 
         try {
-
             $data = $this->populateCategoryData($data);
 
             $image = null;
-            if(isset($data['image']) && $data['image']) {
+            if (isset($data['image']) && $data['image']) {
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
+            } else {
+                $data['has_image'] = 0;
             }
-            else $data['has_image'] = 0;
 
             $category = ShopCategory::create($data);
 
-            if ($image) $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            if ($image) {
+                $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Update a category.
      *
-     * @param  \App\Models\Shop\ShopCategory  $category
-     * @param  array                          $data
-     * @param  \App\Models\User\User          $user
-     * @return \App\Models\Shop\ShopCategory|bool
+     * @param ShopCategory          $category
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return bool|ShopCategory
      */
-    public function updateShopCategory($category, $data, $user)
-    {
+    public function updateShopCategory($category, $data, $user) {
         DB::beginTransaction();
 
         try {
             // More specific validation
-            if(ShopCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) throw new \Exception("The name has already been taken.");
+            if (ShopCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) {
+                throw new \Exception('The name has already been taken.');
+            }
 
             $data = $this->populateCategoryData($data, $category);
 
             $image = null;
-            if(isset($data['image']) && $data['image']) {
+            if (isset($data['image']) && $data['image']) {
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
@@ -279,28 +291,84 @@ class ShopService extends Service {
 
             $category->update($data);
 
-            if ($category) $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            if ($category) {
+                $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Delete a category.
+     *
+     * @param ShopCategory $category
+     *
+     * @return bool
+     */
+    public function deleteShopCategory($category) {
+        DB::beginTransaction();
+
+        try {
+            // Check first if the category is currently in use
+            if (Shop::where('shop_category_id', $category->id)->exists()) {
+                throw new \Exception('A shop with this category exists. Please change its category first.');
+            }
+
+            if ($category->has_image) {
+                $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName);
+            }
+            $category->delete();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Sorts category order.
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function sortShopCategory($data) {
+        DB::beginTransaction();
+
+        try {
+            // explode the sort array and reverse it since the order is inverted
+            $sort = array_reverse(explode(',', $data));
+
+            foreach ($sort as $key => $s) {
+                ShopCategory::where('id', $s)->update(['sort' => $key]);
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Handle category data.
      *
-     * @param  array                               $data
-     * @param  \App\Models\Shop\ShopCategory|null  $category
+     * @param array             $data
+     * @param ShopCategory|null $category
+     *
      * @return array
      */
-    private function populateCategoryData($data, $category = null)
-    {
-        if(isset($data['remove_image']))
-        {
-            if($category && $category->has_image && $data['remove_image'])
-            {
+    private function populateCategoryData($data, $category = null) {
+        if (isset($data['remove_image'])) {
+            if ($category && $category->has_image && $data['remove_image']) {
                 $data['has_image'] = 0;
                 $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName);
             }
@@ -313,8 +381,8 @@ class ShopService extends Service {
     /**
      * Processes user input for creating/updating a shop.
      *
-     * @param array                 $data
-     * @param \App\Models\Shop\Shop $shop
+     * @param array $data
+     * @param Shop  $shop
      *
      * @return array
      */
@@ -335,58 +403,13 @@ class ShopService extends Service {
             unset($data['remove_image']);
         }
 
-        if(isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') $data['shop_category_id'] = null;
-        if((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) throw new \Exception("The selected shop category is invalid.");
+        if (isset($data['shop_category_id']) && $data['shop_category_id'] == 'none') {
+            $data['shop_category_id'] = null;
+        }
+        if ((isset($data['shop_category_id']) && $data['shop_category_id']) && !ShopCategory::where('id', $data['shop_category_id'])->exists()) {
+            throw new \Exception('The selected shop category is invalid.');
+        }
 
         return $data;
-    }
-
-    /**
-     * Delete a category.
-     *
-     * @param  \App\Models\Shop\ShopCategory  $category
-     * @return bool
-     */
-    public function deleteShopCategory($category)
-    {
-        DB::beginTransaction();
-
-        try {
-            // Check first if the category is currently in use
-            if(Shop::where('shop_category_id', $category->id)->exists()) throw new \Exception("A shop with this category exists. Please change its category first.");
-
-            if($category->has_image) $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName);
-            $category->delete();
-
-            return $this->commitReturn(true);
-        } catch(\Exception $e) {
-            $this->setError('error', $e->getMessage());
-        }
-        return $this->rollbackReturn(false);
-    }
-
-    /**
-     * Sorts category order.
-     *
-     * @param  array  $data
-     * @return bool
-     */
-    public function sortShopCategory($data)
-    {
-        DB::beginTransaction();
-
-        try {
-            // explode the sort array and reverse it since the order is inverted
-            $sort = array_reverse(explode(',', $data));
-
-            foreach($sort as $key => $s) {
-                ShopCategory::where('id', $s)->update(['sort' => $key]);
-            }
-
-            return $this->commitReturn(true);
-        } catch(\Exception $e) {
-            $this->setError('error', $e->getMessage());
-        }
-        return $this->rollbackReturn(false);
     }
 }

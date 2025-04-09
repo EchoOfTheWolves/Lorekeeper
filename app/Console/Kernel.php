@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel {
         $schedule->command('reset-hol')
             ->daily();
         $schedule->command('update-timed-daily')
-            ->everyMinute();          
+            ->everyMinute();
         $schedule->exec('rm public/images/avatars/*.tmp')
             ->daily();
         $schedule->command('update-extension-tracker')

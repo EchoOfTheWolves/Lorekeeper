@@ -19,7 +19,6 @@ use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
 use App\Models\Shop\UserShopLog;
 use App\Models\Submission\Submission;
-use App\Models\Submission\SubmissionCharacter;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -150,17 +149,16 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get only the user's characters.
      */
-    public function primaryCharacters()
-    {
+    public function primaryCharacters() {
         return $this->hasMany('App\Models\Character\Character')->where('is_myo_slot', 0)->orderBy('sort', 'DESC');
     }
 
     /**
      * Get the user's characters (including co-owned).
      */
-    public function characters()
-    {
+    public function characters() {
         $first = ($this->hasMany('App\Models\Character\Character', 'coowner_id')->where('is_myo_slot', 0)->orderBy('sort', 'DESC'));
+
         return $this->hasMany('App\Models\Character\Character')->where('is_myo_slot', 0)->orderBy('sort', 'DESC')->union($first);
     }
 
@@ -218,17 +216,16 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     /**
-     * gets all the user's character folders
+     * gets all the user's character folders.
      */
-    public function folders()
-    {
+    public function folders() {
         return $this->hasMany('App\Models\Character\CharacterFolder');
     }
-     /**
+
+    /**
      * Get the user's rank data.
      */
-    public function shops()
-    {
+    public function shops() {
         return $this->hasMany('App\Models\Shop\UserShop', 'user_id');
     }
 
@@ -484,7 +481,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function getcheckBirthdayAttribute() {
         $bday = $this->birthday;
-        if (!$bday || $bday->diffInYears(carbon::now()) < 13) {
+        if (!$bday || $bday->diffInYears(Carbon::now()) < 13) {
             return false;
         } else {
             return true;
@@ -617,15 +614,18 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get the user's shop purchase logs.
      *
-     * @param  int  $limit
-     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
      */
-    public function getUserShopLogs($limit = 10)
-    {
+    public function getUserShopLogs($limit = 10) {
         $user = $this;
         $query = UserShopLog::where('user_id', $this->id)->with('shop')->with('item')->with('currency')->orderBy('id', 'DESC');
-        if($limit) return $query->take($limit)->get();
-        else return $query->paginate(30);
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**
@@ -677,25 +677,34 @@ class User extends Authenticatable implements MustVerifyEmail {
         $this->settings->save();
     }
 
-        /**
+    /**
      * Checks if there are characters credited to the user's alias and updates ownership to their account accordingly.
      */
-    public function updateCoCharacters()
-    {
-        if(!$this->hasAlias) return;
-        
+    public function updateCoCharacters() {
+        if (!$this->hasAlias) {
+            return;
+        }
+
         // Pluck alias from url and check for matches
-        $urlCharacters = Character::whereNotNull('coowner_url')->pluck('coowner_url','id');
-        $matches = []; $count = 0;
-        foreach($this->aliases as $alias) {
+        $urlCharacters = Character::whereNotNull('coowner_url')->pluck('coowner_url', 'id');
+        $matches = [];
+        $count = 0;
+        foreach ($this->aliases as $alias) {
             // Find all urls from the same site as this alias
-            foreach($urlCharacters as $key=>$character) preg_match_all(config('lorekeeper.sites.'.$alias->site.'.regex'), $character, $matches[$key]);
+            foreach ($urlCharacters as $key=>$character) {
+                preg_match_all(config('lorekeeper.sites.'.$alias->site.'.regex'), $character, $matches[$key]);
+            }
             // Find all alias matches within those, and update the character's owner
-            foreach($matches as $key=>$match) if($match[1] != [] && strtolower($match[1][0]) == strtolower($alias->alias)) {Character::find($key)->update(['coowner_url' => null, 'coowner_id' => $this->id]); $count += 1;}
+            foreach ($matches as $key=>$match) {
+                if ($match[1] != [] && strtolower($match[1][0]) == strtolower($alias->alias)) {
+                    Character::find($key)->update(['coowner_url' => null, 'coowner_id' => $this->id]);
+                    $count += 1;
+                }
+            }
         }
 
         //
-        if($count > 0) {
+        if ($count > 0) {
             $this->settings->is_fto = 0;
         }
         $this->settings->save();
@@ -743,7 +752,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      *
      * @param mixed $character
      *
-     * @return \App\Models\Character\CharacterBookmark
+     * @return CharacterBookmark
      */
     public function hasBookmarked($character) {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();

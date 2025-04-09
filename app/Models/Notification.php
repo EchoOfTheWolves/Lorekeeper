@@ -144,8 +144,8 @@ class Notification extends Model {
     public const REPORT_CLOSED = 221;
     public const COMMENT_MADE = 239;
     public const COMMENT_REPLY = 240;
-    public const COOWNER_OWNER_UPDATE              = 298;
-    public const COOWNER_UPDATE                    = 299;
+    public const COOWNER_OWNER_UPDATE = 298;
+    public const COOWNER_UPDATE = 299;
     public const CHARACTER_ITEM_GRANT = 501;
     public const CHARACTER_ITEM_REMOVAL = 502;
     public const GALLERY_SUBMISSION_COLLABORATOR = 505;
@@ -159,5 +159,5 @@ class Notification extends Model {
     public const GALLERY_SUBMISSION_STAFF_COMMENTS = 513;
     public const GALLERY_SUBMISSION_EDITED = 514;
     public const GALLERY_SUBMISSION_PARTICIPANT = 515;
-    public const USER_SHOP_ITEM_SOLD    = 1104;
+    public const USER_SHOP_ITEM_SOLD = 1104;
 }

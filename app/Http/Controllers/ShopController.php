@@ -29,14 +29,14 @@ class ShopController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
-    {        $shopcategories = ShopCategory::orderBy('sort', 'DESC')->get();
-            $shops = count($shopcategories) ? Shop::where('is_active', 1)->orderByRaw('FIELD(shop_category_id,'.implode(',', $shopcategories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('shop_category_id') : Shop::where('is_active', 1)->orderBy('name')->get()->groupBy('shop_category_id');
-        
+    public function getIndex() {
+        $shopcategories = ShopCategory::orderBy('sort', 'DESC')->get();
+        $shops = count($shopcategories) ? Shop::where('is_active', 1)->orderByRaw('FIELD(shop_category_id,'.implode(',', $shopcategories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('shop_category_id') : Shop::where('is_active', 1)->orderBy('name')->get()->groupBy('shop_category_id');
+
         return view('shops.index', [
             'shopcategories' => $shopcategories->keyBy('id'),
-            'shops' => $shops,
-            ]);
+            'shops'          => $shops,
+        ]);
     }
 
     /**
@@ -46,8 +46,7 @@ class ShopController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getShop($id)
-    {
+    public function getShop($id) {
         $categories = ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
         $shopcategories = ShopCategory::orderBy('sort', 'DESC')->get();
         $shops = count($shopcategories) ? Shop::where('is_active', 1)->orderByRaw('FIELD(shop_category_id,'.implode(',', $shopcategories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('shop_category_id') : Shop::where('is_active', 1)->orderBy('name')->get()->groupBy('shop_category_id');
@@ -64,12 +63,12 @@ class ShopController extends Controller {
         $items = count($categories) ? $query->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('item_category_id') : $shop->displayStock()->orderBy('name')->get()->groupBy('item_category_id');
 
         return view('shops.shop', [
-            'shop'       => $shop,
-            'categories' => $categories->keyBy('id'),
-            'items' => $items,
+            'shop'           => $shop,
+            'categories'     => $categories->keyBy('id'),
+            'items'          => $items,
             'shopcategories' => $shopcategories->keyBy('id'),
-            'shops' => $shops,
-            'currencies' => Currency::whereIn('id', ShopStock::where('shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id')
+            'shops'          => $shops,
+            'currencies'     => Currency::whereIn('id', ShopStock::where('shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id'),
         ]);
     }
 
@@ -136,15 +135,14 @@ class ShopController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPurchaseHistory()
-    {
+    public function getPurchaseHistory() {
         $shopcategories = ShopCategory::orderBy('sort', 'DESC')->get();
-            $shops = count($shopcategories) ? Shop::where('is_active', 1)->orderByRaw('FIELD(shop_category_id,'.implode(',', $shopcategories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('shop_category_id') : Shop::where('is_active', 1)->orderBy('name')->get()->groupBy('shop_category_id');
-     
+        $shops = count($shopcategories) ? Shop::where('is_active', 1)->orderByRaw('FIELD(shop_category_id,'.implode(',', $shopcategories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('shop_category_id') : Shop::where('is_active', 1)->orderBy('name')->get()->groupBy('shop_category_id');
+
         return view('shops.purchase_history', [
-            'logs' => Auth::user()->getShopLogs(0),
+            'logs'           => Auth::user()->getShopLogs(0),
             'shopcategories' => $shopcategories->keyBy('id'),
-            'shops' => $shops,
+            'shops'          => $shops,
         ]);
     }
 }

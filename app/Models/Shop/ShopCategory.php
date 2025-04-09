@@ -2,18 +2,16 @@
 
 namespace App\Models\Shop;
 
-use Config;
 use App\Models\Model;
 
-class ShopCategory extends Model
-{
+class ShopCategory extends Model {
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'sort', 'has_image', 'description' 
+        'name', 'sort', 'has_image', 'description',
     ];
 
     /**
@@ -22,43 +20,41 @@ class ShopCategory extends Model
      * @var string
      */
     protected $table = 'shop_categories';
-    
+
     /**
      * Validation rules for creation.
      *
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|unique:shop_categories|between:3,25',
+        'name'        => 'required|unique:shop_categories|between:3,25',
         'description' => 'nullable',
-        'image' => 'mimes:png',
+        'image'       => 'mimes:png',
     ];
-    
+
     /**
      * Validation rules for updating.
      *
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|between:3,25',
+        'name'        => 'required|between:3,25',
         'description' => 'nullable',
-        'image' => 'mimes:png',
+        'image'       => 'mimes:png',
     ];
 
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
-
 
     /**
      * Displays the model's name, linked to its encyclopedia page.
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'" class="display-category">'.$this->name.'</a>';
     }
 
@@ -67,8 +63,7 @@ class ShopCategory extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/data/shop-categories';
     }
 
@@ -77,9 +72,8 @@ class ShopCategory extends Model
      *
      * @return string
      */
-    public function getCategoryImageFileNameAttribute()
-    {
-        return $this->id . '-image.png';
+    public function getCategoryImageFileNameAttribute() {
+        return $this->id.'-image.png';
     }
 
     /**
@@ -87,20 +81,20 @@ class ShopCategory extends Model
      *
      * @return string
      */
-    public function getCategoryImagePathAttribute()
-    {
+    public function getCategoryImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
-    
+
     /**
      * Gets the URL of the model's image.
      *
      * @return string
      */
-    public function getCategoryImageUrlAttribute()
-    {
-        if (!$this->has_image) return null;
-        return asset($this->imageDirectory . '/' . $this->categoryImageFileName);
-    }
+    public function getCategoryImageUrlAttribute() {
+        if (!$this->has_image) {
+            return null;
+        }
 
+        return asset($this->imageDirectory.'/'.$this->categoryImageFileName);
+    }
 }

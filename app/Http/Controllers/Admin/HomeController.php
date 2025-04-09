@@ -40,7 +40,7 @@ class HomeController extends Controller {
             'transferCount'          => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount'             => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
             'galleryRequireApproval' => $galleryRequireApproval,
-            'galleryCurrencyAwards' => GalleryCriterion::get()->count() > 0,
+            'galleryCurrencyAwards'  => GalleryCriterion::get()->count() > 0,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
             'galleryAwardCount'      => GallerySubmission::requiresAward()->where('is_valued', 0)->count(),
         ]);

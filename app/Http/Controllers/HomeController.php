@@ -36,14 +36,15 @@ class HomeController extends Controller {
             $gallerySubmissions = [];
         }
 
-        if(Settings::get('featured_character')) {
+        if (Settings::get('featured_character')) {
             $character = Character::find(Settings::get('featured_character'));
+        } else {
+            $character = null;
         }
-        else $character = null;
-        
+
         return view('welcome', [
             'about'               => SitePage::where('key', 'about')->first(),
-            'featured' => $character,
+            'featured'            => $character,
             'gallerySubmissions'  => $gallerySubmissions,
         ]);
     }
@@ -76,7 +77,7 @@ class HomeController extends Controller {
         }
 
         // Redirect to the provider's authentication page
-        return $service->getAuthRedirect($provider); //Socialite::driver($provider)->redirect();
+        return $service->getAuthRedirect($provider); // Socialite::driver($provider)->redirect();
     }
 
     /**
@@ -193,10 +194,10 @@ class HomeController extends Controller {
         // I think there's no harm in linking multiple of the same site as people may want their activity separated into an ARPG account.
         // Uncomment the following to restrict to one account per site, however.
         // Check if the user already has a username associated with their account
-        //if(DB::table('user_aliases')->where('site', $provider)->where('user_id', $user->id)->exists()) {
+        // if(DB::table('user_aliases')->where('site', $provider)->where('user_id', $user->id)->exists()) {
         //    $this->error = 'You already have a username associated with this website linked to your account.';
         //    return false;
-        //}
+        // }
 
         return true;
     }

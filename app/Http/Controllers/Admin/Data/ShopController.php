@@ -7,7 +7,6 @@ use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Shop\Shop;
 use App\Models\Shop\ShopCategory;
-use App\Models\Shop\ShopStock;
 use App\Services\ShopService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +39,7 @@ class ShopController extends Controller {
      */
     public function getCreateShop() {
         return view('admin.shops.create_edit_shop', [
-            'shop' => new Shop,
+            'shop'            => new Shop,
             'shop_categories' => ['none' => 'No category'] + ShopCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
@@ -59,9 +58,9 @@ class ShopController extends Controller {
         }
 
         return view('admin.shops.create_edit_shop', [
-            'shop'       => $shop,
-            'items'      => Item::orderBy('name')->pluck('name', 'id'),
-            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+            'shop'            => $shop,
+            'items'           => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies'      => Currency::orderBy('name')->pluck('name', 'id'),
             'shop_categories' => ['none' => 'No category'] + ShopCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
@@ -77,7 +76,7 @@ class ShopController extends Controller {
     public function postCreateEditShop(Request $request, ShopService $service, $id = null) {
         $id ? $request->validate(Shop::$updateRules) : $request->validate(Shop::$createRules);
         $data = $request->only([
-            'name', 'description', 'image', 'remove_image', 'is_active', 'visible_only', 'shop_category_id'
+            'name', 'description', 'image', 'remove_image', 'is_active', 'visible_only', 'shop_category_id',
         ]);
         if ($id && $service->updateShop(Shop::find($id), $data, Auth::user())) {
             flash('Shop updated successfully.')->success();
@@ -182,8 +181,7 @@ class ShopController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getShopCategoryIndex()
-    {
+    public function getShopCategoryIndex() {
         return view('admin.shops.shop_categories', [
             'categories' => ShopCategory::orderBy('sort', 'DESC')->get(),
         ]);
@@ -194,64 +192,68 @@ class ShopController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateShopCategory()
-    {
+    public function getCreateShopCategory() {
         return view('admin.shops.create_edit_shop_category', [
-            'category' => new ShopCategory
+            'category' => new ShopCategory,
         ]);
     }
 
     /**
      * Shows the edit shop category page.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditShopCategory($id)
-    {
+    public function getEditShopCategory($id) {
         $category = ShopCategory::find($id);
-        if(!$category) abort(404);
+        if (!$category) {
+            abort(404);
+        }
+
         return view('admin.shops.create_edit_shop_category', [
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
     /**
      * Creates or edits an shop category.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\ShopService  $service
-     * @param  int|null                  $id
+     * @param App\Services\ShopService $service
+     * @param int|null                 $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditShopCategory(Request $request, ShopService $service, $id = null)
-    {
+    public function postCreateEditShopCategory(Request $request, ShopService $service, $id = null) {
         $id ? $request->validate(ShopCategory::$updateRules) : $request->validate(ShopCategory::$createRules);
         $data = $request->only([
-            'name', 'description', 'image', 'remove_image'
+            'name', 'description', 'image', 'remove_image',
         ]);
-        if($id && $service->updateShopCategory(ShopCategory::find($id), $data, Auth::user())) {
+        if ($id && $service->updateShopCategory(ShopCategory::find($id), $data, Auth::user())) {
             flash('Category updated successfully.')->success();
-        }
-        else if (!$id && $category = $service->createShopCategory($data, Auth::user())) {
+        } elseif (!$id && $category = $service->createShopCategory($data, Auth::user())) {
             flash('Category created successfully.')->success();
+
             return redirect()->to('admin/data/shops/shop-categories/edit/'.$category->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
 
     /**
      * Gets the shop category deletion modal.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteShopCategory($id)
-    {
+    public function getDeleteShopCategory($id) {
         $category = ShopCategory::find($id);
+
         return view('admin.shops._delete_shop_category', [
             'category' => $category,
         ]);
@@ -260,38 +262,39 @@ class ShopController extends Controller {
     /**
      * Deletes an shop category.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\ShopService  $service
-     * @param  int                       $id
+     * @param App\Services\ShopService $service
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteShopCategory(Request $request, ShopService $service, $id)
-    {
-        if($id && $service->deleteShopCategory(ShopCategory::find($id))) {
+    public function postDeleteShopCategory(Request $request, ShopService $service, $id) {
+        if ($id && $service->deleteShopCategory(ShopCategory::find($id))) {
             flash('Category deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->to('admin/data/shops/shop-categories');
     }
 
     /**
      * Sorts shop categories.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\ShopService  $service
+     * @param App\Services\ShopService $service
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortShopCategory(Request $request, ShopService $service)
-    {
-        if($service->sortShopCategory($request->get('sort'))) {
+    public function postSortShopCategory(Request $request, ShopService $service) {
+        if ($service->sortShopCategory($request->get('sort'))) {
             flash('Category order updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
-
 }

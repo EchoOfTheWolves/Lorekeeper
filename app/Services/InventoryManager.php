@@ -4,9 +4,8 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Models\Character\CharacterItem;
-use App\Models\Currency\Currency;
-use App\Models\Shop\UserShopStock;
 use App\Models\Item\Item;
+use App\Models\Shop\UserShopStock;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use Carbon\Carbon;
@@ -26,8 +25,8 @@ class InventoryManager extends Service {
     /**
      * Grants an item to multiple users.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $staff
+     * @param array $data
+     * @param User  $staff
      *
      * @return bool
      */
@@ -91,7 +90,7 @@ class InventoryManager extends Service {
      *
      * @param array                           $data
      * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $staff
+     * @param User                            $staff
      *
      * @return bool
      */
@@ -155,11 +154,11 @@ class InventoryManager extends Service {
     /**
      * Transfers items between a user and character.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User         $sender
-     * @param \App\Models\Character\Character|\App\Models\User\User         $recipient
-     * @param \App\Models\Character\CharacterItem|\App\Models\User\UserItem $stacks
-     * @param int                                                           $quantities
-     * @param mixed                                                         $user
+     * @param \App\Models\Character\Character|User $sender
+     * @param \App\Models\Character\Character|User $recipient
+     * @param CharacterItem|UserItem               $stacks
+     * @param int                                  $quantities
+     * @param mixed                                $user
      *
      * @return bool
      */
@@ -210,7 +209,7 @@ class InventoryManager extends Service {
                     throw new \Exception('Quantity to transfer exceeds item count.');
                 }
 
-                //Check that hold count isn't being exceeded
+                // Check that hold count isn't being exceeded
                 if ($stack->item->category->character_limit > 0) {
                     $limit = $stack->item->category->character_limit;
                 }
@@ -241,10 +240,10 @@ class InventoryManager extends Service {
     /**
      * Transfers items between user stacks.
      *
-     * @param \App\Models\User\User     $sender
-     * @param \App\Models\User\User     $recipient
-     * @param \App\Models\User\UserItem $stacks
-     * @param int                       $quantities
+     * @param User     $sender
+     * @param User     $recipient
+     * @param UserItem $stacks
+     * @param int      $quantities
      *
      * @return bool
      */
@@ -312,10 +311,10 @@ class InventoryManager extends Service {
     /**
      * Deletes items from stack.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User         $owner
-     * @param \App\Models\Character\CharacterItem|\App\Models\User\UserItem $stacks
-     * @param int                                                           $quantities
-     * @param mixed                                                         $user
+     * @param \App\Models\Character\Character|User $owner
+     * @param CharacterItem|UserItem               $stacks
+     * @param int                                  $quantities
+     * @param mixed                                $user
      *
      * @return bool
      */
@@ -394,9 +393,9 @@ class InventoryManager extends Service {
     /**
      * Sells items from stack.
      *
-     * @param \App\Models\User\User     $user
-     * @param \App\Models\User\UserItem $stacks
-     * @param int                       $quantities
+     * @param User     $user
+     * @param UserItem $stacks
+     * @param int      $quantities
      *
      * @return bool
      */
@@ -460,12 +459,12 @@ class InventoryManager extends Service {
     /**
      * Credits an item to a user or character.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User $sender
-     * @param \App\Models\Character\Character|\App\Models\User\User $recipient
-     * @param string                                                $type
-     * @param array                                                 $data
-     * @param \App\Models\Item\Item                                 $item
-     * @param int                                                   $quantity
+     * @param \App\Models\Character\Character|User $sender
+     * @param \App\Models\Character\Character|User $recipient
+     * @param string                               $type
+     * @param array                                $data
+     * @param Item                                 $item
+     * @param int                                  $quantity
      *
      * @return bool
      */
@@ -522,12 +521,12 @@ class InventoryManager extends Service {
     /**
      * Moves items from one user or character stack to another.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User $sender
-     * @param \App\Models\Character\Character|\App\Models\User\User $recipient
-     * @param string                                                $type
-     * @param array                                                 $data
-     * @param mixed                                                 $stack
-     * @param mixed                                                 $quantity
+     * @param \App\Models\Character\Character|User $sender
+     * @param \App\Models\Character\Character|User $recipient
+     * @param string                               $type
+     * @param array                                $data
+     * @param mixed                                $stack
+     * @param mixed                                $quantity
      *
      * @return bool
      */
@@ -565,11 +564,11 @@ class InventoryManager extends Service {
     /**
      * Debits an item from a user or character.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User $owner
-     * @param string                                                $type
-     * @param array                                                 $data
-     * @param \App\Models\Item\UserItem                             $stack
-     * @param mixed                                                 $quantity
+     * @param \App\Models\Character\Character|User $owner
+     * @param string                               $type
+     * @param array                                $data
+     * @param \App\Models\Item\UserItem            $stack
+     * @param mixed                                $quantity
      *
      * @return bool
      */
@@ -595,10 +594,10 @@ class InventoryManager extends Service {
     /**
      * Names an item stack.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User         $owner
-     * @param \App\Models\Character\CharacterItem|\App\Models\User\UserItem $stacks
-     * @param mixed                                                         $name
-     * @param mixed                                                         $user
+     * @param \App\Models\Character\Character|User $owner
+     * @param CharacterItem|UserItem               $stacks
+     * @param mixed                                $name
+     * @param mixed                                $user
      *
      * @return bool
      */
@@ -663,130 +662,165 @@ class InventoryManager extends Service {
         );
     }
 
-
     /**
      * quickstocks items between a user and shop.
      *
-     * @param  \App\Models\User\User|\App\Models\Shop\UserShop          $sender
-     * @param  \App\Models\User\User|\App\Models\Shop\UserShop          $recipient
-     * @param  \App\Models\User\UserItem|\App\Models\Shop\UserShopStock  $stacks
-     * @param  int                                                            $quantities
+     * @param \App\Models\Shop\UserShop|User $sender
+     * @param \App\Models\Shop\UserShop|User $recipient
+     * @param mixed                          $stack
+     * @param mixed                          $quantity
+     *
      * @return bool
      */
-    public function sendShop($sender, $recipient, $stack, $quantity)
-    {
+    public function sendShop($sender, $recipient, $stack, $quantity) {
         DB::beginTransaction();
 
         try {
-                if(!$stack) throw new \Exception("Invalid or no stack selected.");
-                if(!$recipient) throw new \Exception("Invalid recipient selected.");
-                if(!$sender) throw new \Exception("Invalid sender selected.");
+            if (!$stack) {
+                throw new \Exception('Invalid or no stack selected.');
+            }
+            if (!$recipient) {
+                throw new \Exception('Invalid recipient selected.');
+            }
+            if (!$sender) {
+                throw new \Exception('Invalid sender selected.');
+            }
 
-                if($recipient->logType == 'Shop' && $sender->logType == 'Shop') throw new \Exception("Cannot transfer items between shops.");
-                if($sender->logType == 'Shop' && $quantity <= 0 && $stack->count > 0) $quantity = $stack->count;
-                if($quantity <= 0) throw new \Exception("Invalid quantity entered.");
-                
-                if(($recipient->logType == 'Shop' && !$sender->hasPower('edit_inventories') && !Auth::user() == $recipient->user) || ($recipient->logType == 'User' && !Auth::user()->hasPower('edit_inventories') && !Auth::user() == $sender->user)) throw new \Exception("Cannot transfer items to/from a shop you don't own.");
-                
-                //streamlining and also adding a small failsafe in case transfer status gets changed to unsellable for any reason while an item is stocked
-                //items won't get trapped this way
-                if($recipient->logType == 'Shop' && !$stack->isTransferrable && !Auth::user()->hasPower('edit_inventories')) throw new \Exception("One of the selected items cannot be transferred.");
-                if($recipient->logType == 'Shop' && !$stack->item->canUserSell) throw new \Exception("This item cannot be sold in user shops."); 
-                
-                if($recipient->logType == 'Shop' && $stack->count < $quantity) throw new \Exception("Quantity to transfer exceeds item count."); 
+            if ($recipient->logType == 'Shop' && $sender->logType == 'Shop') {
+                throw new \Exception('Cannot transfer items between shops.');
+            }
+            if ($sender->logType == 'Shop' && $quantity <= 0 && $stack->count > 0) {
+                $quantity = $stack->count;
+            }
+            if ($quantity <= 0) {
+                throw new \Exception('Invalid quantity entered.');
+            }
 
-                if($recipient->logType == 'User' && $stack->quantity < $quantity) throw new \Exception("Quantity to transfer exceeds item count."); 
+            if (($recipient->logType == 'Shop' && !$sender->hasPower('edit_inventories') && !Auth::user() == $recipient->user) || ($recipient->logType == 'User' && !Auth::user()->hasPower('edit_inventories') && !Auth::user() == $sender->user)) {
+                throw new \Exception("Cannot transfer items to/from a shop you don't own.");
+            }
 
-                if(!$this->shopItem($sender, $recipient, $sender->logType == 'User' ? 'User → Shop Transfer' : 'Shop → User Transfer', $stack->data, $stack->item, $quantity)) throw new \Exception("Could not transfer item to shop.");
-                
-                if($sender->logType == 'Shop'){
-                    $stack->quantity -= $quantity;
-                    $stack->save();
-                    if($stack->quantity == 0) $stack->delete(); 
+            // streamlining and also adding a small failsafe in case transfer status gets changed to unsellable for any reason while an item is stocked
+            // items won't get trapped this way
+            if ($recipient->logType == 'Shop' && !$stack->isTransferrable && !Auth::user()->hasPower('edit_inventories')) {
+                throw new \Exception('One of the selected items cannot be transferred.');
+            }
+            if ($recipient->logType == 'Shop' && !$stack->item->canUserSell) {
+                throw new \Exception('This item cannot be sold in user shops.');
+            }
+
+            if ($recipient->logType == 'Shop' && $stack->count < $quantity) {
+                throw new \Exception('Quantity to transfer exceeds item count.');
+            }
+
+            if ($recipient->logType == 'User' && $stack->quantity < $quantity) {
+                throw new \Exception('Quantity to transfer exceeds item count.');
+            }
+
+            if (!$this->shopItem($sender, $recipient, $sender->logType == 'User' ? 'User → Shop Transfer' : 'Shop → User Transfer', $stack->data, $stack->item, $quantity)) {
+                throw new \Exception('Could not transfer item to shop.');
+            }
+
+            if ($sender->logType == 'Shop') {
+                $stack->quantity -= $quantity;
+                $stack->save();
+                if ($stack->quantity == 0) {
+                    $stack->delete();
                 }
-                else{
-                    $stack->count -= $quantity;
-                    $stack->save();
-                }
+            } else {
+                $stack->count -= $quantity;
+                $stack->save();
+            }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Credits an item to a user or shop.
      *
-     * @param  \App\Models\User\User|\App\Models\Shop\UserShop  $sender
-     * @param  \App\Models\User\User|\App\Models\Shop\UserShop  $recipient
-     * @param  string                                                 $type 
-     * @param  array                                                  $data
-     * @param  \App\Models\Item\Item                                  $item
-     * @param  int                                                    $quantity
+     * @param \App\Models\Shop\UserShop|User $sender
+     * @param \App\Models\Shop\UserShop|User $recipient
+     * @param string                         $type
+     * @param array                          $data
+     * @param Item                           $item
+     * @param int                            $quantity
+     *
      * @return bool
      */
-    public function shopItem($sender, $recipient, $type, $data, $item, $quantity)
-    {
+    public function shopItem($sender, $recipient, $type, $data, $item, $quantity) {
         DB::beginTransaction();
 
         try {
-            $data = ['data' => '', 'notes' => '']; //make back and forth data blank for both transfers because things get. wacky. 
-            $encoded_data = \json_encode($data); 
+            $data = ['data' => '', 'notes' => '']; // make back and forth data blank for both transfers because things get. wacky.
+            $encoded_data = \json_encode($data);
 
-            if($recipient->logType == 'User') {
+            if ($recipient->logType == 'User') {
                 $recipient_stack = UserItem::where([
                     ['user_id', '=', $recipient->id],
                     ['item_id', '=', $item->id],
-                    ['data', '=', $encoded_data]
+                    ['data', '=', $encoded_data],
                 ])->first();
-                
-                if(!$recipient_stack)
+
+                if (!$recipient_stack) {
                     $recipient_stack = UserItem::create(['user_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
+                }
                 $recipient_stack->count += $quantity;
                 $recipient_stack->save();
-            }
-            else {
+            } else {
                 $recipient_stack = UserShopStock::where([
                     ['user_shop_id', '=', $recipient->id],
                     ['item_id', '=', $item->id],
-                    ['data', '=', $encoded_data]
+                    ['data', '=', $encoded_data],
                 ])->first();
-                
-                if(!$recipient_stack)
+
+                if (!$recipient_stack) {
                     $recipient_stack = UserShopStock::create(['user_shop_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
+                }
                 $recipient_stack->quantity += $quantity;
                 $recipient_stack->save();
             }
-            if($type && !$this->createLog($sender ? $sender->id : null, $sender ? $sender->logType : null, $recipient ? $recipient->id : null, $recipient ? $recipient->logType : null, null, $type, $data['data'], $item->id, $quantity)) throw new \Exception("Failed to create log.");
+            if ($type && !$this->createLog($sender ? $sender->id : null, $sender ? $sender->logType : null, $recipient ? $recipient->id : null, $recipient ? $recipient->logType : null, null, $type, $data['data'], $item->id, $quantity)) {
+                throw new \Exception('Failed to create log.');
+            }
+
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
-     * quickstock items
+     * quickstock items.
      *
-     * @param  array                  $data
-     * @param  \App\Models\User\User  $user
-     * @param  bool                   $isClaim
+     * @param array $data
+     * @param User  $user
+     * @param mixed $recipient
+     *
      * @return mixed
      */
-    public function quickstockItems($data, $user, $recipient)
-    {
+    public function quickstockItems($data, $user, $recipient) {
         DB::beginTransaction();
 
         try {
-
-            if(isset($data['stack_id'])) {
-                foreach($data['stack_id'] as $stackId) {
+            if (isset($data['stack_id'])) {
+                foreach ($data['stack_id'] as $stackId) {
                     $stack = UserItem::with('item')->find($stackId);
-                    if(!$stack || $stack->user_id != $user->id) throw new \Exception("Invalid item selected.");
-                    if(!isset($data['stack_quantity'][$stackId])) throw new \Exception("Invalid quantity selected.");
-                    if(!$this->sendShop($user, $recipient, $stack, $data['stack_quantity'][$stackId])) throw new \Exception("Could not transfer item to shop.");
+                    if (!$stack || $stack->user_id != $user->id) {
+                        throw new \Exception('Invalid item selected.');
+                    }
+                    if (!isset($data['stack_quantity'][$stackId])) {
+                        throw new \Exception('Invalid quantity selected.');
+                    }
+                    if (!$this->sendShop($user, $recipient, $stack, $data['stack_quantity'][$stackId])) {
+                        throw new \Exception('Could not transfer item to shop.');
+                    }
                 }
             }
 
@@ -801,7 +835,7 @@ class InventoryManager extends Service {
     /**
      * Consolidates a user's item stacks.
      *
-     * @param \App\Models\User\User $user
+     * @param User $user
      *
      * @return bool
      */
@@ -861,9 +895,10 @@ class InventoryManager extends Service {
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 }

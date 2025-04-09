@@ -3,9 +3,6 @@
 namespace App\Models\Character;
 
 use App\Models\Model;
-use App\Models\Feature\FeatureCategory;
-use App\Models\Character\CharacterCategory;
-use App\Models\Character\CharacterImageSubtype;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
@@ -25,7 +22,7 @@ class CharacterImage extends Model {
         'extension', 'use_cropper', 'hash', 'fullsize_hash', 'fullsize_extension', 'sort',
         'x0', 'x1', 'y0', 'y1',
         'description', 'parsed_description',
-        'is_valid', 'transformation_id','transformation_info','transformation_description'
+        'is_valid', 'transformation_id', 'transformation_info', 'transformation_description',
     ];
 
     /**
@@ -99,8 +96,7 @@ class CharacterImage extends Model {
     /**
      * Get the subtype of the character image.
      */
-    public function subtypes()
-    {
+    public function subtypes() {
         return $this->hasMany(CharacterImageSubtype::class, 'character_image_id');
     }
 
@@ -287,8 +283,7 @@ class CharacterImage extends Model {
     /**
      * Displays the image's subtypes as an imploded string.
      */
-    public function displaySubtypes()
-    {
+    public function displaySubtypes() {
         if (!count($this->subtypes)) {
             return 'None';
         }
@@ -296,6 +291,7 @@ class CharacterImage extends Model {
         foreach ($this->subtypes as $subtype) {
             $subtypes[] = $subtype->subtype->displayName;
         }
+
         return implode(', ', $subtypes);
     }
 }

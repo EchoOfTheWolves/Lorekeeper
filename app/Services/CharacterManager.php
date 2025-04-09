@@ -13,13 +13,9 @@ use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterImageSubtype;
 use App\Models\Character\CharacterTransfer;
-use App\Models\Character\CharacterTransformation as Transformation;
-use App\Models\Currency\Currency;
-use App\Models\Feature\Feature;
-use App\Models\User\User;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
-use App\Models\Rarity;
+use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -76,11 +72,11 @@ class CharacterManager extends Service {
     /**
      * Creates a new character or MYO slot.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param bool                  $isMyo
+     * @param array $data
+     * @param User  $user
+     * @param bool  $isMyo
      *
-     * @return \App\Models\Character\Character|bool
+     * @return bool|Character
      */
     public function createCharacter($data, $user, $isMyo = false) {
         DB::beginTransaction();
@@ -101,16 +97,23 @@ class CharacterManager extends Service {
                     throw new \Exception('Characters require a rarity.');
                 }
             }
-            if(isset($data['subtype_ids']) && $data['subtype_ids'])
-            {
-                if(!(isset($data['species_id']) && $data['species_id'])) throw new \Exception('Species must be selected to select a subtype.');
-                foreach($data['subtype_ids'] as $subtypeId) {
-                    $subtype = Subtype::find($subtypeId);
-                    if(!$subtype || $subtype->species_id != $data['species_id']) throw new \Exception('Selected subtype invalid or does not match species.');
+            if (isset($data['subtype_ids']) && $data['subtype_ids']) {
+                if (!(isset($data['species_id']) && $data['species_id'])) {
+                    throw new \Exception('Species must be selected to select a subtype.');
                 }
+                foreach ($data['subtype_ids'] as $subtypeId) {
+                    $subtype = Subtype::find($subtypeId);
+                    if (!$subtype || $subtype->species_id != $data['species_id']) {
+                        throw new \Exception('Selected subtype invalid or does not match species.');
+                    }
+                }
+            } else {
+                $data['subtype_ids'] = null;
             }
-            else $data['subtype_ids'] = null;
-            if($isMyo) { $data['coowner_id'] = null; $data['coowner_url'] = null; }
+            if ($isMyo) {
+                $data['coowner_id'] = null;
+                $data['coowner_url'] = null;
+            }
 
             // Get owner info
             $url = null;
@@ -132,17 +135,19 @@ class CharacterManager extends Service {
             $courl = null;
             $corecipientId = null;
             $corecipient = null;
-            if(isset($data['coowner_id']) && $data['coowner_id']) $corecipient = User::find($data['coowner_id']);
-            elseif(isset($data['coowner_url']) && $data['coowner_url']) $corecipient = checkAlias($data['coowner_url']);
-    
-            if(is_object($corecipient)) {
+            if (isset($data['coowner_id']) && $data['coowner_id']) {
+                $corecipient = User::find($data['coowner_id']);
+            } elseif (isset($data['coowner_url']) && $data['coowner_url']) {
+                $corecipient = checkAlias($data['coowner_url']);
+            }
+
+            if (is_object($corecipient)) {
                 $corecipientId = $corecipient->id;
                 $data['coowner_id'] = $corecipient->id;
-            }
-            else {
+            } else {
                 $courl = $corecipient;
             }
-            /////////////////////////////////////////////
+            // ///////////////////////////////////////////
 
             // Create character
             $character = $this->handleCharacter($data, $isMyo);
@@ -188,16 +193,17 @@ class CharacterManager extends Service {
                 ));
             }
 
-            /////////////
-            if(is_object($corecipient) && $user->id != $corecipient->id) {
+            // ///////////
+            if (is_object($corecipient) && $user->id != $corecipient->id) {
                 Notifications::create($isMyo ? 'MYO_GRANT' : 'CHARACTER_UPLOAD', $corecipient, [
                     'character_url' => $character->url,
-                ] + ($isMyo ?
+                ] + (
+                    $isMyo ?
                     ['name' => $character->name] :
                     ['character_slug' => $character->slug]
                 ));
             }
-            ///////////
+            // /////////
             if (!$this->logAdminAction($user, 'Created Character', 'Created '.$character->displayName)) {
                 throw new \Exception('Failed to log admin action.');
             }
@@ -213,7 +219,7 @@ class CharacterManager extends Service {
     /**
      * Trims and optionally resizes and watermarks an image.
      *
-     * @param \App\Models\Character\CharacterImage $characterImage
+     * @param CharacterImage $characterImage
      */
     public function processImage($characterImage) {
         $imageProperties = getimagesize($characterImage->imagePath.'/'.$characterImage->imageFileName);
@@ -324,11 +330,11 @@ class CharacterManager extends Service {
 
                 $wmScale = config('lorekeeper.settings.watermark_percent');
 
-                //Assume Landscape by Default
+                // Assume Landscape by Default
                 $maxSize = $imageWidth * $wmScale;
 
                 if ($imageWidth > $imageHeight) {
-                    //Landscape
+                    // Landscape
                     $maxSize = $imageWidth * $wmScale;
                 } else {
                     // Portrait
@@ -336,7 +342,7 @@ class CharacterManager extends Service {
                 }
 
                 if ($wmWidth > $wmHeight) {
-                    //Landscape
+                    // Landscape
                     $watermark->resize($maxSize, null, function ($constraint) {
                         $constraint->aspectRatio();
                     });
@@ -357,9 +363,9 @@ class CharacterManager extends Service {
     /**
      * Crops a thumbnail for the given image.
      *
-     * @param array                                $points
-     * @param \App\Models\Character\CharacterImage $characterImage
-     * @param mixed                                $isMyo
+     * @param array          $points
+     * @param CharacterImage $characterImage
+     * @param mixed          $isMyo
      */
     public function cropThumbnail($points, $characterImage, $isMyo = false) {
         $imageProperties = getimagesize($characterImage->imagePath.'/'.$characterImage->imageFileName);
@@ -432,11 +438,11 @@ class CharacterManager extends Service {
 
                     $wmScale = config('lorekeeper.settings.watermark_percent');
 
-                    //Assume Landscape by Default
+                    // Assume Landscape by Default
                     $maxSize = $imageWidth * $wmScale;
 
                     if ($imageWidth > $imageHeight) {
-                        //Landscape
+                        // Landscape
                         $maxSize = $imageWidth * $wmScale;
                     } else {
                         // Portrait
@@ -444,7 +450,7 @@ class CharacterManager extends Service {
                     }
 
                     if ($wmWidth > $wmHeight) {
-                        //Landscape
+                        // Landscape
                         $watermark->resize($maxSize, null, function ($constraint) {
                             $constraint->aspectRatio();
                         });
@@ -559,11 +565,11 @@ class CharacterManager extends Service {
     /**
      * Creates a character image.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
      *
-     * @return \App\Models\Character\Character|bool
+     * @return bool|Character
      */
     public function createImage($data, $character, $user) {
         DB::beginTransaction();
@@ -577,15 +583,19 @@ class CharacterManager extends Service {
                     throw new \Exception('Characters require a rarity.');
                 }
             }
-            if(isset($data['subtype_ids']) && $data['subtype_ids'])
-            {
-                if(!(isset($data['species_id']) && $data['species_id'])) throw new \Exception('Species must be selected to select a subtype.');
-                foreach($data['subtype_ids'] as $subtypeId) {
-                    $subtype = Subtype::find($subtypeId);
-                    if(!$subtype || $subtype->species_id != $data['species_id']) throw new \Exception('Selected subtype invalid or does not match species.');
+            if (isset($data['subtype_ids']) && $data['subtype_ids']) {
+                if (!(isset($data['species_id']) && $data['species_id'])) {
+                    throw new \Exception('Species must be selected to select a subtype.');
                 }
+                foreach ($data['subtype_ids'] as $subtypeId) {
+                    $subtype = Subtype::find($subtypeId);
+                    if (!$subtype || $subtype->species_id != $data['species_id']) {
+                        throw new \Exception('Selected subtype invalid or does not match species.');
+                    }
+                }
+            } else {
+                $data['subtype_ids'] = null;
             }
-            else $data['subtype_ids'] = null;
 
             $data['is_visible'] = 1;
 
@@ -632,9 +642,9 @@ class CharacterManager extends Service {
     /**
      * Updates a character image.
      *
-     * @param array                                $data
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param array          $data
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -643,13 +653,15 @@ class CharacterManager extends Service {
 
         try {
             // Check that the subtype matches
-            if(isset($data['subtype_ids']) && $data['subtype_ids'])
-            {
-                if(!(isset($data['species_id']) && $data['species_id'])) throw new \Exception('Species must be selected to select a subtype.');
-                foreach($data['subtype_ids'] as $subtypeId)
-                {
+            if (isset($data['subtype_ids']) && $data['subtype_ids']) {
+                if (!(isset($data['species_id']) && $data['species_id'])) {
+                    throw new \Exception('Species must be selected to select a subtype.');
+                }
+                foreach ($data['subtype_ids'] as $subtypeId) {
                     $subtype = Subtype::find($subtypeId);
-                    if(!$subtype || $subtype->species_id != $image->species_id) throw new \Exception('Selected subtype invalid or does not match species.');
+                    if (!$subtype || $subtype->species_id != $image->species_id) {
+                        throw new \Exception('Selected subtype invalid or does not match species.');
+                    }
                 }
             }
 
@@ -679,13 +691,11 @@ class CharacterManager extends Service {
             $image->species_id = $data['species_id'];
             // SUBTYPES
             $image->subtypes()->delete();
-            if(isset($data['subtype_ids']) && $data['subtype_ids'])
-            {
-                foreach($data['subtype_ids'] as $subtypeId)
-                {
+            if (isset($data['subtype_ids']) && $data['subtype_ids']) {
+                foreach ($data['subtype_ids'] as $subtypeId) {
                     CharacterImageSubtype::create([
                         'character_image_id' => $image->id,
-                        'subtype_id' => $subtypeId
+                        'subtype_id'         => $subtypeId,
                     ]);
                 }
             }
@@ -723,9 +733,9 @@ class CharacterManager extends Service {
     /**
      * Updates image data.
      *
-     * @param array                                $data
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param array          $data
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -759,9 +769,9 @@ class CharacterManager extends Service {
     /**
      * Updates image credits.
      *
-     * @param array                                $data
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param array          $data
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -851,9 +861,9 @@ class CharacterManager extends Service {
     /**
      * Reuploads an image.
      *
-     * @param array                                $data
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param array          $data
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -919,9 +929,9 @@ class CharacterManager extends Service {
     /**
      * Deletes an image.
      *
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
-     * @param bool                                 $forceDelete
+     * @param CharacterImage $image
+     * @param User           $user
+     * @param bool           $forceDelete
      *
      * @return bool
      */
@@ -969,9 +979,9 @@ class CharacterManager extends Service {
     /**
      * Updates image settings.
      *
-     * @param array                                $data
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param array          $data
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -1006,8 +1016,8 @@ class CharacterManager extends Service {
     /**
      * Updates a character's active image.
      *
-     * @param \App\Models\Character\CharacterImage $image
-     * @param \App\Models\User\User                $user
+     * @param CharacterImage $image
+     * @param User           $user
      *
      * @return bool
      */
@@ -1044,9 +1054,9 @@ class CharacterManager extends Service {
     /**
      * Sorts a character's images.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param mixed                 $character
+     * @param array $data
+     * @param User  $user
+     * @param mixed $character
      *
      * @return bool
      */
@@ -1066,12 +1076,12 @@ class CharacterManager extends Service {
 
             $count = 0;
             foreach ($images as $image) {
-                //if($count == 1)
-                //{
+                // if($count == 1)
+                // {
                 //    // Set the first one as the active image
                 //    $image->character->image_id = $image->id;
                 //    $image->character->save();
-                //}
+                // }
                 $image->sort = $count;
                 $image->save();
                 $count++;
@@ -1092,8 +1102,8 @@ class CharacterManager extends Service {
     /**
      * Sorts a user's characters.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -1113,8 +1123,11 @@ class CharacterManager extends Service {
             $count = 0;
             foreach ($characters as $character) {
                 $character->sort = $count;
-                if($folders[$count] == 'None') $character->folder_id = null; 
-                else $character->folder_id = $folders[$count];
+                if ($folders[$count] == 'None') {
+                    $character->folder_id = null;
+                } else {
+                    $character->folder_id = $folders[$count];
+                }
                 $character->save();
                 $count++;
             }
@@ -1130,9 +1143,9 @@ class CharacterManager extends Service {
     /**
      * Updates a character's stats.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param mixed                 $character
+     * @param array $data
+     * @param User  $user
+     * @param mixed $character
      *
      * @return bool
      */
@@ -1235,9 +1248,9 @@ class CharacterManager extends Service {
     /**
      * Updates a character's description.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
      *
      * @return bool
      */
@@ -1271,9 +1284,9 @@ class CharacterManager extends Service {
     /**
      * Updates a character's settings.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
-     * @param mixed                 $character
+     * @param array $data
+     * @param User  $user
+     * @param mixed $character
      *
      * @return bool
      */
@@ -1305,10 +1318,10 @@ class CharacterManager extends Service {
     /**
      * Updates a character's profile.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
-     * @param bool                            $isAdmin
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
+     * @param bool      $isAdmin
      *
      * @return bool
      */
@@ -1392,8 +1405,8 @@ class CharacterManager extends Service {
     /**
      * Deletes a character.
      *
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param Character $character
+     * @param User      $user
      *
      * @return bool
      */
@@ -1444,9 +1457,9 @@ class CharacterManager extends Service {
     /**
      * Creates a character transfer.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
      *
      * @return bool
      */
@@ -1520,9 +1533,9 @@ class CharacterManager extends Service {
     /**
      * Forces an admin transfer of a character.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
      *
      * @return bool
      */
@@ -1602,8 +1615,8 @@ class CharacterManager extends Service {
     /**
      * Processes a character transfer.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -1623,7 +1636,7 @@ class CharacterManager extends Service {
 
                 // Process the character move if the transfer has already been approved
                 if ($transfer->is_approved) {
-                    //check the cooldown saved
+                    // check the cooldown saved
                     if (isset($transfer->data['cooldown'])) {
                         $cooldown = $transfer->data['cooldown'];
                     }
@@ -1670,8 +1683,8 @@ class CharacterManager extends Service {
     /**
      * Cancels a character transfer.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -1706,8 +1719,8 @@ class CharacterManager extends Service {
     /**
      * Processes a character transfer in the approvals queue.
      *
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -1802,18 +1815,17 @@ class CharacterManager extends Service {
     /**
      * Moves a character from one user to another.
      *
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $recipient
-     * @param string                          $data
-     * @param int                             $cooldown
-     * @param string                          $logType
+     * @param Character $character
+     * @param User      $recipient
+     * @param string    $data
+     * @param int       $cooldown
+     * @param string    $logType
      */
-    public function moveCharacter($character, $recipient, $data, $cooldown = -1, $logType = null)
-    {   
-        if($character->folder_id) {
+    public function moveCharacter($character, $recipient, $data, $cooldown = -1, $logType = null) {
+        if ($character->folder_id) {
             $character->folder_id = null;
             $character->save();
-        } 
+        }
         $sender = $character->user;
         if (!$sender) {
             $sender = $character->owner_url;
@@ -1831,20 +1843,17 @@ class CharacterManager extends Service {
             $recipient->settings->save();
         }
 
-        //Notify any co-owners
-        if($character->coowner_id)
-        {
+        // Notify any co-owners
+        if ($character->coowner_id) {
             $coOwner = $character->coowner;
-            if(is_object($recipient) && $coOwner->id == $recipient->id)
-            {
+            if (is_object($recipient) && $coOwner->id == $recipient->id) {
                 $character->coowner_id = null;
                 $character->coowner_url = null;
                 $character->save();
-            }
-            else {
+            } else {
                 Notifications::create('COOWNER_OWNER_UPDATE', $coOwner, [
                     'character_url' => $character->displayName,
-                    'recipient' => is_object($recipient) ? $recipient->displayName : prettyProfileName($recipient),
+                    'recipient'     => is_object($recipient) ? $recipient->displayName : prettyProfileName($recipient),
                 ]);
             }
         }
@@ -1908,12 +1917,117 @@ class CharacterManager extends Service {
     }
 
     /**
+     * CO-OWNER STUFF.
+     *
+     * @param mixed $character
+     * @param mixed $data
+     * @param mixed $user
+     */
+    public function updateCoOwner($character, $data, $user) {
+        // VALIDATION /////////
+        if ($character->isMyo) {
+            throw new \Exception('Cannot have a co-owner on a MYO');
+        }
+
+        // old co owner
+        $oldOwner = null;
+        if (isset($character->coowner_url)) {
+            $oldOwner = prettyProfileLink($character->coowner_url);
+        } elseif (isset($character->coowner_id)) {
+            $oldOwner = $character->coowner->displayName;
+        } else {
+            $oldOwner = 'None.';
+        }
+        //
+
+        // if there was no co-owner before
+        if (!isset($data['coowner_id']) && !isset($data['coowner_url'])) {
+            if ($character->coowner_id || $character->coowner_url) {
+                $character->coowner_id = null;
+                $character->coowner_url = null;
+                $character->save();
+
+                $this->createLog($user->id, null, null, null, $character->id, 'Character Co-owner Removed', 'Co-owner removed. Old co-owner: '.$oldOwner, 'character', true, null, null);
+            }
+        }
+        // if there was
+        else {
+            if (isset($data['coowner_id'])) {
+                if ($character->user_id == $data['coowner_id']) {
+                    throw new \Exception('You cannot set the owner as the co-owner.');
+                }
+                if (isset($character->coowner_id)) {
+                    if ($character->coowner_id == $data['coowner_id']) {
+                        throw new \Exception('This user is already a co-owner.');
+                    }
+                }
+            }
+
+            if (isset($data['coowner_url'])) {
+                if ($character->owner_url == $data['coowner_url']) {
+                    throw new \Exception('You cannot set the owner as the co-owner.');
+                }
+                if (isset($character->coowner_url)) {
+                    if ($character->coowner_url == $data['coowner_url']) {
+                        throw new \Exception('This user is already a co-owner.');
+                    }
+                }
+            }
+            // ///////////////////
+
+            if (isset($data['coowner_url'])) {
+                if ($character->owner_url == $data['coowner_url']) {
+                    throw new \Exception('You cannot set the owner as the co-owner.');
+                }
+            }
+
+            // new co owner
+            $courl = null;
+            $corecipientId = null;
+            if (isset($data['coowner_id']) && $data['coowner_id']) {
+                $corecipient = User::find($data['coowner_id']);
+            } elseif (isset($data['coowner_url']) && $data['coowner_url']) {
+                $corecipient = checkAlias($data['coowner_url']);
+            }
+
+            if (is_object($corecipient)) {
+                $corecipientId = $corecipient->id;
+                $data['coowner_id'] = $corecipient->id;
+            } else {
+                $courl = $corecipient;
+            }
+
+            if (is_object($corecipient) && $character->user_id != $corecipient->id) {
+                Notifications::create('COOWNER_UPDATE', $corecipient, [
+                    'character_url' => $character->displayName,
+                    'user_url'      => $user->url,
+                    'user'          => $user->displayname,
+                ]);
+
+                $character->coowner_id = $corecipientId;
+                $character->save();
+            } else {
+                $character->coowner_url = $courl;
+                $character->save();
+            }
+
+            if ($character->coowner_id) {
+                $new = $character->coowner->displayName;
+            } else {
+                $new = prettyProfileLink($character->coowner_url);
+            }
+
+            $this->createLog($user->id, null, null, null, $character->id, 'Character Co-Owner Updated', 'Co-owner edited. Old co-owner: '.$oldOwner.' New co-owner: '.$new.'.', 'character', true, null, null);
+        }
+    }
+
+    /**
      * Handles character data.
      *
      * @param array $data
      * @param bool  $isMyo
      *
-     * @return \App\Models\Character\Character|bool
+     * @return bool|Character
      */
     private function handleCharacter($data, $isMyo = false) {
         try {
@@ -1971,8 +2085,8 @@ class CharacterManager extends Service {
      * @param bool  $isMyo
      * @param mixed $character
      *
-     * @return \App\Models\Character\Character           $character
-     * @return \App\Models\Character\CharacterImage|bool
+     * @return Character           $character
+     * @return bool|CharacterImage
      */
     private function handleCharacterImage($data, $character, $isMyo = false) {
         try {
@@ -1983,7 +2097,6 @@ class CharacterManager extends Service {
                 $data['transformation_id'] = isset($data['transformation_id']) && $data['transformation_id'] ? $data['transformation_id'] : null;
                 $data['transformation_info'] = isset($data['transformation_info']) && $data['transformation_info'] ? $data['transformation_info'] : null;
                 $data['transformation_description'] = isset($data['transformation_description']) && $data['transformation_description'] ? $data['transformation_description'] : null;
-                
 
                 // Use default images for MYO slots without an image provided
                 if (!isset($data['image'])) {
@@ -2015,12 +2128,11 @@ class CharacterManager extends Service {
             $image = CharacterImage::create($imageData);
 
             // create subtype relations
-            if($data['subtype_ids'])
-            {
-                foreach($data['subtype_ids'] as $subtypeId) {
+            if ($data['subtype_ids']) {
+                foreach ($data['subtype_ids'] as $subtypeId) {
                     CharacterImageSubtype::create([
                         'character_image_id' => $image->id,
-                        'subtype_id' => $subtypeId
+                        'subtype_id'         => $subtypeId,
                     ]);
                 }
             }
@@ -2115,7 +2227,7 @@ class CharacterManager extends Service {
     /**
      * Generates a list of features for displaying.
      *
-     * @param \App\Models\Character\CharacterImage $image
+     * @param CharacterImage $image
      *
      * @return string
      */
@@ -2131,7 +2243,7 @@ class CharacterManager extends Service {
     /**
      * Generates a list of image credits for displaying.
      *
-     * @param \App\Models\Character\CharacterImage $image
+     * @param CharacterImage $image
      *
      * @return string
      */
@@ -2145,101 +2257,5 @@ class CharacterManager extends Service {
         }
 
         return $result;
-    }
-
-    /**
-     * 
-     * CO-OWNER STUFF   
-     * 
-     */
-    public function updateCoOwner($character, $data, $user)
-    {
-        // VALIDATION /////////
-        if($character->isMyo) throw new \Exception('Cannot have a co-owner on a MYO');
-
-            // old co owner
-            $oldOwner = null;
-            if(isset($character->coowner_url))
-            {
-                $oldOwner = prettyProfileLink($character->coowner_url); 
-            }
-            elseif(isset($character->coowner_id))
-            {
-                $oldOwner = $character->coowner->displayName;
-            }
-            else { $oldOwner = 'None.'; }
-            //
-
-        // if there was no co-owner before
-        if(!isset($data['coowner_id']) && !isset($data['coowner_url']))
-        {
-            if($character->coowner_id || $character->coowner_url)
-            {
-                $character->coowner_id = null;
-                $character->coowner_url = null;
-                $character->save();
-
-                $this->createLog($user->id, null, null, null, $character->id, 'Character Co-owner Removed', 'Co-owner removed. Old co-owner: ' . $oldOwner, 'character', true, null, null);
-        
-            }
-        }
-        // if there was
-        else {
-
-            if(isset($data['coowner_id'])) 
-            { 
-                if($character->user_id == $data['coowner_id']) throw new \Exception('You cannot set the owner as the co-owner.'); 
-                if(isset($character->coowner_id))
-                {
-                    if($character->coowner_id == $data['coowner_id']) throw new \Exception('This user is already a co-owner.'); 
-                }
-            }
-
-            if(isset($data['coowner_url'])) 
-            { 
-                if($character->owner_url == $data['coowner_url']) throw new \Exception('You cannot set the owner as the co-owner.'); 
-                if(isset($character->coowner_url))
-                {
-                    if($character->coowner_url == $data['coowner_url']) throw new \Exception('This user is already a co-owner.'); 
-                }
-            }
-            /////////////////////
-
-            if(isset($data['coowner_url'])) { if($character->owner_url == $data['coowner_url']) { throw new \Exception('You cannot set the owner as the co-owner.'); } }
-
-            // new co owner
-            $courl = null;
-            $corecipientId = null;
-            if(isset($data['coowner_id']) && $data['coowner_id']) $corecipient = User::find($data['coowner_id']);
-            elseif(isset($data['coowner_url']) && $data['coowner_url']) $corecipient = checkAlias($data['coowner_url']);
-
-            if(is_object($corecipient)) {
-                $corecipientId = $corecipient->id;
-                $data['coowner_id'] = $corecipient->id;
-            }
-            else {
-                $courl = $corecipient;
-            }
-
-            if(is_object($corecipient) && $character->user_id != $corecipient->id) {
-                Notifications::create('COOWNER_UPDATE', $corecipient, [
-                    'character_url' => $character->displayName,
-                    'user_url' => $user->url,
-                    'user' => $user->displayname
-                ]);
-
-                $character->coowner_id = $corecipientId;
-                $character->save();
-            }
-            else {
-                $character->coowner_url = $courl;
-                $character->save();
-            }
-
-            if($character->coowner_id)  { $new =  $character->coowner->displayName; }
-            else { $new = prettyProfileLink($character->coowner_url); }
-
-            $this->createLog($user->id, null, null, null, $character->id, 'Character Co-Owner Updated', 'Co-owner edited. Old co-owner: ' . $oldOwner . ' New co-owner: ' . $new . '.', 'character', true, null, null);
-        }
     }
 }

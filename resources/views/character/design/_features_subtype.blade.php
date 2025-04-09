@@ -1,1 +1,1 @@
-{!! Form::select('subtype_id', $subtypes, $subtype, ['class' => 'form-control', 'id' => 'subtype']) !!}
+{!! Form::select('subtype_ids[]', $subtypes, $subtype, ['class' => 'form-control', 'id' => 'subtype', 'multiple', 'placeholder' => 'Select Subtypes']) !!}

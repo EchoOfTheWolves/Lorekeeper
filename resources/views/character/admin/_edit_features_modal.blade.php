@@ -6,7 +6,7 @@
 
 <div class="form-group" id="subtypes">
     {!! Form::label('Subtypes (Optional)') !!}
-    {!! Form::select('subtype_ids[]', $subtypes, $image->subtypes()->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple']) !!}
+    {!! Form::select('subtype_ids[]', $subtypes, $image->subtypes()->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple', 'placeholder' => 'Select Subtypes']) !!}
 </div>
 
 <hr>
@@ -48,11 +48,13 @@
     {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
 </div>
 {!! Form::close() !!}
+
 <div class="feature-row hide mb-2">
     {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait']) !!}
     {!! Form::text('feature_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
     <a href="#" class="remove-feature btn btn-danger mb-2">×</a>
 </div>
+
 <script>
     $(document).ready(function() {
         @if (config('lorekeeper.extensions.organised_traits_dropdown'))
@@ -117,10 +119,6 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert("AJAX call failed: " + textStatus + ", " + errorThrown);
         });
-
-        $( "#subtype" ).selectize({
-            maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
-        });
     });
     
     function refreshSubtype() {
@@ -132,6 +130,9 @@
             dataType: "text"
         }).done(function(res) {
             $("#subtypes").html(res);
+            $("#subtype").selectize({
+                maxItems: {{ config('lorekeeper.extensions.multiple_subtype_limit') }},
+            });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert("AJAX call failed: " + textStatus + ", " + errorThrown);
         });

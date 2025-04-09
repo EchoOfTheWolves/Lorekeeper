@@ -10,7 +10,8 @@
     @include('character.design._header', ['request' => $request])
 
     <h2>
-        Traits</h2>
+        Traits
+    </h2>
 
     @if ($request->status == 'Draft' && $request->user_id == Auth::user()->id)
         <p>Select the traits for the {{ $request->character->is_myo_slot ? 'created' : 'updated' }} character. @if ($request->character->is_myo_slot)
@@ -33,7 +34,7 @@
                 <div class="alert alert-secondary">{!! $request->character->image->displaySubtypes() !!}</div>
             @else
                 <div id="subtypes">
-                    {!! Form::select('subtype_ids[]', $subtypes, $request->subtypes(), ['class' => 'form-control', 'id' => 'subtype', 'multiple']) !!}
+                    {!! Form::select('subtype_ids[]', $subtypes, $request->subtypes(), ['class' => 'form-control', 'id' => 'subtype', 'multiple', 'placeholder' => 'Select Subtypes']) !!}
                 </div>
             @endif
         </div>
@@ -206,6 +207,9 @@
                 dataType: "text"
             }).done(function(res) {
                 $("#subtypes").html(res);
+                $("#subtype").selectize({
+                    maxItems: {{ config('lorekeeper.extensions.multiple_subtype_limit') }},
+                });
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });

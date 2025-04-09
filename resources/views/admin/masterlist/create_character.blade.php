@@ -321,7 +321,7 @@
             }).done(function(res) {
                 $("#subtypes").html(res);
                 $("#subtype").selectize({
-                    maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+                    maxItems: {{ config('lorekeeper.extensions.multiple_subtype_limit') }},
                 });
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
@@ -339,7 +339,7 @@
 
         $(document).ready(function() {
             $("#subtype").selectize({
-                maxItems: config('lorekeeper.extensions.multiple_subtype_limit'),
+                maxItems: {{ config('lorekeeper.extensions.multiple_subtype_limit') }},
             });
         });
     </script>

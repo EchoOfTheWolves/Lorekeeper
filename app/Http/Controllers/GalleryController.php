@@ -418,7 +418,7 @@ class GalleryController extends Controller {
         $id ? $request->validate(GallerySubmission::$updateRules) : $request->validate(GallerySubmission::$createRules);
         $data = $request->only(['image', 'text', 'title', 'description', 'slug', 'collaborator_id', 'collaborator_data', 'participant_id', 'participant_type', 'gallery_id', 'alert_user', 'prompt_id', 'content_warning', 'criterion']);
 
-        if (!$id && Settings::get('gallery_submissions_reward_currency')) {
+        if (!$id && $request->only(['criterion'])) {
             $currencyFormData = $request->only(['criterion']);
         } else {
             $currencyFormData = null;

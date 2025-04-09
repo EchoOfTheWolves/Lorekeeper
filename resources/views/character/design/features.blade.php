@@ -30,7 +30,7 @@
 
         <div class="form-group">
             {!! Form::label('subtype_ids', 'Species Subtype(s)') !!}
-            @if($request->character->is_myo_slot && count($request->character->image->subtypes))
+            @if ($request->character->is_myo_slot && count($request->character->image->subtypes))
                 <div class="alert alert-secondary">{!! $request->character->image->displaySubtypes() !!}</div>
             @else
                 <div id="subtypes">
@@ -114,49 +114,51 @@
                 </div>
                 <div class="col-md-10 col-8">{!! $request->species ? $request->species->displayName : 'None Selected' !!}</div>
             </div>
-        @if($request->subtype_ids || count($request->character->image->subtypes))
-            <div class="row">
-                <div class="col-md-2 col-4"><h5>Subtype(s)</h5></div>
-                <div class="col-md-10 col-8">
-                    @if($request->subtype_ids)
-                        {!! $request->subtype_ids ? $request->displaySubtypes() : 'None Selected' !!}
-                    @else
-                        {!! $request->character->image->displaySubtypes() ?? 'None Selected' !!}
-                    @endif
+            @if ($request->subtype_ids || count($request->character->image->subtypes))
+                <div class="row">
+                    <div class="col-md-2 col-4">
+                        <h5>Subtype(s)</h5>
+                    </div>
+                    <div class="col-md-10 col-8">
+                        @if ($request->subtype_ids)
+                            {!! $request->subtype_ids ? $request->displaySubtypes() : 'None Selected' !!}
+                        @else
+                            {!! $request->character->image->displaySubtypes() ?? 'None Selected' !!}
+                        @endif
+                    </div>
                 </div>
-            </div>
-        @endif
-        @if ($request->transformation_id)
-            <div class="row">
-                <div class="col-md-2 col-4">
-                    <h5>{{ ucfirst(__('transformations.transformation')) }}</h5>
-                </div>
-                <div class="col-md-10 col-8">
-                    @if ($request->character->is_myo_slot && $request->character->image->transformation_id)
-                        {!! $request->character->image->transformation->displayName !!}
-                    @else
-                        {!! $request->transformation_id ? $request->transformation->displayName : 'None Selected' !!}
-                    @endif
-                </div>
-                <div class="col-md-2 col-4">
-                    <strong>Tab Info</strong>
-                </div>
-                <div class="col-md-10 col-8">
-                    @if ($request->character->is_myo_slot && $request->character->image->transformation_info)
-                        {{ $request->character->image->transformation_info }}
-                    @else
-                        {!! $request->transformation_info ? $request->transformation_info : 'No tab info given.' !!}
-                    @endif
-                </div>
-                <div class="col-md-2 col-4">
-                    <strong>Description</strong>
-                </div>
-                <div class="col-md-10 col-8">
-                    @if ($request->character->is_myo_slot && $request->character->image->transformation_description)
-                        {{ $request->character->image->transformation_description }}
-                    @else
-                        {!! $request->transformation_description ? $request->transformation_description : 'No description given.' !!}
-                    @endif
+            @endif
+            @if ($request->transformation_id)
+                <div class="row">
+                    <div class="col-md-2 col-4">
+                        <h5>{{ ucfirst(__('transformations.transformation')) }}</h5>
+                    </div>
+                    <div class="col-md-10 col-8">
+                        @if ($request->character->is_myo_slot && $request->character->image->transformation_id)
+                            {!! $request->character->image->transformation->displayName !!}
+                        @else
+                            {!! $request->transformation_id ? $request->transformation->displayName : 'None Selected' !!}
+                        @endif
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <strong>Tab Info</strong>
+                    </div>
+                    <div class="col-md-10 col-8">
+                        @if ($request->character->is_myo_slot && $request->character->image->transformation_info)
+                            {{ $request->character->image->transformation_info }}
+                        @else
+                            {!! $request->transformation_info ? $request->transformation_info : 'No tab info given.' !!}
+                        @endif
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <strong>Description</strong>
+                    </div>
+                    <div class="col-md-10 col-8">
+                        @if ($request->character->is_myo_slot && $request->character->image->transformation_description)
+                            {{ $request->character->image->transformation_description }}
+                        @else
+                            {!! $request->transformation_description ? $request->transformation_description : 'No description given.' !!}
+                        @endif
                     </div>
                 </div>
             @endif

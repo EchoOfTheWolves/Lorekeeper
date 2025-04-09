@@ -13,23 +13,23 @@
                 $('#main-tab').find('[data-toggle="toggle"]').bootstrapToggle();
                 $('.reupload-image').on('click', function(e) {
                     e.preventDefault();
-                    loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/reupload", 'Reupload Image');
+                    loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/reupload", 'Reupload Image');
                 });
                 $('.active-image').on('click', function(e) {
                     e.preventDefault();
-                    loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/active", 'Set Active');
+                    loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/active", 'Set Active');
                 });
                 $('.delete-image').on('click', function(e) {
                     e.preventDefault();
-                    loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/delete", 'Delete Image');
+                    loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/delete", 'Delete Image');
                 });
                 $('.edit-features').on('click', function(e) {
                     e.preventDefault();
-                    loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/traits", 'Edit Traits');
+                    loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/traits", 'Edit Traits');
                 });
                 $('.edit-notes').on('click', function(e) {
                     e.preventDefault();
-                    $( "div.imagenoteseditingparse" ).load("{{ url('admin/character/image') }}/"+$(this).data('id')+"/notes", function() {
+                    $("div.imagenoteseditingparse").load("{{ url('admin/character/image') }}/" + $(this).data('id') + "/notes", function() {
                         tinymce.init({
                             selector: '.imagenoteseditingparse .wysiwyg',
                             height: 500,
@@ -49,11 +49,11 @@
                             target_list: false
                         });
                     });
-                    $( ".edit-notes" ).remove();
+                    $(".edit-notes").remove();
                 });
                 $('.edit-credits').on('click', function(e) {
                     e.preventDefault();
-                    loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/credits", 'Edit Image Credits');
+                    loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/credits", 'Edit Image Credits');
                 });
                 $("#main-tab").fadeIn(500);
             });

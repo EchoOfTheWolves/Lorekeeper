@@ -32,7 +32,7 @@
 
     {!! Form::open(['url' => 'characters/sort', 'class' => 'text-right']) !!}
     <div id="sortable" class="row sortable">
-        @foreach($characters as $character)
+        @foreach ($characters as $character)
             <div class="col-md-3 col-6 text-center mb-2" data-id="{{ $character->id }}">
                 <div>
                     <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
@@ -45,7 +45,6 @@
                     {!! Form::select('folder_ids[]', $folders, $character->folder_id, ['class' => 'form-control']) !!}
                 </div>
             </div>
-
         @endforeach
     </div>
 
@@ -55,25 +54,25 @@
 @endsection
 @section('scripts')
     <script>
-        $( document ).ready(function() {
-            $('.create-folder').click(function(e){
+        $(document).ready(function() {
+            $('.create-folder').click(function(e) {
                 e.preventDefault();
                 loadModal("{{ url('/characters/folder/create') }}", "Create New Folder");
             });
 
-            $('.edit-folder').click(function(e){
+            $('.edit-folder').click(function(e) {
                 e.preventDefault();
                 $('#folders').collapse('toggle');
             });
 
-            $('.edit-get-button').click(function(e){
+            $('.edit-get-button').click(function(e) {
                 e.preventDefault();
                 var folder_id = $('#folders select').val();
                 var url = "{{ url('/characters/folder/edit') }}/" + folder_id;
                 loadModal(url, "Edit Folder");
             });
 
-            $( "#sortable" ).sortable({
+            $("#sortable").sortable({
                 characters: '.sort-item',
                 placeholder: "sortable-placeholder col-md-3 col-6",
                 stop: function(event, ui) {

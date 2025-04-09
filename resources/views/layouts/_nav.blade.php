@@ -116,8 +116,8 @@
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
                         </a>
-                        @if(Auth::check())
-                            @if(Auth::user()->shops()->count() && Settings::get('user_shop_limit') == 1)
+                        @if (Auth::check())
+                            @if (Auth::user()->shops()->count() && Settings::get('user_shop_limit') == 1)
                                 <a class="dropdown-item" href="{{ url(Auth::user()->shops()->first()->editUrl) }}">
                                     My Shop
                                 </a>
@@ -129,8 +129,8 @@
                         @endif
                         <a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">
                             All User Shops
-</a>
-                       
+                        </a>
+
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -138,12 +138,12 @@
                         Games
                     </a>
                     <div class="dropdown-menu" aria-labelledby="gameDropdown">
-                    <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
-                        {{__('dailies.dailies')}}
+                        <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
+                            {{ __('dailies.dailies') }}
                         </a>
-                    <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
+                        <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
                             Higher or Lower
-                        </a>    
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item">

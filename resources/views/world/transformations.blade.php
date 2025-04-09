@@ -1,12 +1,12 @@
 @extends('world.layout')
 
 @section('title')
-{{ucfirst(__('transformations.transformations'))}}
+    {{ ucfirst(__('transformations.transformations')) }}
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['World' => 'world', ucfirst(__('transformations.transformations')) => 'world/'.__('transformations.transformations')]) !!}
-    <h1>{{ucfirst(__('transformations.transformations'))}}</h1>
+    {!! breadcrumbs(['World' => 'world', ucfirst(__('transformations.transformations')) => 'world/' . __('transformations.transformations')]) !!}
+    <h1>{{ ucfirst(__('transformations.transformations')) }}</h1>
 
     <div>
         {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}

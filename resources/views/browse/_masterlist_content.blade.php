@@ -25,21 +25,21 @@
                     </div>
                     <div class="col-md-6">
                         <div class="masterlist-search-field">
-                        {!! Form::label('subtype_ids[]', 'Species Subtype: ') !!} 
-                            {!! add_help('Search for characters that have <strong>' . (config('lorekeeper.extensions.exclusionary_search') ? 'all' : 'any' ) .'</strong> of the selected subtypes.') !!}
+                            {!! Form::label('subtype_ids[]', 'Species Subtype: ') !!}
+                            {!! add_help('Search for characters that have <strong>' . (config('lorekeeper.extensions.exclusionary_search') ? 'all' : 'any') . '</strong> of the selected subtypes.') !!}
                             {!! Form::select('subtype_ids[]', $subtypes, Request::get('subtype_ids'), ['class' => 'form-control userselectize', 'multiple']) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="masterlist-search-field">
-                            {!! Form::label('transformation_id', ucfirst(__('transformations.transformation')).': ') !!}
+                            {!! Form::label('transformation_id', ucfirst(__('transformations.transformation')) . ': ') !!}
                             {!! Form::select('transformation_id', $transformations, Request::get('transformation_id'), ['class' => 'form-control']) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="masterlist-search-field">
-                            {!! Form::label('has_transformation', 'Has a '.ucfirst(__('transformations.transformation')).': ') !!}
-                            {!! Form::select('has_transformation', ['1' => 'Has a '.__('transformations.transformation').'.'], Request::get('has_transformation'), ['class' => 'form-control', 'placeholder' => 'Any']) !!}
+                            {!! Form::label('has_transformation', 'Has a ' . ucfirst(__('transformations.transformation')) . ': ') !!}
+                            {!! Form::select('has_transformation', ['1' => 'Has a ' . __('transformations.transformation') . '.'], Request::get('has_transformation'), ['class' => 'form-control', 'placeholder' => 'Any']) !!}
                         </div>
                     </div>
                 </div>

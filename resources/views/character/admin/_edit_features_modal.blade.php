@@ -6,7 +6,12 @@
 
 <div class="form-group" id="subtypes">
     {!! Form::label('Subtypes (Optional)') !!}
-    {!! Form::select('subtype_ids[]', $subtypes, $image->subtypes()->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple', 'placeholder' => 'Select Subtypes']) !!}
+    {!! Form::select(
+        'subtype_ids[]',
+        $subtypes,
+        $image->subtypes()->pluck('subtype_id')->toArray(),
+        ['class' => 'form-control', 'id' => 'subtype', 'multiple', 'placeholder' => 'Select Subtypes'],
+    ) !!}
 </div>
 
 <hr>
@@ -120,7 +125,7 @@
             alert("AJAX call failed: " + textStatus + ", " + errorThrown);
         });
     });
-    
+
     function refreshSubtype() {
         var species = $('#species').val();
         var id = '<?php echo $image->id; ?>';

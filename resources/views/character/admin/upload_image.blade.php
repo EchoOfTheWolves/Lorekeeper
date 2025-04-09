@@ -110,7 +110,14 @@
 
     <div class="form-group" id="subtypes">
         {!! Form::label('Subtypes (Optional)') !!}
-        {!! Form::select('subtype_ids[]', $subtypes, old('subtype_ids') ? : $character->image->subtypes()?->pluck('subtype_id')->toArray(), ['class' => 'form-control', 'id' => 'subtype', 'multiple']) !!}
+        {!! Form::select(
+            'subtype_ids[]',
+            $subtypes,
+            old('subtype_ids') ?:
+            $character->image->subtypes()
+                ?->pluck('subtype_id')->toArray(),
+            ['class' => 'form-control', 'id' => 'subtype', 'multiple'],
+        ) !!}
     </div>
 
     <hr>
@@ -159,7 +166,7 @@
         {!! Form::submit('Create Image', ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
-    
+
     <div class="designer-row hide mb-2">
         {!! Form::select('designer_id[]', $users, null, ['class' => 'form-control mr-2 designer-select', 'placeholder' => 'Select a Designer']) !!}
         {!! Form::text('designer_url[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Designer URL']) !!}
@@ -338,9 +345,9 @@
 
         });
 
-        $( "#species" ).change(function() {
+        $("#species").change(function() {
             var species = $('#species').val();
-            var id = '<?php echo($character->image->id); ?>';
+            var id = '<?php echo $character->image->id; ?>';
             $.ajax({
                 type: "GET",
                 url: "{{ url('admin/character/image/subtype') }}?species=" + species + "&id=" + id,

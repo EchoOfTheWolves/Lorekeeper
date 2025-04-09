@@ -58,9 +58,7 @@
                 @if ($shop->has_image)
                     <div class="shop-image container">
                         <a href="{{ $shop->url }}">
-                            <img src="{{ $shop->shopImageUrl }}"
-                                style="max-width: 200px !important; max-height: 200px !important;"
-                                alt="{{ $shop->name }}" />
+                            <img src="{{ $shop->shopImageUrl }}" style="max-width: 200px !important; max-height: 200px !important;" alt="{{ $shop->name }}" />
                         </a>
                     </div>
                 @endif
@@ -69,7 +67,7 @@
                     Owned by <a href="{{ $shop->user->url }}">{!! $shop->user->displayName !!}</a>
                 </div>
                 <div class="shop-name mt-1">
-                   <strong>Stock</strong>: {{ $shop->visibleStock->count() }}
+                    <strong>Stock</strong>: {{ $shop->visibleStock->count() }}
                 </div>
             </div>
         @endforeach

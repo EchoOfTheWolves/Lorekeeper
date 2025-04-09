@@ -95,9 +95,9 @@
                                     </p>
                                 @endif
                                 {!! $description !!}
-                                @if($item->canUserSell)
+                                @if ($item->canUserSell)
                                     <div class="text-right mb-4">
-                                        <a class="btn btn-secondary " href="{{ url('user-shops/item-search?item_ids='.$item->id) }}"><i class="fas fa-shopping-cart mr-2"></i>User Shops</a>
+                                        <a class="btn btn-secondary " href="{{ url('user-shops/item-search?item_ids=' . $item->id) }}"><i class="fas fa-shopping-cart mr-2"></i>User Shops</a>
                                     </div>
                                 @endif
                                 @if (((isset($item->uses) && $item->uses) || (isset($item->source) && $item->source) || $item->shop_stock_count || (isset($item->data['prompts']) && $item->data['prompts'])) && config('lorekeeper.extensions.item_entry_expansion.extra_fields'))

@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-lg-8 col-7 pl-1">{!! $image->species_id ? $image->species->displayName : 'None' !!}</div>
                 </div>
-                @if(count($image->subtypes))
+                @if (count($image->subtypes))
                     <div class="row no-gutters">
                         <div class="col-lg-4 col-5">
                             <h5>Subtype{{ count($image->subtypes) > 1 ? 's' : '' }}</h5>
@@ -61,7 +61,9 @@
                             <a href="{{ $image->transformation->url }}">
                                 {!! $image->transformation->displayName !!}
                             </a>
-                            @if($image->transformation_description) ({{ $image->transformation_description }}) @endif
+                            @if ($image->transformation_description)
+                                ({{ $image->transformation_description }})
+                            @endif
                         </div>
                     </div>
                 @endif
@@ -243,4 +245,3 @@
     </div>
 
 </div>
-

@@ -26,12 +26,12 @@
                 @foreach ($character->images()->where('is_valid', 1)->get() as $image)
                     <li class="nav-item">
                         <a class="nav-link form-data-button {{ $image->id == $character->image->id ? 'active' : '' }}" data-toggle="tab" role="tab" data-id="{{ $image->id }}">
-                            {{ $image->transformation_id ? $image->transformation->name : 'Main' }} {{ $image->transformation_info ? ' ('.$image->transformation_info.')' : '' }}
+                            {{ $image->transformation_id ? $image->transformation->name : 'Main' }} {{ $image->transformation_info ? ' (' . $image->transformation_info . ')' : '' }}
                         </a>
                     </li>
                 @endforeach
                 <li>
-                    <h3>{!! add_help('Click on a '.__('transformations.transformation').' to view the image. If you don\'t see the '.__('transformations.transformation').' you\'re looking for, it may not have been uploaded yet.') !!}</h3>
+                    <h3>{!! add_help('Click on a ' . __('transformations.transformation') . ' to view the image. If you don\'t see the ' . __('transformations.transformation') . ' you\'re looking for, it may not have been uploaded yet.') !!}</h3>
                 </li>
             </ul>
         </div>

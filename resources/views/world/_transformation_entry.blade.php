@@ -5,7 +5,7 @@
     @endif
     <div class="{{ $transformation->transformationImageUrl ? 'col-md-9' : 'col-12' }}">
         <h3>{!! $transformation->displayName !!} <a href="{{ $transformation->searchUrl }}" class="world-entry-search text-muted"><i class="fas fa-search"></i></a></h3>
-        @if($transformation->species_id)
+        @if ($transformation->species_id)
             <div><strong>Species:</strong> {!! $transformation->species->displayName !!} </div>
         @endif
         <div class="world-entry-text">

@@ -8,7 +8,7 @@
     <x-admin-edit title="Shop" :object="$shop" />
     {!! breadcrumbs(['Shops' => 'shops', $shop->name => $shop->url]) !!}
 
-    @if($shop->visible_only == 1)
+    @if ($shop->visible_only == 1)
         <div class="alert alert-danger text-center">
             This shop is currently set to view-only. You cannot purchase items from it, but you can still view its stock.
         </div>

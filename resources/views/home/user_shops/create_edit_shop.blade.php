@@ -88,8 +88,7 @@
         </div>
 
         <div class="text-center">
-            <img src="{{ $shop->shopImageUrl }}" style="max-width: 200px !important; max-height: 200px !important;"
-                alt="{{ $shop->name }}" />
+            <img src="{{ $shop->shopImageUrl }}" style="max-width: 200px !important; max-height: 200px !important;" alt="{{ $shop->name }}" />
             <p>{!! $shop->parsed_description !!}</p>
         </div>
     @endif

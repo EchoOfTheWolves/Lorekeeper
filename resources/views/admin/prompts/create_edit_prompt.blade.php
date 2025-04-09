@@ -112,7 +112,8 @@
     <h3>Submission Limits</h3>
     <p>Limit the number of times a user can submit. Leave blank to allow endless submissions.</p>
     <p>Set a number into number of submissions. This will be applied for all time if you leave period blank, or per time period (ex: once a month, twice a week) if selected.</p>
-    <p>If you turn 'per character' on, then the number of submissions multiplies per character (ex: if you can submit twice a month per character and you own three characters, that's 6 submissions) HOWEVER it will not keep track of which characters are being submitted due to conflicts arising in character cameos. A user will be able to submit those full 6 times with just one character...!</p>
+    <p>If you turn 'per character' on, then the number of submissions multiplies per character (ex: if you can submit twice a month per character and you own three characters, that's 6 submissions) HOWEVER it will not keep track of which characters are
+        being submitted due to conflicts arising in character cameos. A user will be able to submit those full 6 times with just one character...!</p>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -141,12 +142,12 @@
 
     <h3 class="mt-5">Criteria Rewards <a class="btn btn-primary float-right add-calc" type="button">+ Criterion</a></h3>
     <p>Criteria can be used in addition to or in replacement of rewards. They can be created under the "criterion" section of the admin panel,
-    and allow for dynamic reward amounts to be generated based on user / admin selected criteria like the type of art, or the number of words.</p>
+        and allow for dynamic reward amounts to be generated based on user / admin selected criteria like the type of art, or the number of words.</p>
     <div id="criteria">
         @foreach ($prompt->criteria as $criterion)
             <div class="card p-3 mb-2 pl-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <a class="col-1 p-0" data-toggle="collapse" href="#collapsable-{{$criterion->id}}">
+                    <a class="col-1 p-0" data-toggle="collapse" href="#collapsable-{{ $criterion->id }}">
                         <i class="fas fa-angle-down" style="font-size: 24px"></i>
                     </a>
                     <div class="flex-grow-1 mr-2">
@@ -156,8 +157,14 @@
                         <button class="btn btn-danger delete-calc" type="button"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-                <div id="collapsable-{{$criterion->id}}" class="form collapse">
-                    @include('criteria._minimum_requirements', ['criterion' => $criterion->criterion, 'minRequirements' => $criterion->minRequirements, 'id' => $criterion->criterion_id, 'isAdmin' => true, 'criterion_currency' => isset($criterion->criterion_currency_id) ? $criterion->criterion_currency_id : $criterion->criterion->currency_id])
+                <div id="collapsable-{{ $criterion->id }}" class="form collapse">
+                    @include('criteria._minimum_requirements', [
+                        'criterion' => $criterion->criterion,
+                        'minRequirements' => $criterion->minRequirements,
+                        'id' => $criterion->criterion_id,
+                        'isAdmin' => true,
+                        'criterion_currency' => isset($criterion->criterion_currency_id) ? $criterion->criterion_currency_id : $criterion->criterion->currency_id,
+                    ])
                 </div>
             </div>
         @endforeach
@@ -178,7 +185,7 @@
                 {!! Form::select('criterion_id[]', $criteria, null, ['class' => 'form-control criterion-select', 'placeholder' => 'Select a Criterion to set Minimum Requirements']) !!}
             </div>
             <div>
-               <button class="btn btn-danger delete-calc" type="button"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-danger delete-calc" type="button"><i class="fas fa-trash"></i></button>
             </div>
         </div>
         <div id="collapsable-" class="form collapse">Select a criterion to populate this area.</div>
@@ -219,31 +226,33 @@
                 clone.find('.collapse').attr('id', 'collapsable-' + key);
                 $('#criteria').append(clone);
             });
-            
+
             $('.delete-calc').on('click', deleteCriterion);
-            
-            function deleteCriterion (e) {
+
+            function deleteCriterion(e) {
                 e.preventDefault();
                 var toDelete = $(this).closest('.card');
                 toDelete.remove();
             }
-            
-            function loadForm (e) {
+
+            function loadForm(e) {
                 var id = $(this).val();
-                if(id) {
+                if (id) {
                     var form = $(this).closest('.card').find('.form');
-                    form.load("{{ url('criteria') }}/" + id, ( response, status, xhr ) => {
-                        if ( status == "error" ) {
+                    form.load("{{ url('criteria') }}/" + id, (response, status, xhr) => {
+                        if (status == "error") {
                             var msg = "Error: ";
-                            console.error( msg + xhr.status + " " + xhr.statusText );
+                            console.error(msg + xhr.status + " " + xhr.statusText);
                         } else {
-                            form.find('[data-toggle=tooltip]').tooltip({html: true});
+                            form.find('[data-toggle=tooltip]').tooltip({
+                                html: true
+                            });
                             form.find('[data-toggle=toggle]').bootstrapToggle();
                         }
                     });
                 }
             }
-            
+
             $('.criterion-select').on('change', loadForm);
         });
     </script>

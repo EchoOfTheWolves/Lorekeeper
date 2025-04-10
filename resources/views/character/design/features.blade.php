@@ -200,6 +200,9 @@
     @include('widgets._image_upload_js')
 
     <script>
+        $("#subtype").selectize({
+            maxItems: {{ config('lorekeeper.extensions.multiple_subtype_limit') }},
+        });
         $("#species").change(function() {
             var species = $('#species').val();
             var id = '<?php echo $request->id; ?>';

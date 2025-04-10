@@ -395,7 +395,7 @@ class DesignUpdateManager extends Service {
                         if (!$subtype) {
                             throw new \Exception('Invalid subtype selected.');
                         }
-                        if ($subtype && $subtype->species_id != $species->id) {
+                        if ($subtype && ($subtype->species_id != $species->id)) {
                             throw new \Exception('Subtype does not match the species.');
                         }
                     }
@@ -406,7 +406,6 @@ class DesignUpdateManager extends Service {
             } else {
                 $subtype = null;
             }
-
             if (isset($data['transformation_id']) && $data['transformation_id']) {
                 $transformation = ($request->character->is_myo_slot && $request->character->image->transformation_id) ? $request->character->image->transformation : Transformation::find($data['transformation_id']);
                 $transformation_info = ($request->character->is_myo_slot && $request->character->image->transformation_info) ? $request->character->image->transformation_info : $data['transformation_info'];
@@ -422,9 +421,6 @@ class DesignUpdateManager extends Service {
             }
             if (!$species) {
                 throw new \Exception('Invalid species selected.');
-            }
-            if ($subtype && $subtype->species_id != $species->id) {
-                throw new \Exception('Subtype does not match the species.');
             }
             if ($transformation && $transformation->species_id != null) {
                 if ($transformation->species_id != $species->id) {

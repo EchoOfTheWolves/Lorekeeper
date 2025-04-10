@@ -217,9 +217,15 @@ class UserController extends Controller {
             $query->visible();
         }
 
+        $query = $query->orderBy('sort', 'DESC')->get()
+        // group query folder, getting the name from the id
+            ->groupBy(function ($item) {
+                return $item->folder ? $item->folder->name : 'Unsorted';
+            });
+
         return view('user.sublist', [
             'user'       => $user,
-            'characters' => $query->orderByRaw('user_id = ? desc', [$user->id])->orderBy('sort', 'DESC')->get(),
+            'characters' => $query,
             'sublist'    => $sublist,
         ]);
     }

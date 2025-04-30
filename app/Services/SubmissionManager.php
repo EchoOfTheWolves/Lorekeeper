@@ -59,6 +59,9 @@ class SubmissionManager extends Service {
                 if (!$prompt) {
                     throw new \Exception('Invalid prompt selected.');
                 }
+                if ($prompt->staff_only && !$user->isStaff) {
+                    throw new \Exception('This prompt may only be submitted to by staff members.');
+                }
                 // check that the prompt limit hasn't been hit
                 if ($prompt->limit) {
                     // check that the user hasn't hit the prompt submission limit
@@ -129,12 +132,6 @@ class SubmissionManager extends Service {
 
                     addAsset($userAssets, $stack, $data['stack_quantity'][$stackId]);
                 }
-
-                if ($prompt->staff_only && !$user->isStaff) {
-                    throw new \Exception('This prompt may only be submitted to by staff members.');
-                }
-            } else {
-                $prompt = null;
             }
 
             // Create the submission itself.

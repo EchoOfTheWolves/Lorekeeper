@@ -33,25 +33,23 @@
                             @foreach ($chunk as $shopId => $shop)
                                 @if ($shop->visible_only == 1)
                                     <div class="col-md-3 col-6 mb-3 text-center collectionnotunlocked">
-                                        @if ($shop->has_image)
-                                            <div class="shop-image">
-                                                <a href="{{ $shop->url }}"><img src="{{ $shop->shopImageUrl }}" alt="{{ $shop->name }}" /></a>
-                                            </div>
+                                        @if ($shop->is_staff)
+                                            @if (auth::check() && auth::user()->isstaff)
+                                                @include('shops._shop')
+                                            @endif
+                                        @else
+                                            @include('shops._shop')
                                         @endif
-                                        <div class="shop-name mt-1">
-                                            <a href="{{ $shop->url }}" class="h5 mb-0">{{ $shop->name }} <i class="fas fa-eye" data-toggle="tooltip" title="View-only"></i> </a>
-                                        </div>
                                     </div>
                                 @else
                                     <div class="col-md-3 col-6 mb-3 text-center">
-                                        @if ($shop->has_image)
-                                            <div class="shop-image">
-                                                <a href="{{ $shop->url }}"><img src="{{ $shop->shopImageUrl }}" alt="{{ $shop->name }}" /></a>
-                                            </div>
+                                        @if ($shop->is_staff)
+                                            @if (auth::check() && auth::user()->isstaff)
+                                                @include('shops._shop')
+                                            @endif
+                                        @else
+                                            @include('shops._shop')
                                         @endif
-                                        <div class="shop-name mt-1">
-                                            <a href="{{ $shop->url }}" class="h5 mb-0">{{ $shop->name }}</a>
-                                        </div>
                                     </div>
                                 @endif
                             @endforeach

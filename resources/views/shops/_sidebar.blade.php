@@ -21,12 +21,17 @@
                 </div>
                 @foreach ($categoryshops->chunk(4) as $chunk)
                     @foreach ($chunk as $shopId => $shop)
-                        <div class="sidebar-item">
-                            <a href="{{ $shop->url }}" class="{{ set_active('shops/' . $shop->id) }}">{{ $shop->name }}</a>
-                        </div>
+                        @if ($shop->is_staff)
+                            @if (auth::check() && auth::user()->isstaff)
+                                <div class="sidebar-item"><a href="{{ $shop->url }}" class="{{ set_active('shops/' . $shop->id) }}">{{ $shop->name }}</a></div>
+                            @endif
+                        @else
+                            <div class="sidebar-item"><a href="{{ $shop->url }}" class="{{ set_active('shops/' . $shop->id) }}">{{ $shop->name }}</a></div>
+                        @endif
                     @endforeach
                 @endforeach
             @endforeach
         </li>
+    @endif
 </ul>
-@endif
+

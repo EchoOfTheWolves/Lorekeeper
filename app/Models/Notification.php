@@ -146,6 +146,10 @@ class Notification extends Model {
     public const COMMENT_REPLY = 240;
     public const COOWNER_OWNER_UPDATE = 298;
     public const COOWNER_UPDATE = 299;
+    public const PET_REMOVAL = 241;
+    public const PET_TRANSFER = 242;
+    public const FORCED_PET_TRANSFER = 243;
+    public const PET_GRANT = 244;
     public const CHARACTER_ITEM_GRANT = 501;
     public const CHARACTER_ITEM_REMOVAL = 502;
     public const GALLERY_SUBMISSION_COLLABORATOR = 505;

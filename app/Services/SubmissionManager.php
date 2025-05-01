@@ -9,6 +9,7 @@ use App\Models\Criteria\Criterion;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
+use App\Models\Pet\Pet;
 use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
 use App\Models\Submission\Submission;
@@ -702,6 +703,9 @@ class SubmissionManager extends Service {
                             if (!$reward->is_user_owned) {
                                 throw new \Exception('Invalid currency selected.');
                             }
+                            break;
+                        case 'Pet':
+                            $reward = Pet::find($data['rewardable_id'][$key]);
                             break;
                         case 'LootTable':
                             if (!$isStaff) {

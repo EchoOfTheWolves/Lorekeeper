@@ -15,6 +15,7 @@
 **************************************************************************************************/
 
 Route::get('items/{id}', 'Users\InventoryController@getStack');
+Route::get('pets/{id}', 'Users\PetController@getStack');
 Route::get('items/character/{id}', 'Users\InventoryController@getCharacterStack');
 
 /**************************************************************************************************
@@ -57,10 +58,13 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/sublist/{key}', 'UserController@getUserSublist');
     Route::get('{name}/myos', 'UserController@getUserMyoSlots');
     Route::get('{name}/inventory', 'UserController@getUserInventory');
+    Route::get('{name}/pets', 'UserController@getUserPets');
+    Route::get('{name}/pets/{id}', 'UserController@getUserPet');
     Route::get('{name}/bank', 'UserController@getUserBank');
 
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
+    Route::get('{name}/pet-logs', 'UserController@getUserPetLogs');
     Route::get('{name}/ownership', 'UserController@getUserOwnershipLogs');
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
     Route::get('{name}/shops', 'UserController@getUserShops');
@@ -113,6 +117,11 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('items/{id}', 'WorldController@getItem');
     Route::get('trait-categories', 'WorldController@getFeatureCategories');
     Route::get('traits', 'WorldController@getFeatures');
+    Route::get('pet-categories', 'WorldController@getPetCategories');
+    Route::get('pets', 'WorldController@getPets');
+    Route::get('pets/{id}', 'WorldController@getPet');
+    Route::get('prompt-categories', 'WorldController@getPromptCategories');
+    Route::get('prompts', 'WorldController@getPrompts');
     Route::get('character-categories', 'WorldController@getCharacterCategories');
     Route::get(__('transformations.transformations'), 'WorldController@getTransformations');
 });

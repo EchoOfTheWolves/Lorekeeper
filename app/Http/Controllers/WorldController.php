@@ -9,6 +9,8 @@ use App\Models\Feature\Feature;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Pet\Pet;
+use App\Models\Pet\PetCategory;
 use App\Models\Rarity;
 use App\Models\Shop\Shop;
 use App\Models\Species\Species;
@@ -381,6 +383,7 @@ class WorldController extends Controller {
      */
     public function getItem($id) {
         $item = Item::where('id', $id)->released(Auth::user() ?? null)->with('category');
+        $categories = ItemCategory::orderBy('sort', 'DESC')->get();
 
         if (config('lorekeeper.extensions.item_entry_expansion.extra_fields')) {
             $item->with('artist', 'shopStock')->withCount('shopStock');
@@ -402,6 +405,14 @@ class WorldController extends Controller {
             'imageUrl'    => $item->imageUrl,
             'name'        => $item->displayName,
             'description' => $item->parsed_description,
+            'categories'  => $categories->keyBy('id'),
+            'shops'       => Shop::where(function ($shops) {
+                if (Auth::check() && Auth::user()->isStaff) {
+                    return $shops;
+                }
+
+                return $shops->where('is_staff', 0);
+            })->whereIn('id', ShopStock::where('item_id', $item->id)->pluck('shop_id')->unique()->toArray())->orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -437,6 +448,79 @@ class WorldController extends Controller {
 
         return view('world.transformations', [
             'transformations' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Shows the pet categories page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getPetCategories(Request $request) {
+        $query = PetCategory::query();
+        $name = $request->get('name');
+        if ($name) {
+            $query->where('name', 'LIKE', '%'.$name.'%');
+        }
+
+        return view('world.pet_categories', [
+            'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Shows the pets page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getPets(Request $request) {
+        $query = Pet::with('category');
+        $data = $request->only(['pet_category_id', 'name', 'sort']);
+        if (isset($data['pet_category_id']) && $data['pet_category_id'] != 'none') {
+            $query->where('pet_category_id', $data['pet_category_id']);
+        }
+        if (isset($data['name'])) {
+            $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        }
+
+        if (isset($data['sort'])) {
+            switch ($data['sort']) {
+                case 'alpha':
+                    $query->sortAlphabetical();
+                    break;
+                case 'alpha-reverse':
+                    $query->sortAlphabetical(true);
+                    break;
+                case 'category':
+                    $query->sortCategory();
+                    break;
+                case 'newest':
+                    $query->sortNewest();
+                    break;
+                case 'oldest':
+                    $query->sortOldest();
+                    break;
+            }
+        } else {
+            $query->sortCategory();
+        }
+
+        return view('world.pets', [
+            'pets'       => $query->paginate(20)->appends($request->query()),
+            'categories' => ['none' => 'Any Category'] + PetCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+        ]);
+    }
+
+    /**
+     * Gets a specific pet page.
+     *
+     * @param mixed $id
+     */
+    public function getPet($id) {
+        $pet = Pet::with('category')->findOrFail($id);
+
+        return view('world.pet_page', [
+            'pet' => $pet,
         ]);
     }
 }

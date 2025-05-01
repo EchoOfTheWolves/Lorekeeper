@@ -112,6 +112,10 @@ return [
                 'name' => 'Item Grants',
                 'url'  => 'admin/grants/items',
             ],
+            [
+                'name' => 'Pet Grants',
+                'url'  => 'admin/grants/pets',
+            ],
         ],
     ],
     'Masterlist' => [
@@ -205,6 +209,10 @@ return [
             [
                 'name' => 'Criteria Rewards',
                 'url'  => 'admin/data/criteria',
+            ],
+            [
+                'name' => 'Pets',
+                'url'  => 'admin/data/pets',
             ],
         ],
     ],

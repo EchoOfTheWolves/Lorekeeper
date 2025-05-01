@@ -3,6 +3,7 @@
         var $lootTable = $('#lootTableBody');
         var $lootRow = $('#lootRow').find('.loot-row');
         var $itemSelect = $('#lootRowData').find('.item-select');
+        var $PetSelect = $('#lootRowData').find('.pet-select');
         var $currencySelect = $('#lootRowData').find('.currency-select');
         @if ($showLootTables)
             var $tableSelect = $('#lootRowData').find('.table-select');
@@ -29,6 +30,7 @@
             var $clone = null;
             if (val == 'Item') $clone = $itemSelect.clone();
             else if (val == 'Currency') $clone = $currencySelect.clone();
+            else if (val == 'Pet') $clone = $PetSelect.clone();
             @if ($showLootTables)
                 else if (val == 'LootTable') $clone = $tableSelect.clone();
             @endif
@@ -47,6 +49,7 @@
 
                 var $clone = null;
                 if (val == 'Item') $clone = $itemSelect.clone();
+                else if (val == 'Pet') $clone = $PetSelect.clone();
                 else if (val == 'Currency') $clone = $currencySelect.clone();
                 @if ($showLootTables)
                     else if (val == 'LootTable') $clone = $tableSelect.clone();

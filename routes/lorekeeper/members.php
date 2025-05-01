@@ -68,6 +68,26 @@ Route::group(['prefix' => 'inventory', 'namespace' => 'Users'], function () {
     Route::post('quickstock-items', 'InventoryController@postQuickstock');
 });
 
+Route::group(['prefix' => 'pets', 'namespace' => 'Users'], function () {
+    Route::get('/', 'PetController@getIndex');
+    Route::post('transfer/{id}', 'PetController@postTransfer');
+    Route::post('delete/{id}', 'PetController@postDelete');
+    Route::post('name/{id}', 'PetController@postName');
+    Route::post('attach/{id}', 'PetController@postAttach');
+    Route::post('detach/{id}', 'PetController@postDetach');
+    Route::post('variant/{id}', 'PetController@postVariant');
+    Route::post('evolution/{id}', 'PetController@postEvolution');
+
+    Route::get('selector', 'PetController@getSelector');
+    Route::post('collect/{id}', 'PetController@postClaimPetDrops');
+    Route::post('collect-all', 'PetController@postClaimAllPetDrops');
+    Route::post('image/{id}', 'PetController@postCustomImage');
+    Route::post('description/{id}', 'PetController@postDescription');
+
+    Route::get('view/{id}', 'PetController@getPetPage')->where('id', '[0-9]+');
+    Route::post('view/{id}/edit', 'PetController@postEditPetProfile')->where('id', '[0-9]+');
+});
+
 Route::group(['prefix' => 'characters', 'namespace' => 'Users'], function () {
     Route::get('/', 'CharacterController@getIndex');
     Route::post('sort', 'CharacterController@postSortCharacters');

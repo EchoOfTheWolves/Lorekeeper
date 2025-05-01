@@ -13,6 +13,7 @@ use App\Models\Pet\Pet;
 use App\Models\Pet\PetCategory;
 use App\Models\Rarity;
 use App\Models\Shop\Shop;
+use App\Models\Shop\ShopStock;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;

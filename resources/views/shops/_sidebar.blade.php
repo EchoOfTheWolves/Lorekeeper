@@ -22,7 +22,7 @@
                 @foreach ($categoryshops->chunk(4) as $chunk)
                     @foreach ($chunk as $shopId => $shop)
                         @if ($shop->is_staff)
-                            @if (auth::check() && auth::user()->isstaff)
+                            @if (Auth::check() && Auth::user()->isstaff)
                                 <div class="sidebar-item"><a href="{{ $shop->url }}" class="{{ set_active('shops/' . $shop->id) }}">{{ $shop->name }}</a></div>
                             @endif
                         @else

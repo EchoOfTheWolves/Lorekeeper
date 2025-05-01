@@ -34,7 +34,7 @@
                                 @if ($shop->visible_only == 1)
                                     <div class="col-md-3 col-6 mb-3 text-center collectionnotunlocked">
                                         @if ($shop->is_staff)
-                                            @if (auth::check() && auth::user()->isstaff)
+                                            @if (Auth::check() && Auth::user()->isstaff)
                                                 @include('shops._shop')
                                             @endif
                                         @else
@@ -44,7 +44,7 @@
                                 @else
                                     <div class="col-md-3 col-6 mb-3 text-center">
                                         @if ($shop->is_staff)
-                                            @if (auth::check() && auth::user()->isstaff)
+                                            @if (Auth::check() && Auth::user()->isstaff)
                                                 @include('shops._shop')
                                             @endif
                                         @else

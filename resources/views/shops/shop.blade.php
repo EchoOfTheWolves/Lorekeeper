@@ -61,9 +61,11 @@
                             <div class="row mb-3">
                                 @foreach ($chunk as $item)
                                     <div class="col-sm-3 col-6 text-center inventory-item" data-id="{{ $item->pivot->id }}">
-                                        <div class="mb-1">
-                                            <a href="#" class="inventory-stack"><img src="{{ $item->imageUrl }}" alt="{{ $item->name }}" /></a>
-                                        </div>
+                                        @if ($item->imageUrl)
+                                            <div class="mb-1">
+                                                <a href="#" class="inventory-stack"><img src="{{ $item->imageUrl }}" alt="{{ $item->name }}" /></a>
+                                            </div>
+                                        @endif
                                         <div>
                                             <a href="#" class="inventory-stack inventory-stack-name"><strong>{{ $item->name }}</strong></a>
                                             <div><strong>Cost:</strong> {!! $currencies[$item->pivot->currency_id]->display((int) $item->pivot->cost) !!}</div>

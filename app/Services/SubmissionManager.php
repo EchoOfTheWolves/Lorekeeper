@@ -115,26 +115,6 @@ class SubmissionManager extends Service {
                 $characters = [];
             }
 
-            $userAssets = createAssetsArray();
-
-            // Attach items. Technically, the user doesn't lose ownership of the item - we're just adding an additional holding field.
-            // We're also not going to add logs as this might add unnecessary fluff to the logs and the items still belong to the user.
-            if (isset($data['stack_id'])) {
-                foreach ($data['stack_id'] as $stackId) {
-                    $stack = UserItem::with('item')->find($stackId);
-                    if (!$stack || $stack->user_id != $user->id) {
-                        throw new \Exception('Invalid item selected.');
-                    }
-                    if (!isset($data['stack_quantity'][$stackId])) {
-                        throw new \Exception('Invalid quantity selected.');
-                    }
-                    $stack->submission_count += $data['stack_quantity'][$stackId];
-                    $stack->save();
-
-                    addAsset($userAssets, $stack, $data['stack_quantity'][$stackId]);
-                }
-            }
-
             // Create the submission itself.
             $submission = Submission::create([
                 'user_id'   => $user->id,
@@ -203,6 +183,15 @@ class SubmissionManager extends Service {
                 }
             } else {
                 $prompt = null;
+            }
+
+            $withCriteriaSelected = isset($data['criterion']) ? array_filter($data['criterion'], function ($obj) {
+                return isset($obj['id']);
+            }) : [];
+            if (count($withCriteriaSelected) > 0) {
+                $data['criterion'] = $withCriteriaSelected;
+            } else {
+                $data['criterion'] = null;
             }
 
             // First, return all items and currency applied.
@@ -289,6 +278,7 @@ class SubmissionManager extends Service {
                     'data'                  => json_encode([
                         'user'      => $userAssets,
                         'rewards'   => getDataReadyAssets($promptRewards),
+                        'criterion'             => $assets['criterion'] ?? null,
                     ]), // list of rewards and addons
                 ]);
 
@@ -305,6 +295,7 @@ class SubmissionManager extends Service {
                     'data'       => json_encode([
                         'user'      => $userAssets,
                         'rewards'   => getDataReadyAssets($promptRewards),
+                        'criterion'             => $assets['criterion'] ?? null,
                     ]), // list of rewards and addons
                 ]);
             }
@@ -473,14 +464,7 @@ class SubmissionManager extends Service {
                 'data' => 'Received rewards for '.($submission->prompt_id ? 'submission' : 'claim').' (<a href="'.$submission->viewUrl.'">#'.$submission->id.'</a>)',
             ];
 
-            // Distribute user rewards
-            if (!$rewards = fillUserAssets($rewards, $user, $submission->user, $promptLogType, $promptData)) {
-                throw new \Exception('Failed to distribute rewards to user.');
-            }
-
             // Distribute currency from criteria
-            $service = new CurrencyManager;
-
             if (isset($data['criterion'])) {
                 foreach ($data['criterion'] as $key => $criterionData) {
                     $criterion = Criterion::where('id', $criterionData['id'])->first();
@@ -490,10 +474,13 @@ class SubmissionManager extends Service {
                         $criterion_currency = $criterion->currency;
                     }
 
-                    if (!$service->creditCurrency($user, $submission->user, $promptLogType, $promptData['data'], $criterion_currency, $criterion->calculateReward($criterionData))) {
-                        throw new \Exception('Failed to distribute criterion rewards to user.');
-                    }
+                    addAsset($rewards, $criterion_currency, $criterion->calculateReward($criterionData));
                 }
+            }
+
+            // Distribute user rewards
+            if (!$rewards = fillUserAssets($rewards, $user, $submission->user, $promptLogType, $promptData)) {
+                throw new \Exception('Failed to distribute rewards to user.');
             }
 
             // Retrieve all reward IDs for characters

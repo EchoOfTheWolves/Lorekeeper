@@ -121,6 +121,7 @@ class SubmissionController extends Controller {
         $inventory = UserItem::with('item')->whereNull('deleted_at')->where('count', '>', '0')->where('user_id', Auth::user()->id)->get();
         $submission = Submission::where('id', $id)->where('status', 'Draft')->where('user_id', Auth::user()->id)->first();
         $prompt = Prompt::where('id', $submission->prompt_id)->first();
+        $promptCriteria = $prompt ? PromptCriterion::where('prompt_id', $prompt)->pluck('criterion_id')->toArray() : null;
         if (!$submission) {
             abort(404);
         }

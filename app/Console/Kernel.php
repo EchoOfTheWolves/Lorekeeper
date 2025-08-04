@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel {
             ->daily();
         $schedule->command('update-timed-daily')
             ->everyMinute();
-            $schedule->command('restock-shops')
+        $schedule->command('restock-shops')
             ->daily();
         $schedule->command('update-timed-stock')
             ->everyMinute();

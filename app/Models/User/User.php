@@ -786,4 +786,17 @@ class User extends Authenticatable implements MustVerifyEmail {
     public function hasBookmarked($character) {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
     }
+
+
+    /**
+     * Finds the last HoL play for the user.
+     */
+    public function holLastPlay() {
+        $check = CurrencyLog::orderBy('id', 'DESC')->where('recipient_id', $this->id)->where('recipient_type', 'User')->where('log_type', 'HoL Grant')->first();
+        if (!$check) {
+            return null;
+        }
+
+        return $this->settings->hol_last_play ?? $check->created_at;
+    }
 }

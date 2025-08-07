@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\HolService;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HolController extends Controller {
     /**********************************************************************************************
@@ -17,8 +18,18 @@ class HolController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getIndex() {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        $user = Auth::user();
+
+        if (($user->settings->hol_plays < config('lorekeeper.hol.hol_plays')) && ($user->holLastPlay() < Carbon::now()->startOfDay())) {
+            $user->settings->hol_plays = config('lorekeeper.hol.hol_plays');
+            $user->settings->save();
+        }
+
         return view('hol.index', [
-            'user' => Auth::user(),
+            'user' => $user,
         ]);
     }
 
@@ -37,6 +48,7 @@ class HolController extends Controller {
         }
 
         $user->settings->hol_plays -= 1;
+        $user->settings->hol_last_play = Carbon::now();
         $user->settings->save();
 
         // roll numba

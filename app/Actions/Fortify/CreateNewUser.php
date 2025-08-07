@@ -29,6 +29,7 @@ class CreateNewUser implements CreatesNewUsers {
         ]);
         $user->settings()->create([
             'user_id' => $user->id,
+            'hol_plays' => config('lorekeeper.hol.hol_plays'),
         ]);
         $user->profile()->create([
             'user_id' => $user->id,

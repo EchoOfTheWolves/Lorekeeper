@@ -24,12 +24,12 @@ return [
 
     // Species Trait Index - Mercury
     'species_trait_index' => [
-        'enable'       => 0,
-        'trait_modals' => 0, // Enables modals when you click on a trait for more info instead of linking to the traits page - Moif
+        'enable'       => 1,
+        'trait_modals' => 1, // Enables modals when you click on a trait for more info instead of linking to the traits page - Moif
     ],
 
     // Character Status Badges - Juni
-    'character_status_badges' => 0,
+    'character_status_badges' => 1,
 
     // Character TH Profile Link - Juni
     'character_TH_profile_link' => 1,
@@ -40,7 +40,7 @@ return [
     // Item Entry Expansion - Mercury
     'item_entry_expansion' => [
         'extra_fields'    => 0,
-        'resale_function' => 0,
+        'resale_function' => 1,
         'loot_tables'     => [
             // Adds the ability to use either rarity criteria for items or item categories with rarity criteria in loot tables. Note that disabling this does not apply retroactively.
             'enable'              => 0,
@@ -49,7 +49,7 @@ return [
     ],
 
     // Group Traits By Category - Uri
-    'traits_by_category' => 0,
+    'traits_by_category' => 1,
 
     // Scroll To Top - Uri
     'scroll_to_top' => 0, // 1 - On, 0 - off

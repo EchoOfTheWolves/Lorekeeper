@@ -274,7 +274,6 @@ class CharacterImage extends Model {
         return asset($this->imageDirectory.'/'.$this->thumbnailFileName);
     }
 
-<<<<<<< HEAD
     /**********************************************************************************************
 
         OTHER FUNCTIONS
@@ -294,7 +293,6 @@ class CharacterImage extends Model {
         }
 
         return implode(', ', $subtypes);
-=======
     /**
      * Gets the label attribute as an object.
      *
@@ -302,6 +300,5 @@ class CharacterImage extends Model {
      */
     public function getLabelAttribute() {
         return json_decode($this->attributes['label'], true);
->>>>>>> c5062078cf4422787fcd2b9dae892ecf0eed9214
     }
 }

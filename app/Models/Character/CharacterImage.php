@@ -293,7 +293,10 @@ class CharacterImage extends Model {
         }
 
         return implode(', ', $subtypes);
-    /**
+    
+}
+
+/**
      * Gets the label attribute as an object.
      *
      * @return string
@@ -301,4 +304,3 @@ class CharacterImage extends Model {
     public function getLabelAttribute() {
         return json_decode($this->attributes['label'], true);
     }
-}

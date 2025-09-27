@@ -304,3 +304,4 @@ class CharacterImage extends Model {
     public function getLabelAttribute() {
         return json_decode($this->attributes['label'], true);
     }
+}

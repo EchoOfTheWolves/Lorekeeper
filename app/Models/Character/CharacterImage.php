@@ -22,7 +22,7 @@ class CharacterImage extends Model {
         'extension', 'use_cropper', 'hash', 'fullsize_hash', 'fullsize_extension', 'sort',
         'x0', 'x1', 'y0', 'y1',
         'description', 'parsed_description',
-        'is_valid', 'transformation_id', 'transformation_info', 'transformation_description',
+        'is_valid', 'transformation_id', 'transformation_info', 'transformation_description', 'label',
     ];
 
     /**
@@ -274,6 +274,7 @@ class CharacterImage extends Model {
         return asset($this->imageDirectory.'/'.$this->thumbnailFileName);
     }
 
+<<<<<<< HEAD
     /**********************************************************************************************
 
         OTHER FUNCTIONS
@@ -293,5 +294,14 @@ class CharacterImage extends Model {
         }
 
         return implode(', ', $subtypes);
+=======
+    /**
+     * Gets the label attribute as an object.
+     *
+     * @return string
+     */
+    public function getLabelAttribute() {
+        return json_decode($this->attributes['label'], true);
+>>>>>>> c5062078cf4422787fcd2b9dae892ecf0eed9214
     }
 }

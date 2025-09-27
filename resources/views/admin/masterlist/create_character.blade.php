@@ -282,6 +282,10 @@
             </div>
         </div>
 
+        @if (!$isMyo)
+            @include('widgets._character_label', ['isStaff' => true])
+        @endif
+
         <div class="text-right">
             {!! Form::submit('Create Character', ['class' => 'btn btn-primary']) !!}
         </div>

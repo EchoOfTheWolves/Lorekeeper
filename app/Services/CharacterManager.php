@@ -999,6 +999,10 @@ class CharacterManager extends Service {
 
             $image->is_valid = isset($data['is_valid']);
             $image->is_visible = isset($data['is_visible']);
+            $image->label = isset($data['label']) ? json_encode([
+                'label' => $data['label'],
+                'label_information'=> $data['label_information']
+            ]) : null;
             $image->save();
 
             // Add a log for the character
@@ -2124,6 +2128,10 @@ class CharacterManager extends Service {
             $imageData['extension'] = (config('lorekeeper.settings.masterlist_image_format') ?? ($data['extension'] ?? $data['image']->getClientOriginalExtension()));
             $imageData['fullsize_extension'] = (config('lorekeeper.settings.masterlist_fullsizes_format') ?? ($data['fullsize_extension'] ?? $data['image']->getClientOriginalExtension()));
             $imageData['character_id'] = $character->id;
+            $imageData['label'] = isset($data['label']) ? json_encode([
+                'label' => $data['label'],
+                'label_information'=> $data['label_information']
+            ]) : null;
 
             $image = CharacterImage::create($imageData);
 

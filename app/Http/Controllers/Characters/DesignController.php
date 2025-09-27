@@ -92,7 +92,7 @@ class DesignController extends Controller {
             abort(404);
         }
 
-        if ($service->saveRequestComment($request->only(['comments']), $r)) {
+        if ($service->saveRequestComment($request->only(['comments', 'label', 'label_information']), $r)) {
             flash('Request edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

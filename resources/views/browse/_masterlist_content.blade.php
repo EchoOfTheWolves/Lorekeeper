@@ -121,6 +121,10 @@
                 @endif
             </div>
             <hr />
+            <div class="form-group">
+                {!! Form::label('label', 'Character Labels: ') !!} {!! add_help('Labels help to identify characters that are inspired by existing IP / media or are chatacter imports!') !!}
+                {!! Form::select('label', ['none' => 'No Labels', 'all' => 'All Labels'] + config('lorekeeper.character_labels'), Request::get('label'), ['class' => 'form-control mr-2', 'placeholder' => 'Select Labels']) !!}
+            </div>
             <div class="masterlist-search-field">
                 {!! Form::checkbox('search_images', 1, Request::get('search_images'), ['class' => 'form-check-input mr-3', 'data-toggle' => 'toggle']) !!}
                 <span class="ml-2">Include all character images in search {!! add_help(

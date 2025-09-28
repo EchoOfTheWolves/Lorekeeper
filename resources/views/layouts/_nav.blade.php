@@ -159,7 +159,7 @@
                         Guides
                     </a>
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
-                        <a class="dropdown-item" href="<?=$species->visualTraitsUrl?>">
+                        <a class="dropdown-item" href="https://www.hiraexin.com/world/species/1/traits">
                             Visual Trait Index
                         </a>
                     </div>

@@ -160,7 +160,10 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
                         <a class="dropdown-item" href="https://www.hiraexin.com/world/species/1/traits">
-                            Visual Trait Index
+                            Hiraexin Visual Trait Index
+                        </a>
+                        <a class="dropdown-item" href="https://www.hiraexin.com/world/species/3/traits">
+                            Daru-kin Visual Trait Index
                         </a>
                     </div>
                 </li>

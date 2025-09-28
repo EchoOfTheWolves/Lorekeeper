@@ -30,7 +30,6 @@ class HomeController extends Controller {
         $galleryCurrencyAwards = Settings::get('gallery_submissions_reward_currency');
 
         return view('admin.index', [
-<<<<<<< HEAD
             'submissionCount'        => Submission::where('status', 'Pending')->whereNotNull('prompt_id')->count(),
             'claimCount'             => Submission::where('status', 'Pending')->whereNull('prompt_id')->count(),
             'designCount'            => CharacterDesignUpdate::characters()->where('status', 'Pending')->count(),
@@ -44,21 +43,6 @@ class HomeController extends Controller {
             'galleryCurrencyAwards'  => GalleryCriterion::get()->count() > 0,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
             'galleryAwardCount'      => GallerySubmission::requiresAward()->where('is_valued', 0)->count(),
-=======
-            'submissionCount'           => Submission::where('status', 'Pending')->whereNotNull('prompt_id')->count(),
-            'claimCount'                => Submission::where('status', 'Pending')->whereNull('prompt_id')->count(),
-            'designCount'               => CharacterDesignUpdate::characters()->where('status', 'Pending')->count(),
-            'myoCount'                  => CharacterDesignUpdate::myos()->where('status', 'Pending')->count(),
-            'reportCount'               => Report::where('status', 'Pending')->count(),
-            'assignedReportCount'       => Report::assignedToMe(Auth::user())->count(),
-            'openTransfersQueue'        => $openTransfersQueue,
-            'transferCount'             => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
-            'tradeCount'                => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
-            'galleryRequireApproval'    => $galleryRequireApproval,
-            'galleryCurrencyAwards'     => $galleryCurrencyAwards,
-            'gallerySubmissionCount'    => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
-            'galleryAwardCount'         => GallerySubmission::requiresAward()->where('is_valued', 0)->count()
->>>>>>> 668f6fe86af13e666304fd5f0809b44a46859a0f
         ]);
     }
 

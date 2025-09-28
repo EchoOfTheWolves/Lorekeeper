@@ -158,16 +158,11 @@
                     <a id="guideDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Guides
                     </a>
-                    {!! $specieses->render() !!}
-    @foreach ($specieses as $species)
-    <div class="dropdown-menu" aria-labelledby="guideDropdown">
+                    <div class="dropdown-menu" aria-labelledby="guideDropdown">
                         <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
                             Visual Trait Index
                         </a>
                     </div>
-    @endforeach
-    {!! $specieses->render() !!}
-                    
                 </li>
             </ul>
 

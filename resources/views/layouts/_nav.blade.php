@@ -160,12 +160,8 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
                         <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
-                            Hiraexin Visual Trait Guide
+                            Visual Trait Index
                         </a>
-                        <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
-                            Daru-kin Visual Trait Guide
-                        </a>
-               
                     </div>
                 </li>
             </ul>

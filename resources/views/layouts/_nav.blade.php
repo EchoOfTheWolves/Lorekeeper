@@ -153,6 +153,20 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a id="guideDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        Guides
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="guideDropdown">
+                        <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
+                            Visual Trait Index
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
+                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->

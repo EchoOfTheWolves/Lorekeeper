@@ -168,11 +168,7 @@
                         </li>
                     @endif
                 @else
-                    @if (Auth::user()->isStaff)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin') }}"><i class="fas fa-crown"></i></a>
-                        </li>
-                    @endif
+                    
                     @if(Auth::user()->isStaff)
                         <li class="nav-item d-flex">
                             <a class="nav-link position-relative display-inline-block" href="{{ url('admin') }}"><i class="fas fa-crown"></i>

@@ -159,9 +159,13 @@
                         Guides
                     </a>
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
-                        <a class="dropdown-item" href="{{ url('world/traits') }}">
-                            All Traits
+                        <a class="dropdown-item" href="{{ $species[1]->visualTraitsUrl }}">
+                            Hiraexin Visual Trait Guide
                         </a>
+                        <a class="dropdown-item" href="{{ $species[3]->visualTraitsUrl }}">
+                            Daru-kin Visual Trait Guide
+                        </a>
+                        
                     </div>
                 </li>
             </ul>

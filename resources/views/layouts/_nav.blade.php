@@ -158,6 +158,7 @@
                     <a id="guideDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Guides
                     </a>
+                    @if (config('lorekeeper.extensions.species_trait_index.enable') && $species->features_count)
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
                         <a class="dropdown-item" href="{{ $species[1]->visualTraitsUrl }}">
                             Hiraexin Visual Trait Guide
@@ -165,7 +166,7 @@
                         <a class="dropdown-item" href="{{ $species[3]->visualTraitsUrl }}">
                             Daru-kin Visual Trait Guide
                         </a>
-                        
+                    @endif    
                     </div>
                 </li>
             </ul>

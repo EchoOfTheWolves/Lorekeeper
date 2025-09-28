@@ -158,12 +158,11 @@
                     <a id="guideDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Guides
                     </a>
-                    
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
-                        <a class="dropdown-item" href="{{ $species[1]->visualTraitsUrl }}">
+                        <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
                             Hiraexin Visual Trait Guide
                         </a>
-                        <a class="dropdown-item" href="{{ $species[3]->visualTraitsUrl }}">
+                        <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
                             Daru-kin Visual Trait Guide
                         </a>
                

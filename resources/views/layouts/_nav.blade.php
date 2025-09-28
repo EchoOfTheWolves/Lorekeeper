@@ -159,8 +159,8 @@
                         Guides
                     </a>
                     <div class="dropdown-menu" aria-labelledby="guideDropdown">
-                        <a class="dropdown-item" href="{{ $species->visualTraitsUrl }}">
-                            Visual Trait Index
+                        <a class="dropdown-item" href="{{ url('world/traits') }}">
+                            All Traits
                         </a>
                     </div>
                 </li>

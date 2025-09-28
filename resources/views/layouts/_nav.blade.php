@@ -182,6 +182,7 @@
                                 </span>
                               @endif
                             </a>
+                            @endif
                         
                     @if (Auth::user()->notifications_unread)
                         <li class="nav-item">

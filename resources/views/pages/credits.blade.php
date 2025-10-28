@@ -148,6 +148,10 @@
             ({{ config('lorekeeper.extensions.staff_rewards.enabled') ? 'Enabled' : 'Disabled' }})
         </p>
         <p class="mb-0 col-md-4">
+            <a href="http://wiki.lorekeeper.me/index.php?title=Extensions:VTI_Trait_Modals"><strong>Visual Trait Indexes Trait Modals</strong></a> by <a href="https://github.com/AW0005">Moif</a>
+            ({{ config('lorekeeper.extensions.species_trait_index.trait_modals') ? 'Enabled' : 'Disabled' }})
+        </p>
+        <p class="mb-0 col-md-4">
             <a href="http://wiki.lorekeeper.me/index.php?title=Extensions:Watermarking"><strong>Watermarking</strong></a> by <a href="https://github.com/itinerare">itinerare</a>
             ({{ config('lorekeeper.settings.watermark_masterlist_images') ? 'Enabled' : 'Disabled' }})
         </p>

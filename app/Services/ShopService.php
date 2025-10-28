@@ -492,6 +492,9 @@ class ShopService extends Service {
         $data['use_coupons'] = isset($data['use_coupons']);
         $data['allowed_coupons'] ??= null;
         $data['is_timed_shop'] = isset($data['is_timed_shop']);
+        if (!isset($data['quotes'])) {
+            $data['quotes'] = null;
+        }
 
         if (isset($data['remove_image'])) {
             if ($shop && $shop->has_image && $data['remove_image']) {

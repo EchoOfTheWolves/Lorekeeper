@@ -9,16 +9,7 @@
 @endsection
 
 @section('meta-desc')
-    @if (isset($item->category) && $item->category)
-        <p><strong>Category:</strong> {{ $item->category->name }}</p>
-    @endif
-    @if (isset($item->rarity) && $item->rarity)
-        :: <p><strong>Rarity:</strong> {{ $item->rarity }}: {{ $item->rarityName }}</p>
-    @endif
-    :: {!! substr(str_replace('"', '&#39;', $item->description), 0, 69) !!}
-    @if (isset($item->uses) && $item->uses)
-        :: <p><strong>Uses:</strong> {!! $item->uses !!}</p>
-    @endif
+    {!! isset($item->category) && $item->category ? '(Category: ' . $item->category->name . ')' : '' !!} {!! isset($item->rarity) && $item->rarity ? '(Rarity: ' . $item->rarity . ')' : '' !!} {!! substr(strip_tags($item->description), 0, 200) !!} {!! isset($item->uses) && $item->uses ? '(Uses: ' . $item->uses . ')' : '' !!}
 @endsection
 
 @section('content')

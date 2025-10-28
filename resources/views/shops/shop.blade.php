@@ -33,6 +33,11 @@
             <img src="{{ $shop->shopImageUrl }}" style="max-width:100%" alt="{{ $shop->name }}" />
         @endif
         <p>{!! $shop->parsed_description !!}</p>
+        @if (isset($shop->quotes) && $shop->quotes)
+            <div class="quote-display card card-body mb-2">
+                <span class="quote"></span>
+            </div>
+        @endif
     </div>
 
     @foreach ($stocks as $type => $stock)
@@ -104,6 +109,35 @@
 
                 loadModal("{{ url('shops/' . $shop->id) }}/" + $(this).data('id'), 'Purchase Item');
             });
+
+            @if (isset($shop->quotes) && $shop->quotes)
+                var $quoteDisplay = $(".quote-display .quote");
+                var speed = 25;
+
+                function typeWriterEffect(text, i) {
+                    if (i < (text.length)) {
+                        $quoteDisplay.html(text.substring(0, i + 1));
+
+                        setTimeout(function() {
+                            typeWriterEffect(text, i + 1)
+                        }, speed);
+                    }
+                }
+
+                function displayQuote(i, text) {
+                    if (typeof text[i] == 'undefined') {
+                        setTimeout(function() {
+                            displayQuote(0, text);
+                        }, 2000);
+                    }
+
+                    if (i < text[i].length) {
+                        typeWriterEffect(text[i], 0);
+                    }
+                }
+
+                displayQuote(0, ["{!! $shop->randomQuote !!}"]);
+            @endif
         });
     </script>
 @endsection

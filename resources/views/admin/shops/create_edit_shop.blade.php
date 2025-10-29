@@ -228,31 +228,6 @@
     </div>
 @endsection
 
-<h5>
-        Shop Dialogue Quotes
-    </h5>
-    <p class="mb-0">
-        Optional. You can add individual quotes here: every time a user visits the shop a random one from this data will be selected to be displayed.
-    </p>
-    <div class="text-right mb-2">
-        <a class="btn btn-primary" id="addQuote" href="#">Add Quote</a>
-    </div>
-    <div id="quotesBody">
-        @if ($shop->quotes)
-            @foreach ($shop->quotes as $quote)
-                <div class="row mb-2">
-                    <div class="col">
-                        {!! Form::text('quotes[]', $quote, ['class' => 'form-control']) !!}
-                    </div>
-                    <div class="col-auto text-right">
-                        <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
-                    </div>
-                </div>
-            @endforeach
-        @endif
-    </div>
-
-
 @section('scripts')
     @parent
     <script>

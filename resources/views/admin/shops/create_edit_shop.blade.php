@@ -70,30 +70,6 @@
 
     </div>
 
-    <h5>
-        Shop Dialogue Quotes
-    </h5>
-    <p class="mb-0">
-        Optional. You can add individual quotes here: every time a user visits the shop a random one from this data will be selected to be displayed.
-    </p>
-    <div class="text-right mb-2">
-        <a class="btn btn-primary" id="addQuote" href="#">Add Quote</a>
-    </div>
-    <div id="quotesBody">
-        @if ($shop->quotes)
-            @foreach ($shop->quotes as $quote)
-                <div class="row mb-2">
-                    <div class="col">
-                        {!! Form::text('quotes[]', $quote, ['class' => 'form-control']) !!}
-                    </div>
-                    <div class="col-auto text-right">
-                        <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
-                    </div>
-                </div>
-            @endforeach
-        @endif
-    </div>
-
     <div class="form-group">
         {!! Form::checkbox('is_active', 1, $shop->id ? $shop->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the shop will not be visible to regular users.') !!}
@@ -153,6 +129,30 @@
         <div class="col-auto text-right">
             <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
         </div>
+    </div>
+
+    <h5>
+        Shop Dialogue Quotes
+    </h5>
+    <p class="mb-0">
+        Optional. You can add individual quotes here: every time a user visits the shop a random one from this data will be selected to be displayed.
+    </p>
+    <div class="text-right mb-2">
+        <a class="btn btn-primary" id="addQuote" href="#">Add Quote</a>
+    </div>
+    <div id="quotesBody">
+        @if ($shop->quotes)
+            @foreach ($shop->quotes as $quote)
+                <div class="row mb-2">
+                    <div class="col">
+                        {!! Form::text('quotes[]', $quote, ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="col-auto text-right">
+                        <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
+                    </div>
+                </div>
+            @endforeach
+        @endif
     </div>
 
     @if ($shop->id)

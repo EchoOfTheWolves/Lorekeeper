@@ -71,11 +71,6 @@
     </div>
 
     <div class="form-group">
-        {!! Form::checkbox('is_active', 1, $shop->id ? $shop->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the shop will not be visible to regular users.') !!}
-    </div>
-
-    <div class="form-group">
         {!! Form::checkbox('use_coupons', 1, $shop->id ? $shop->use_coupons : 0, ['class' => 'form-check-label', 'data-toggle' => 'toggle', 'id' => 'use_coupons']) !!}
         {!! Form::label('use_coupons', 'Allow Coupons?', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Note that ALL coupons will be allowed to be used, unless specified otherwise.') !!}
     </div>
@@ -114,8 +109,6 @@
             </div>
         </div>
     </div>
-
-
     
 
     <h5>

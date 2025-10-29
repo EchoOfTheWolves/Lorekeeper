@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Award\AwardLog;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterImageCreator;
@@ -196,6 +197,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function pets() {
         return $this->belongsToMany('App\Models\Pet\Pet', 'user_pets')->withPivot('data', 'updated_at', 'id', 'variant_id', 'chara_id', 'pet_name', 'has_image', 'evolution_id')->whereNull('user_pets.deleted_at');
+    }
+
+/**
+     * Get the user's awards.
+     */
+    public function awards() {
+        return $this->belongsToMany('App\Models\Award\Award', 'user_awards')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('user_awards.deleted_at');
     }
 
     /**
@@ -622,6 +630,27 @@ class User extends Authenticatable implements MustVerifyEmail {
             $query->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Staff Removal']);
         })->orWhere(function ($query) use ($user) {
             $query->where('recipient_id', $user->id);
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+ /**
+     * Get the user's award logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getAwardLogs($limit = 10) {
+        $user = $this;
+        $query = AwardLog::with('award')->where(function ($query) use ($user) {
+            $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($user) {
+            $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
         })->orderBy('id', 'DESC');
         if ($limit) {
             return $query->take($limit)->get();

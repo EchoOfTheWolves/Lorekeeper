@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Award\Award;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImageCreator;
 use App\Models\Character\CharacterLog;
@@ -255,6 +256,29 @@ class MigrateAliases extends Command {
             $this->line('Skipped: Item artist aliases (column no longer exists)');
         }
 
+        if (Schema::hasColumn('awards', 'artist_alias')) {
+            // Get character logs with a set recipient alias
+            $aliasAwardArtists = Award::whereNotNull('artist_alias')->get();
+
+            if ($aliasAwardArtists->count()) {
+                foreach ($aliasAwardArtists as $awardArtist) {
+                    $userAlias = UserAlias::where('site', 'deviantart')->where('alias', $awardArtist->artist_alias)->first();
+                    if ($userAlias) {
+                        $awardArtist->update(['artist_alias' => null, 'artist_id' => $userAlias->user_id]);
+                    } elseif (!$userAlias) {
+                        $alias = $awardArtist->artist_alias;
+                        $awardArtist->update(['artist_alias' => null, 'artist_url' => 'https://deviantart.com/'.$alias]);
+                    }
+                }
+
+                $this->info('Migrated: Award artist aliases');
+            } else {
+                $this->line('Skipped: Award artist aliases (nothing to migrate)');
+            }
+        } else {
+            $this->line('Skipped: Award artist aliases (column no longer exists)');
+        }
+
         if ($this->option('drop-columns')) {
             // Drop alias columns from the impacted tables.
             Schema::table('users', function (Blueprint $table) {
@@ -277,6 +301,10 @@ class MigrateAliases extends Command {
                 $table->dropColumn('recipient_alias');
             });
             Schema::table('items', function (Blueprint $table) {
+                //
+                $table->dropColumn('artist_alias');
+            });
+            Schema::table('awards', function (Blueprint $table) {
                 //
                 $table->dropColumn('artist_alias');
             });

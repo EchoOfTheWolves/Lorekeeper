@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\Award\Award;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
@@ -13,6 +14,7 @@ use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserItem;
+use App\Services\AwardCaseManager;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use App\Services\PetManager;
@@ -118,6 +120,43 @@ class GrantController extends Controller {
         $data = $request->only(['names', 'pet_ids', 'quantities', 'data', 'disallow_transfer', 'notes', 'variant']);
         if ($service->grantPets($data, Auth::user())) {
             flash('Pets granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+  /**
+     * Show the award grant page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getAwards() {
+        return view('admin.grants.awards', [
+            'userOptions'           => User::orderBy('id')->pluck('name', 'id'),
+            'userAwardOptions'      => Award::orderBy('name')->where('is_user_owned', 1)->pluck('name', 'id'),
+            'characterOptions'      => Character::myo(0)->orderBy('name')->get()->pluck('fullName', 'id'),
+            'characterAwardOptions' => Award::orderBy('name')->where('is_character_owned', 1)->pluck('name', 'id'),
+        ]);
+    }
+
+    /**
+     * Grants or removes awards from multiple users.
+     *
+     * @param App\Services\AwardCaseManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postAwards(Request $request, AwardCaseManager $service) {
+        $data = $request->only([
+            'names', 'award_ids', 'quantities', 'data', 'disallow_transfer', 'notes',
+            'character_names', 'character_award_ids', 'character_quantities',
+        ]);
+        if ($service->grantAwards($data, Auth::user())) {
+            flash(ucfirst(__('awards.awards')).' granted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

@@ -138,6 +138,30 @@
     </div>
 </div>
 
+<div class="card mb-3">
+    <div class="card-body text-center">
+        <h5 class="card-title">{{ ucfirst(__('awards.awards')) }}</h5>
+        <div class="card-body">
+            @if (count($awards))
+                <div class="row">
+                    @foreach ($awards as $award)
+                        <div class="col-md-3 col-6 profile-inventory-item">
+                            @if ($award->imageUrl)
+                                <img src="{{ $award->imageUrl }}" data-toggle="tooltip" title="{{ $award->name }}" />
+                            @else
+                                <p>{{ $award->name }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div>No {{ __('awards.awards') }} earned.</div>
+            @endif
+        </div>
+        <div class="text-right"><a href="{{ $user->url . '/' . __('awards.awardcase') }}">View all...</a></div>
+    </div>
+</div>
+
 <h2>
     <a href="{{ $user->url . '/characters' }}">Characters</a>
     @if (isset($sublists) && $sublists->count() > 0)

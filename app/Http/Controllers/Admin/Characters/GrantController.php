@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Characters;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Currency\Currency;
+use App\Services\AwardCaseManager;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
@@ -44,6 +45,27 @@ class GrantController extends Controller {
         $data = $request->only(['item_ids', 'quantities', 'data', 'disallow_transfer', 'notes']);
         if ($service->grantCharacterItems($data, Character::where('slug', $slug)->first(), Auth::user())) {
             flash('Items granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Grants awards to characters.
+     *
+     * @param string                        $slug
+     * @param App\Services\InventoryManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterAwards($slug, Request $request, AwardCaseManager $service) {
+        $data = $request->only(['award_ids', 'quantities', 'data', 'disallow_transfer', 'notes']);
+        if ($service->grantCharacterAwards($data, Character::where('slug', $slug)->first(), Auth::user())) {
+            flash(ucfirst(__('awards.awards')).' granted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

@@ -216,7 +216,7 @@ return [
             ],
             [
                 'name' => 'Weather',
-                'url' => 'admin/weather/weathers'
+                'url' => 'admin/data/weathers'
             ],
         ]
     ],

@@ -116,20 +116,7 @@
     </div>
 
 
-    <div class="text-right">
-        {!! Form::submit($shop->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
-    </div>
-
-    {!! Form::close() !!}
-
-    <div class="row mb-2 quote-row hide">
-        <div class="col">
-            {!! Form::text('quotes[]', null, ['class' => 'form-control']) !!}
-        </div>
-        <div class="col-auto text-right">
-            <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
-        </div>
-    </div>
+    
 
     <h5>
         Shop Dialogue Quotes
@@ -153,6 +140,21 @@
                 </div>
             @endforeach
         @endif
+    </div>
+
+    <div class="text-right">
+        {!! Form::submit($shop->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
+    </div>
+
+    {!! Form::close() !!}
+
+    <div class="row mb-2 quote-row hide">
+        <div class="col">
+            {!! Form::text('quotes[]', null, ['class' => 'form-control']) !!}
+        </div>
+        <div class="col-auto text-right">
+            <a href="#" class="btn btn-danger remove-quote"><i class="fas fa-times"></i></a>
+        </div>
     </div>
 
     @if ($shop->id)

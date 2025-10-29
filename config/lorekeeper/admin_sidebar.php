@@ -218,7 +218,7 @@ return [
                 'name' => 'Weather',
                 'url'  => 'admin/weather/weathers',
             ],
-        ]
+        ],
     ],
     'Raffles'    => [
         'power' => 'manage_raffles',

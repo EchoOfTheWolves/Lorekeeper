@@ -19,6 +19,10 @@ use App\Models\Species\Subtype;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Weather\Weather;
+use App\Models\Weather\WeatherSeason;
+use App\Models\Weather\WeatherTable;
+use Settings;
 
 class WorldController extends Controller {
     /*
@@ -522,6 +526,74 @@ class WorldController extends Controller {
 
         return view('world.pet_page', [
             'pet' => $pet,
+        ]);
+    }
+
+    /// weather
+
+    /**
+     * Shows the seasons page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getSeasons(Request $request)
+    {
+        $query = WeatherSeason::visible();
+        $data = $request->only(['name', 'sort']);
+        if(isset($data['name']))
+            $query->where('name', 'LIKE', '%'.$data['name'].'%');
+
+        if(isset($data['sort']))
+        {
+            switch($data['sort']) {
+                case 'alpha':
+                    $query->sortAlphabetical();
+                    break;
+                case 'alpha-reverse':
+                    $query->sortAlphabetical(true);
+                    break;
+                case 'newest':
+                    $query->sortNewest();
+                    break;
+                case 'oldest':
+                    $query->sortOldest();
+                    break;
+            }
+        }
+
+        return view('world.seasons', [
+            'seasons' => $query->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Shows the weather page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getWeather(Request $request)
+    {
+        $query = Weather::visible();
+        $name = $request->get('name');
+        if($name) $query->where('name', 'LIKE', '%'.$name.'%');
+        return view('world.weathers', [
+            'weathers' => $query->orderBy('name', 'DESC')->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+     /**
+     * Shows the forecast page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getForecast(Request $request)
+    {
+        return view('world.forecast',[
+            'weather' => Weather::where('id', Settings::get('site_weather'))->first(),
+            'season' => WeatherSeason::where('id', Settings::get('site_season'))->first()
         ]);
     }
 }

@@ -124,6 +124,9 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('prompts', 'WorldController@getPrompts');
     Route::get('character-categories', 'WorldController@getCharacterCategories');
     Route::get(__('transformations.transformations'), 'WorldController@getTransformations');
+    Route::get('seasons', 'WorldController@getSeasons');
+    Route::get('weathers', 'WorldController@getWeather');
+    Route::get('forecast', 'WorldController@getForecast');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

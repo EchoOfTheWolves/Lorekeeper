@@ -14,4 +14,6 @@
 
 @section('sidebar')
     @include('pages._sidebar')
+    
+    @include('widgets._current_weather')
 @endsection

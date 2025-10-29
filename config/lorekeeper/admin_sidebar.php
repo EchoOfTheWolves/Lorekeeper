@@ -214,7 +214,11 @@ return [
                 'name' => 'Pets',
                 'url'  => 'admin/data/pets',
             ],
-        ],
+            [
+                'name' => 'Weather',
+                'url' => 'admin/weather/weathers'
+            ],
+        ]
     ],
     'Raffles'    => [
         'power' => 'manage_raffles',

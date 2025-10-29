@@ -572,3 +572,29 @@ Route::group(['prefix' => 'designs', 'middleware' => 'power:manage_characters'],
     Route::post('vote/{id}/{action}', 'DesignController@postVote')->where('action', 'approve|reject');
 });
 Route::get('{type}/{status}', 'DesignController@getDesignIndex')->where('type', 'myo-approvals|design-approvals')->where('status', 'pending|approved|rejected');
+
+
+//WEATHER
+
+Route::group(['prefix' => 'weather', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function() {
+
+ # SEASONS
+ Route::get('seasons', 'WeatherController@getIndex');
+ Route::get('seasons/create', 'WeatherController@getCreateSeason');
+ Route::get('seasons/edit/{id}', 'WeatherController@getEditSeason');
+ Route::get('seasons/delete/{id}', 'WeatherController@getDeleteSeason');
+ Route::get('seasons/roll/{id}', 'WeatherController@getRollSeason');
+ Route::post('seasons/create', 'WeatherController@postCreateEditSeason');
+ Route::post('seasons/edit/{id?}', 'WeatherController@postCreateEditSeason');
+ Route::post('seasons/delete/{id}', 'WeatherController@postDeleteSeason');
+
+ # weather
+Route::get('weathers', 'WeatherController@getWeatherIndex');
+Route::get('weathers/create', 'WeatherController@getCreateWeather');
+Route::get('weathers/edit/{id}', 'WeatherController@getEditWeather');
+Route::get('weathers/delete/{id}', 'WeatherController@getDeleteWeather');
+Route::post('weathers/create', 'WeatherController@postCreateEditWeather');
+Route::post('weathers/edit/{id?}', 'WeatherController@postCreateEditWeather');
+Route::post('weathers/delete/{id}', 'WeatherController@postDeleteWeather');
+
+});

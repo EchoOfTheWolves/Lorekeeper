@@ -417,31 +417,34 @@ class UserController extends Controller {
     }
 
     /**
-<<<<<<< HEAD
      * Shows a user's pet logs.
-=======
-     * Shows a user's award logs.
->>>>>>> 1cbaf87dbf5414aae7c1baa3e702c06f0a03dd61
      *
      * @param string $name
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-<<<<<<< HEAD
     public function getUserPetLogs($name) {
         $user = $this->user;
 
         return view('user.pet_logs', [
             'user' => $this->user,
             'logs' => $this->user->getPetLogs(0),
-=======
+        ]);
+    }
+
+       /**
+     * Shows a user's award logs.
+     *
+     * @param string $name
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function getUserAwardLogs($name) {
         $user = $this->user;
 
         return view('user.award_logs', [
             'user' => $this->user,
             'logs' => $this->user->getAwardLogs(0),
->>>>>>> 1cbaf87dbf5414aae7c1baa3e702c06f0a03dd61
         ]);
     }
 

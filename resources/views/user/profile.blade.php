@@ -4,7 +4,9 @@
     {{ $user->name }}'s Profile
 @endsection
 
-
+@section('meta-img')
+    {{ $user->avatarUrl }}
+@endsection
 
 @section('profile-content')
     {!! breadcrumbs(['Users' => 'users', $user->name => $user->url]) !!}

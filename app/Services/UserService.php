@@ -646,3 +646,107 @@ class UserService extends Service {
         return $this->rollbackReturn(false);
     }
 }
+
+ /**
+     * Updates the user's border.
+     *
+     * @param  array                  $data
+     * @param  \App\Models\User\User  $user
+     * @return bool
+     */
+    public function updateBorder($data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $border = Border::find($data['border']);
+
+            //do some validation...
+            if (!Auth::user()->isStaff && $border) {
+                if ($border->parent_id) {
+                    abort(404);
+                }
+                if (!$border->is_default) {
+                    if (!Auth::user()->hasBorder($border->id)) {
+                        throw new \Exception("You do not own this border.");
+                    }
+                }
+                if (!$border->is_active) {
+                    throw new \Exception("This border is not active.");
+                }
+                if ($border->admin_only) {
+                    throw new \Exception("You cannot select a staff border.");
+                }
+            }
+
+            if ($data['border_variant_id'] > 0) {
+                $variant = Border::where('id', $data['border_variant_id'])->whereNotNull('parent_id')->first();
+                if (!$variant) {
+                    abort(404);
+                }
+                //do some validation...
+                if (!Auth::user()->isStaff) {
+                    if (!$variant->parent->is_default) {
+                        if (!Auth::user()->hasBorder($variant->parent->id)) {
+                            throw new \Exception("You do not own this border.");
+                        }
+                    }
+                    if (!$variant->is_active) {
+                        throw new \Exception("This border variant is not active.");
+                    }
+                    if ($variant->parent->admin_only) {
+                        throw new \Exception("You cannot select a staff border.");
+                    }
+                }
+            }
+            if (!$data['bottom_border_id'] && $data['top_border_id'] || $data['bottom_border_id'] && !$data['top_border_id']) {
+                throw new \Exception("You must select both a top border and a bottom border.");
+            }
+            if ($data['bottom_border_id'] > 0) {
+                $layer = Border::where('id', $data['bottom_border_id'])->whereNotNull('parent_id')->where('border_type', 'bottom')->first();
+                if (!$layer) {
+                    throw new \Exception("That bottom border does not exist.");
+                }
+                $toplayer = Border::where('id', $data['top_border_id'])->whereNotNull('parent_id')->where('border_type', 'top')->first();
+                if (!$toplayer) {
+                    throw new \Exception("That top border does not exist.");
+                }
+                //do some validation...
+                if (!Auth::user()->isStaff) {
+                    if (!$layer->parent->is_default || !$toplayer->parent->is_default) {
+                        if (!Auth::user()->hasBorder($layer->parent->id) || !Auth::user()->hasBorder($toplayer->parent->id)) {
+                            throw new \Exception("You do not own this border.");
+                        }
+                    }
+                    if (!$layer->is_active) {
+                        throw new \Exception("This bottom border is not active.");
+                    }
+                    if (!$toplayer->is_active) {
+                        throw new \Exception("This top border is not active.");
+                    }
+                    if ($layer->parent->admin_only || $toplayer->parent->admin_only) {
+                        throw new \Exception("You cannot select a staff border.");
+                    }
+
+                }
+            }
+
+            $user->border_id = $data['border'];
+            $user->border_variant_id = $data['border_variant_id'];
+            $user->bottom_border_id = $data['bottom_border_id'];
+            $user->top_border_id = $data['top_border_id'];
+
+            $user->save();
+
+            $user->settings->border_settings = [
+                'border_flip'                  => $data['border_flip'] ?? 0,
+            ];
+            $user->settings->save();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+}

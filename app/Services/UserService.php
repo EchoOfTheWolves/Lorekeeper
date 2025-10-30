@@ -645,7 +645,7 @@ class UserService extends Service {
 
         return $this->rollbackReturn(false);
     }
-}
+
 
  /**
      * Updates the user's border.

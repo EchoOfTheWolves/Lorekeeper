@@ -32,5 +32,9 @@
     @if (!$user->is_deactivated || (Auth::check() && Auth::user()->isStaff))
         @include('user._profile_content', ['user' => $user, 'deactivated' => $user->is_deactivated])
     @endif
+    
+<div style=" float:left;">
+            {!! $user->userBorder() !!}
+        </div>
 
 @endsection

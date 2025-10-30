@@ -478,27 +478,7 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $this->avatar;
     }
 
-    /**
-     * Gets the display URL for a user's avatar, or the default avatar if they don't have one.
-     *
-     * @return url
-     */
-    public function getAvatarUrlAttribute() {
-        if ($this->avatar == 'default.jpg' && config('lorekeeper.extensions.use_gravatar')) {
-            // check if a gravatar exists
-            $hash = md5(strtolower(trim($this->email)));
-            $url = 'https://www.gravatar.com/avatar/'.$hash.'??d=mm&s=200';
-            $headers = @get_headers($url);
 
-            if (!preg_match('|200|', $headers[0])) {
-                return url('images/avatars/default.jpg');
-            } else {
-                return 'https://www.gravatar.com/avatar/'.$hash.'?d=mm&s=200';
-            }
-        }
-
-        return url('images/avatars/'.$this->avatar.'?v='.filemtime(public_path('images/avatars/'.$this->avatar)));
-    }
 
     /**
      * Gets the user's log type for log creation.

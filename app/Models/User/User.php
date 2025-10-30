@@ -31,9 +31,6 @@ use App\Models\Border\Border;
 use App\Models\User\UserBorder;
 use App\Models\User\UserBorderLog;
 
-use Auth;
-use Config;
-
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

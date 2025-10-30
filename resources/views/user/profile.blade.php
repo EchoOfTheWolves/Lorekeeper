@@ -6,6 +6,7 @@
 
 @section('meta-img')
     {{ $user->avatarUrl }}
+    {!! $user->userBorder() !!}
 @endsection
 
 @section('profile-content')

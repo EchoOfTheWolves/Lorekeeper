@@ -20,8 +20,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\Facades\Auth;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use Auth
+
 
 class UserService extends Service {
     /*

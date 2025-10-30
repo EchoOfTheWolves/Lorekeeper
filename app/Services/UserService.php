@@ -8,6 +8,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Invitation;
+use App\Models\Border\Border;
 use App\Models\Rank\Rank;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
@@ -29,7 +30,7 @@ class UserService extends Service {
     |
     | Handles the creation and editing of users.
     |
-    */
+     */
 
     /**
      * Create a user.

@@ -64,6 +64,8 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/pets/{id}', 'UserController@getUserPet');
     Route::get('{name}/bank', 'UserController@getUserBank');
     Route::get('{name}/'.__('awards.awardcase'), 'UserController@getUserAwardCase');
+    Route::get('{name}/borders', 'UserController@getUserBorders');
+    
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
     Route::get('{name}/pet-logs', 'UserController@getUserPetLogs');
@@ -71,6 +73,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/ownership', 'UserController@getUserOwnershipLogs');
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
     Route::get('{name}/shops', 'UserController@getUserShops');
+    Route::get('{name}/border-logs', 'UserController@getUserBorderLogs');
 });
 
 /**************************************************************************************************
@@ -135,6 +138,10 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('seasons', 'WorldController@getSeasons');
     Route::get('weathers', 'WorldController@getWeather');
     Route::get('forecast', 'WorldController@getForecast');
+    Route::get('border-categories', 'WorldController@getBorderCategories');
+    Route::get('borders', 'WorldController@getBorders');
+    Route::get('borders/{id}', 'WorldController@getBorder');
+    Route::get('check-border', 'WorldController@getBorderPreview');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

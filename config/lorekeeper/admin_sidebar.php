@@ -120,7 +120,11 @@ return [
                 'name' => 'Award Grants',
                 'url'  => 'admin/grants/awards',
             ],
-        ],
+        [
+                'name' => 'Border Grants',
+                'url' => 'admin/grants/borders'
+            ],
+        ]
     ],
     'Masterlist' => [
         'power' => 'manage_characters',
@@ -230,7 +234,11 @@ return [
                 'name' => 'Weather',
                 'url'  => 'admin/weather/weathers',
             ],
-        ],
+        [
+                'name' => 'User Borders',
+                'url' => 'admin/data/borders'
+            ],
+        ]
     ],
     'Raffles'    => [
         'power' => 'manage_raffles',

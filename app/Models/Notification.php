@@ -170,4 +170,5 @@ class Notification extends Model {
     public const FORCED_AWARD_TRANSFER = 344;
     public const CHARACTER_AWARD_GRANT = 345;
     public const CHARACTER_AWARD_REMOVAL = 346;
+    public const BORDER_GRANT                      = 1106;
 }

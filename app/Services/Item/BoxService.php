@@ -6,6 +6,10 @@ use App\Models\Item\Item;
 use App\Services\InventoryManager;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
+use App\Models\Currency\Currency;
+use App\Models\Loot\LootTable;
+use App\Models\Raffle\Raffle;
+use App\Models\Border\Border;
 
 class BoxService extends Service {
     /*
@@ -90,6 +94,9 @@ class BoxService extends Service {
                         break;
                     case 'Raffle':
                         $type = 'App\Models\Raffle\Raffle';
+                        break;
+                    case 'Border':
+                        $type = 'App\Models\Border\Border';
                         break;
                 }
                 $asset = $type::find($data['rewardable_id'][$key]);

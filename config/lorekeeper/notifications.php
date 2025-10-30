@@ -524,4 +524,12 @@ return [
         'message' => 'You have sold a {item_name} from <a href="{url}">{shop_name}</a> and have been credited {currency_quantity} {currency_name}.',
         'url'     => 'user-shops/shop/{shop_id}',
     ],
+
+    
+    // BORDER_GRANT
+    1106 => [
+        'name' => 'Border Grant',
+        'message' => 'You have received a staff grant of the user border {border_name} from <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Borders</a>)',
+        'url' => 'user/{recipient_name}/borders'
+    ],
 ];

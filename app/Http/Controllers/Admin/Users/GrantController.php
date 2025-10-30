@@ -20,6 +20,8 @@ use App\Services\InventoryManager;
 use App\Services\PetManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Border\Border;
+use App\Services\BorderService;
 
 class GrantController extends Controller {
     /**
@@ -201,4 +203,37 @@ class GrantController extends Controller {
             'submissions'    => $item ? $submissions : null,
         ]);
     }
+
+    /**
+     * Show the border grant page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBorders()
+    {
+        return view('admin.grants.borders', [
+            'users' => User::orderBy('id')->pluck('name', 'id'),
+            'borders' => Border::base()->where('is_default', 0)->where('admin_only', 0)->orderBy('name')->pluck('name', 'id')
+        ]);
+    }
+
+    /**
+     * Grants or removes items from multiple users.
+     *
+     * @param  \Illuminate\Http\Request        $request
+     * @param  App\Services\InventoryManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBorders(Request $request, BorderService $service)
+    {
+        $data = $request->only(['names', 'border_ids', 'data']);
+        if($service->grantBorders($data, Auth::user())) {
+            flash('Borders granted successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
 }

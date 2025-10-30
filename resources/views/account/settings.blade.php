@@ -136,6 +136,98 @@
     </div>
 
     <div class="card p-3 mb-2">
+        <h3>Border</h3>
+        <p>Change your onsite border.</p>
+        <p>Standard borders behave as normal. Variants may be different colors or even border styles than the main border. If your chosen main border has a "layer" associated with it, you can layer that image with one of its variant's borders.</p>
+        <p>Variants supersede standard borders, and layers supersede variants.</p>
+        {!! Form::open(['url' => 'account/border']) !!}
+        <div class="row">
+            <div class="col-md-6 form-group">
+                {!! Form::label('Border') !!}
+                {!! Form::select('border', $borders, Auth::user()->border_id, ['class' => 'form-control', 'id' => 'border']) !!}
+            </div>
+            <div class="col-md-6 form-group">
+                {!! Form::label('Border Variant') !!}
+                {!! Form::select('border_variant_id', $border_variants, Auth::user()->border_variant_id, ['class' => 'form-control', 'id' => 'bordervariant']) !!}
+            </div>
+        </div>
+        <div id="layers">
+        </div>
+        <h4>Border Style</h4>
+        <h5>Flip</h5>
+        <p>Flip this border (horizontally.)</p>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                {!! Form::checkbox('border_flip', 1, Auth::user()->settings->border_settings['border_flip'] ?? 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('border_flip', 'Flip Border', ['class' => 'form-check-label ml-3']) !!}
+            </div>
+        </div>
+        <div class="text-right">
+            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+        </div>
+        {!! Form::close() !!}
+
+        <h3 class="text-center">Your Borders</h3>
+        <div class="card p-3 mb-2 image-info-box">
+            @if ($default->count())
+                <h4 class="mb-0">Default</h4>
+                <hr class="mt-0">
+                <div class="row">
+                    @foreach ($default as $border)
+                        <div class="col-md-3 col-6 text-center">
+                            <div class="shop-image">
+                                {!! $border->preview() !!}
+                            </div>
+                            <div class="shop-name mt-1 text-center">
+                                <h5>{!! $border->displayName !!}</h5>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            @if (Auth::user()->borders->count())
+                <h4 class="mb-0">Unlocked</h4>
+                <hr class="mt-0">
+                <div class="row">
+                    @foreach (Auth::user()->borders as $border)
+                        <div class="col-md-3 col-6 text-center">
+                            <div class="shop-image">
+                                {!! $border->preview() !!}
+                            </div>
+                            <div class="shop-name mt-1 text-center">
+                                <h5>{!! $border->displayName !!}</h5>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            @if (Auth::user()->isStaff)
+                @if ($admin->count())
+                    <h4 class="mb-0">Staff-Only</h4>
+                    <hr class="mt-0">
+                    <small>You can see these as a member of staff</small>
+                    <div class="row">
+                        @foreach ($admin as $border)
+                            <div class="col-md-3 col-6 text-center">
+                                <div class="shop-image">
+                                    {!! $border->preview() !!}
+                                </div>
+                                <div class="shop-name mt-1 text-center">
+                                    <h5>{!! $border->displayName !!}</h5>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            @endif
+        </div>
+        <div class="text-right mb-4">
+            <a href="{{ url(Auth::user()->url . '/border-logs') }}">View logs...</a>
+        </div>
+    </div>
+
+
+    <div class="card p-3 mb-2">
         <h3>Two-Factor Authentication</h3>
 
         <p>Two-factor authentication acts as a second layer of protection for your account. It uses an app on your phone-- such as Google Authenticator-- and information provided by the site to generate a random code that changes frequently.</p>
@@ -171,4 +263,39 @@
             {!! Form::close() !!}
         @endif
     </div>
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            refreshBorder();
+        });
+
+        $("#border").change(function() {
+            refreshBorder();
+        });
+
+        function refreshBorder() {
+            var border = $('#border').val();
+            $.ajax({
+                type: "GET",
+                url: "{{ url('account/check-border') }}?border=" + border,
+                dataType: "text"
+            }).done(function(res) {
+                $("#bordervariant").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+            $.ajax({
+                type: "GET",
+                url: "{{ url('account/check-layers') }}?border=" + border,
+                dataType: "text"
+            }).done(function(res) {
+                $("#layers").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+        };
+    </script>
 @endsection

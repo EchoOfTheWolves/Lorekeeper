@@ -12,7 +12,7 @@ class UserSettings extends Model {
      */
     protected $fillable = [
         'is_fto', 'submission_count', 'banned_at', 'ban_reason', 'birthday_setting',
-        'deactivate_reason', 'deactivated_at', 'hol_plays', 'hol_last_play',
+        'deactivate_reason', 'deactivated_at', 'hol_plays', 'hol_last_play', 'border_settings',
     ];
 
     /**
@@ -39,6 +39,15 @@ class UserSettings extends Model {
      * @var string
      */
     public $primaryKey = 'user_id';
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'border_settings' => 'array',
+    ];
 
     /**********************************************************************************************
 

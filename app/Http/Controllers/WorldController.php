@@ -686,7 +686,7 @@ class WorldController extends Controller {
         return view('world.seasons', [
             'seasons' => $query->paginate(20)->appends($request->query()),
         ]);
-    }
+    
 
         return view('world.prompts', [
             'prompts' => $query->paginate(20)->appends($request->query()),
@@ -838,3 +838,4 @@ class WorldController extends Controller {
             'border' => $border,
         ]);
     }
+}

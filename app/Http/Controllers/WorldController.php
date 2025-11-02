@@ -723,7 +723,7 @@ class WorldController extends Controller {
             'season' => WeatherSeason::where('id', Settings::get('site_season'))->first()
         ]);
     }
-}
+
 
 
 /**
@@ -838,4 +838,3 @@ class WorldController extends Controller {
             'border' => $border,
         ]);
     }
-}

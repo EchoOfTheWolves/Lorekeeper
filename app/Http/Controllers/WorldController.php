@@ -685,6 +685,9 @@ class WorldController extends Controller {
 
         return view('world.seasons', [
             'seasons' => $query->paginate(20)->appends($request->query()),
+        ]);
+    }
+
         return view('world.prompts', [
             'prompts' => $query->paginate(20)->appends($request->query()),
             'categories' => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),

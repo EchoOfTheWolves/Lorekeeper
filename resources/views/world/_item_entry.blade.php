@@ -131,6 +131,7 @@
                         </div>
                     @endif
                 </div>
+            @endif
 
                 <div class="world-entry-text">
             @if (isset($item->reference) && $item->reference && Config::get('lorekeeper.extensions.item_entry_expansion.extra_fields'))

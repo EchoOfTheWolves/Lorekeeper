@@ -108,7 +108,7 @@ class BoxService extends Service {
             }
             $assets = getDataReadyAssets($assets);
 
-            $tag->update(['data' => json_encode($assets)]);
+            $tag->update(['data' => $assets]);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {

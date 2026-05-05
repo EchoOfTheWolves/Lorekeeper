@@ -29,7 +29,13 @@ class BoxService extends Service {
      */
     public function getEditData() {
         return [
-            
+            'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
+            'items' => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
+            'awards' => Award::orderBy('name')->pluck('name', 'id'),
+            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
+            'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
+            'borders' => Border::base()->orderBy('name')->where('is_default', 0)->where('admin_only', 0)->pluck('name', 'id'),
         ];
     }
 
@@ -108,7 +114,7 @@ class BoxService extends Service {
             }
             $assets = getDataReadyAssets($assets);
 
-            $tag->update(['data' => $assets]);
+            $tag->update(['data' => json_encode($assets)]);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {

@@ -10,6 +10,7 @@ use App\Models\Currency\Currency;
 use App\Models\Loot\LootTable;
 use App\Models\Raffle\Raffle;
 use App\Models\Border\Border;
+use App\Models\Award\Award;
 
 class BoxService extends Service {
     /*

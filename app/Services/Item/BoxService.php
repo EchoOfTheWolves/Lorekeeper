@@ -92,6 +92,7 @@ class BoxService extends Service {
                         break;
                     case 'Pet':
                         $type = 'App\Models\Pet\Pet';
+                        break;
                     case 'Award':
                         $type = 'App\Models\Award\Award';
                         break;
